@@ -1,0 +1,429 @@
+---
+tip: translate by openai@2023-07-20 08:31:54
+generator: pandoc
+title: Beej\'s Guide to C Programming
+viewport: width=device-width, initial-scale=1.0, user-scalable=yes
+---
+::: {#title-block-header}
+
+# Beej\'s Guide to C Programming {#beejs-guide-to-c-programming .title}
+
+Brian "Beej Jorgensen" Hall
+v0.9.13, Copyright © March 29, 2023
+:::
+
+- [[1]{.toc-section-number} Foreword](#foreword){#toc-foreword}
+  - [[1.1]{.toc-section-number} Audience](#audience){#toc-audience}
+  - [[1.2]{.toc-section-number} How to Read This Book](#how-to-read-this-book){#toc-how-to-read-this-book}
+  - [[1.3]{.toc-section-number} Platform and Compiler](#platform-and-compiler){#toc-platform-and-compiler}
+  - [[1.4]{.toc-section-number} Official Homepage](#official-homepage){#toc-official-homepage}
+  - [[1.5]{.toc-section-number} Email Policy](#email-policy){#toc-email-policy}
+  - [[1.6]{.toc-section-number} Mirroring](#mirroring){#toc-mirroring}
+  - [[1.7]{.toc-section-number} Note for Translators](#note-for-translators){#toc-note-for-translators}
+  - [[1.8]{.toc-section-number} Copyright and Distribution](#copyright-and-distribution){#toc-copyright-and-distribution}
+  - [[1.9]{.toc-section-number} Dedication](#dedication){#toc-dedication}
+- [[2]{.toc-section-number} Hello, World!](#hello-world){#toc-hello-world}
+  - [[2.1]{.toc-section-number} What to Expect from C](#what-to-expect-from-c){#toc-what-to-expect-from-c}
+  - [[2.2]{.toc-section-number} Hello, World!](#hello-world-1){#toc-hello-world-1}
+  - [[2.3]{.toc-section-number} Compilation Details](#compilation-details){#toc-compilation-details}
+  - [[2.4]{.toc-section-number} Building with `gcc`](#building-with-gcc){#toc-building-with-gcc}
+  - [[2.5]{.toc-section-number} Building with `clang`](#building-with-clang){#toc-building-with-clang}
+  - [[2.6]{.toc-section-number} Building from IDEs](#building-from-ides){#toc-building-from-ides}
+  - [[2.7]{.toc-section-number} C Versions](#c-versions){#toc-c-versions}
+- [[3]{.toc-section-number} Variables and Statements](#variables-and-statements){#toc-variables-and-statements}
+  - [[3.1]{.toc-section-number} Variables](#variables){#toc-variables}
+    - [[3.1.1]{.toc-section-number} Variable Names](#variable-names){#toc-variable-names}
+    - [[3.1.2]{.toc-section-number} Variable Types](#variable-types){#toc-variable-types}
+    - [[3.1.3]{.toc-section-number} Boolean Types](#boolean-types){#toc-boolean-types}
+  - [[3.2]{.toc-section-number} Operators and Expressions](#operators){#toc-operators}
+    - [[3.2.1]{.toc-section-number} Arithmetic](#arithmetic){#toc-arithmetic}
+    - [[3.2.2]{.toc-section-number} Ternary Operator](#ternary-operator){#toc-ternary-operator}
+    - [[3.2.3]{.toc-section-number} Pre-and-Post Increment-and-Decrement](#pre-and-post-increment-and-decrement){#toc-pre-and-post-increment-and-decrement}
+    - [[3.2.4]{.toc-section-number} The Comma Operator](#the-comma-operator){#toc-the-comma-operator}
+    - [[3.2.5]{.toc-section-number} Conditional Operators](#conditional-operators){#toc-conditional-operators}
+    - [[3.2.6]{.toc-section-number} Boolean Operators](#boolean-operators){#toc-boolean-operators}
+    - [[3.2.7]{.toc-section-number} The `sizeof` Operator](#sizeof-operator){#toc-sizeof-operator}
+  - [[3.3]{.toc-section-number} Flow Control](#flow-control){#toc-flow-control}
+    - [[3.3.1]{.toc-section-number} The `if`-`else` statement](#ifstat){#toc-ifstat}
+    - [[3.3.2]{.toc-section-number} The `while` statement](#whilestat){#toc-whilestat}
+    - [[3.3.3]{.toc-section-number} The `do-while` statement](#dowhilestat){#toc-dowhilestat}
+    - [[3.3.4]{.toc-section-number} The `for` statement](#forstat){#toc-forstat}
+    - [[3.3.5]{.toc-section-number} The `switch` Statement](#switch-statement){#toc-switch-statement}
+- [[4]{.toc-section-number} Functions](#functions){#toc-functions}
+  - [[4.1]{.toc-section-number} Passing by Value](#passvalue){#toc-passvalue}
+  - [[4.2]{.toc-section-number} Function Prototypes](#prototypes){#toc-prototypes}
+  - [[4.3]{.toc-section-number} Empty Parameter Lists](#empty-parameter-lists){#toc-empty-parameter-lists}
+- [[5]{.toc-section-number} Pointers---Cower In Fear!](#pointers){#toc-pointers}
+  - [[5.1]{.toc-section-number} Memory and Variables](#ptmem){#toc-ptmem}
+  - [[5.2]{.toc-section-number} Pointer Types](#pttypes){#toc-pttypes}
+  - [[5.3]{.toc-section-number} Dereferencing](#deref){#toc-deref}
+  - [[5.4]{.toc-section-number} Passing Pointers as Arguments](#ptpass){#toc-ptpass}
+  - [[5.5]{.toc-section-number} The `NULL` Pointer](#the-null-pointer){#toc-the-null-pointer}
+  - [[5.6]{.toc-section-number} A Note on Declaring Pointers](#a-note-on-declaring-pointers){#toc-a-note-on-declaring-pointers}
+  - [[5.7]{.toc-section-number} `sizeof` and Pointers](#sizeof-and-pointers){#toc-sizeof-and-pointers}
+- [[6]{.toc-section-number} Arrays](#arrays){#toc-arrays}
+  - [[6.1]{.toc-section-number} Easy Example](#easy-example){#toc-easy-example}
+  - [[6.2]{.toc-section-number} Getting the Length of an Array](#getting-the-length-of-an-array){#toc-getting-the-length-of-an-array}
+  - [[6.3]{.toc-section-number} Array Initializers](#array-initializers){#toc-array-initializers}
+  - [[6.4]{.toc-section-number} Out of Bounds!](#out-of-bounds){#toc-out-of-bounds}
+  - [[6.5]{.toc-section-number} Multidimensional Arrays](#multidimensional-arrays){#toc-multidimensional-arrays}
+  - [[6.6]{.toc-section-number} Arrays and Pointers](#arrays-and-pointers){#toc-arrays-and-pointers}
+    - [[6.6.1]{.toc-section-number} Getting a Pointer to an Array](#getting-a-pointer-to-an-array){#toc-getting-a-pointer-to-an-array}
+    - [[6.6.2]{.toc-section-number} Passing Single Dimensional Arrays to Functions](#passing1darrays){#toc-passing1darrays}
+    - [[6.6.3]{.toc-section-number} Changing Arrays in Functions](#changing-arrays-in-functions){#toc-changing-arrays-in-functions}
+    - [[6.6.4]{.toc-section-number} Passing Multidimensional Arrays to Functions](#passing-multidimensional-arrays-to-functions){#toc-passing-multidimensional-arrays-to-functions}
+- [[7]{.toc-section-number} Strings](#strings){#toc-strings}
+  - [[7.1]{.toc-section-number} String Literals](#string-literals){#toc-string-literals}
+  - [[7.2]{.toc-section-number} String Variables](#string-variables){#toc-string-variables}
+  - [[7.3]{.toc-section-number} String Variables as Arrays](#string-variables-as-arrays){#toc-string-variables-as-arrays}
+  - [[7.4]{.toc-section-number} String Initializers](#string-initializers){#toc-string-initializers}
+  - [[7.5]{.toc-section-number} Getting String Length](#getting-string-length){#toc-getting-string-length}
+  - [[7.6]{.toc-section-number} String Termination](#string-termination){#toc-string-termination}
+  - [[7.7]{.toc-section-number} Copying a String](#copying-a-string){#toc-copying-a-string}
+- [[8]{.toc-section-number} Structs](#structs){#toc-structs}
+  - [[8.1]{.toc-section-number} Declaring a Struct](#declaring-a-struct){#toc-declaring-a-struct}
+  - [[8.2]{.toc-section-number} Struct Initializers](#struct-initializers){#toc-struct-initializers}
+  - [[8.3]{.toc-section-number} Passing Structs to Functions](#passing-structs-to-functions){#toc-passing-structs-to-functions}
+  - [[8.4]{.toc-section-number} The Arrow Operator](#the-arrow-operator){#toc-the-arrow-operator}
+  - [[8.5]{.toc-section-number} Copying and Returning `struct` s](#copying-and-returning-structs){#toc-copying-and-returning-structs}
+  - [[8.6]{.toc-section-number} Comparing `struct` s](#comparing-structs){#toc-comparing-structs}
+- [[9]{.toc-section-number} File Input/Output](#file-inputoutput){#toc-file-inputoutput}
+  - [[9.1]{.toc-section-number} The `FILE*` Data Type](#the-file-data-type){#toc-the-file-data-type}
+  - [[9.2]{.toc-section-number} Reading Text Files](#reading-text-files){#toc-reading-text-files}
+  - [[9.3]{.toc-section-number} End of File: `EOF`](#end-of-file-eof){#toc-end-of-file-eof}
+    - [[9.3.1]{.toc-section-number} Reading a Line at a Time](#reading-a-line-at-a-time){#toc-reading-a-line-at-a-time}
+  - [[9.4]{.toc-section-number} Formatted Input](#formatted-input){#toc-formatted-input}
+  - [[9.5]{.toc-section-number} Writing Text Files](#writing-text-files){#toc-writing-text-files}
+  - [[9.6]{.toc-section-number} Binary File I/O](#binary-file-io){#toc-binary-file-io}
+    - [[9.6.1]{.toc-section-number} `struct` and Number Caveats](#struct-and-number-caveats){#toc-struct-and-number-caveats}
+- [[10]{.toc-section-number} `typedef`: Making New Types](#typedef-making-new-types){#toc-typedef-making-new-types}
+  - [[10.1]{.toc-section-number} `typedef` in Theory](#typedef-in-theory){#toc-typedef-in-theory}
+    - [[10.1.1]{.toc-section-number} Scoping](#scoping){#toc-scoping}
+  - [[10.2]{.toc-section-number} `typedef` in Practice](#typedef-in-practice){#toc-typedef-in-practice}
+    - [[10.2.1]{.toc-section-number} `typedef` and `struct` s](#typedef-struct){#toc-typedef-struct}
+    - [[10.2.2]{.toc-section-number} `typedef` and Other Types](#typedef-and-other-types){#toc-typedef-and-other-types}
+    - [[10.2.3]{.toc-section-number} `typedef` and Pointers](#typedef-and-pointers){#toc-typedef-and-pointers}
+    - [[10.2.4]{.toc-section-number} `typedef` and Capitalization](#typedef-and-capitalization){#toc-typedef-and-capitalization}
+  - [[10.3]{.toc-section-number} Arrays and `typedef`](#arrays-and-typedef){#toc-arrays-and-typedef}
+- [[11]{.toc-section-number} Pointers II: Arithmetic](#pointers2){#toc-pointers2}
+  - [[11.1]{.toc-section-number} Pointer Arithmetic](#pointer-arithmetic){#toc-pointer-arithmetic}
+    - [[11.1.1]{.toc-section-number} Adding to Pointers](#adding-to-pointers){#toc-adding-to-pointers}
+    - [[11.1.2]{.toc-section-number} Changing Pointers](#changing-pointers){#toc-changing-pointers}
+    - [[11.1.3]{.toc-section-number} Subtracting Pointers](#subtracting-pointers){#toc-subtracting-pointers}
+  - [[11.2]{.toc-section-number} Array/Pointer Equivalence](#arraypointerequiv){#toc-arraypointerequiv}
+    - [[11.2.1]{.toc-section-number} Array/Pointer Equivalence in Function Calls](#arraypointer-equivalence-in-function-calls){#toc-arraypointer-equivalence-in-function-calls}
+  - [[11.3]{.toc-section-number} `void` Pointers](#void-pointers){#toc-void-pointers}
+- [[12]{.toc-section-number} Manual Memory Allocation](#manual-memory-allocation){#toc-manual-memory-allocation}
+  - [[12.1]{.toc-section-number} Allocating and Deallocating, `malloc()` and `free()`](#allocating-and-deallocating-malloc-and-free){#toc-allocating-and-deallocating-malloc-and-free}
+  - [[12.2]{.toc-section-number} Error Checking](#error-checking){#toc-error-checking}
+  - [[12.3]{.toc-section-number} Allocating Space for an Array](#allocating-space-for-an-array){#toc-allocating-space-for-an-array}
+  - [[12.4]{.toc-section-number} An Alternative: `calloc()`](#an-alternative-calloc){#toc-an-alternative-calloc}
+  - [[12.5]{.toc-section-number} Changing Allocated Size with `realloc()`](#changing-allocated-size-with-realloc){#toc-changing-allocated-size-with-realloc}
+    - [[12.5.1]{.toc-section-number} Reading in Lines of Arbitrary Length](#reading-in-lines-of-arbitrary-length){#toc-reading-in-lines-of-arbitrary-length}
+    - [[12.5.2]{.toc-section-number} `realloc()` with `NULL`](#realloc-with-null){#toc-realloc-with-null}
+  - [[12.6]{.toc-section-number} Aligned Allocations](#aligned-allocations){#toc-aligned-allocations}
+- [[13]{.toc-section-number} Scope](#scope){#toc-scope}
+  - [[13.1]{.toc-section-number} Block Scope](#block-scope){#toc-block-scope}
+    - [[13.1.1]{.toc-section-number} Where To Define Variables](#where-to-define-variables){#toc-where-to-define-variables}
+    - [[13.1.2]{.toc-section-number} Variable Hiding](#variable-hiding){#toc-variable-hiding}
+  - [[13.2]{.toc-section-number} File Scope](#file-scope){#toc-file-scope}
+  - [[13.3]{.toc-section-number} `for`-loop Scope](#for-loop-scope){#toc-for-loop-scope}
+  - [[13.4]{.toc-section-number} A Note on Function Scope](#a-note-on-function-scope){#toc-a-note-on-function-scope}
+- [[14]{.toc-section-number} Types II: Way More Types!](#types-ii-way-more-types){#toc-types-ii-way-more-types}
+  - [[14.1]{.toc-section-number} Signed and Unsigned Integers](#signed-and-unsigned-integers){#toc-signed-and-unsigned-integers}
+  - [[14.2]{.toc-section-number} Character Types](#character-types){#toc-character-types}
+  - [[14.3]{.toc-section-number} More Integer Types: `short`, `long`, `long long`](#more-integer-types-short-long-long-long){#toc-more-integer-types-short-long-long-long}
+  - [[14.4]{.toc-section-number} More Float: `double` and `long double`](#more-float-double-and-long-double){#toc-more-float-double-and-long-double}
+    - [[14.4.1]{.toc-section-number} How Many Decimal Digits?](#how-many-decimal-digits){#toc-how-many-decimal-digits}
+    - [[14.4.2]{.toc-section-number} Converting to Decimal and Back](#converting-to-decimal-and-back){#toc-converting-to-decimal-and-back}
+  - [[14.5]{.toc-section-number} Constant Numeric Types](#constant-numeric-types){#toc-constant-numeric-types}
+    - [[14.5.1]{.toc-section-number} Hexadecimal and Octal](#hexadecimal-and-octal){#toc-hexadecimal-and-octal}
+    - [[14.5.2]{.toc-section-number} Integer Constants](#integer-constants){#toc-integer-constants}
+    - [[14.5.3]{.toc-section-number} Floating Point Constants](#floating-point-constants){#toc-floating-point-constants}
+- [[15]{.toc-section-number} Types III: Conversions](#types-iii-conversions){#toc-types-iii-conversions}
+  - [[15.1]{.toc-section-number} String Conversions](#string-conversions){#toc-string-conversions}
+    - [[15.1.1]{.toc-section-number} Numeric Value to String](#numeric-value-to-string){#toc-numeric-value-to-string}
+    - [[15.1.2]{.toc-section-number} String to Numeric Value](#string-to-numeric-value){#toc-string-to-numeric-value}
+  - [[15.2]{.toc-section-number} `char` Conversions](#char-conversions){#toc-char-conversions}
+  - [[15.3]{.toc-section-number} Numeric Conversions](#numeric-conversions){#toc-numeric-conversions}
+    - [[15.3.1]{.toc-section-number} Boolean](#boolean){#toc-boolean}
+    - [[15.3.2]{.toc-section-number} Integer to Integer Conversions](#integer-to-integer-conversions){#toc-integer-to-integer-conversions}
+    - [[15.3.3]{.toc-section-number} Integer and Floating Point Conversions](#integer-and-floating-point-conversions){#toc-integer-and-floating-point-conversions}
+  - [[15.4]{.toc-section-number} Implicit Conversions](#implicit-conversions){#toc-implicit-conversions}
+    - [[15.4.1]{.toc-section-number} The Integer Promotions](#integer-promotions){#toc-integer-promotions}
+    - [[15.4.2]{.toc-section-number} The Usual Arithmetic Conversions](#usual-arithmetic-conversions){#toc-usual-arithmetic-conversions}
+    - [[15.4.3]{.toc-section-number} `void*`](#void){#toc-void}
+  - [[15.5]{.toc-section-number} Explicit Conversions](#explicit-conversions){#toc-explicit-conversions}
+    - [[15.5.1]{.toc-section-number} Casting](#casting){#toc-casting}
+- [[16]{.toc-section-number} Types IV: Qualifiers and Specifiers](#types-iv-qualifiers-and-specifiers){#toc-types-iv-qualifiers-and-specifiers}
+  - [[16.1]{.toc-section-number} Type Qualifiers](#type-qualifiers){#toc-type-qualifiers}
+    - [[16.1.1]{.toc-section-number} `const`](#const){#toc-const}
+    - [[16.1.2]{.toc-section-number} `restrict`](#restrict){#toc-restrict}
+    - [[16.1.3]{.toc-section-number} `volatile`](#volatile){#toc-volatile}
+    - [[16.1.4]{.toc-section-number} `_Atomic`](#atomic){#toc-atomic}
+  - [[16.2]{.toc-section-number} Storage-Class Specifiers](#storage-class-specifiers){#toc-storage-class-specifiers}
+    - [[16.2.1]{.toc-section-number} `auto`](#auto){#toc-auto}
+    - [[16.2.2]{.toc-section-number} `static`](#static){#toc-static}
+    - [[16.2.3]{.toc-section-number} `extern`](#extern){#toc-extern}
+    - [[16.2.4]{.toc-section-number} `register`](#register){#toc-register}
+    - [[16.2.5]{.toc-section-number} `_Thread_local`](#thread_local){#toc-thread_local}
+- [[17]{.toc-section-number} Multifile Projects](#multifile-projects){#toc-multifile-projects}
+  - [[17.1]{.toc-section-number} Includes and Function Prototypes](#includes-func-protos){#toc-includes-func-protos}
+  - [[17.2]{.toc-section-number} Dealing with Repeated Includes](#dealing-with-repeated-includes){#toc-dealing-with-repeated-includes}
+  - [[17.3]{.toc-section-number} `static` and `extern`](#static-and-extern){#toc-static-and-extern}
+  - [[17.4]{.toc-section-number} Compiling with Object Files](#compiling-with-object-files){#toc-compiling-with-object-files}
+- [[18]{.toc-section-number} The Outside Environment](#the-outside-environment){#toc-the-outside-environment}
+  - [[18.1]{.toc-section-number} Command Line Arguments](#command-line-arguments){#toc-command-line-arguments}
+    - [[18.1.1]{.toc-section-number} The Last `argv` is `NULL`](#the-last-argv-is-null){#toc-the-last-argv-is-null}
+    - [[18.1.2]{.toc-section-number} The Alternate: `char **argv`](#the-alternate-char-argv){#toc-the-alternate-char-argv}
+    - [[18.1.3]{.toc-section-number} Fun Facts](#fun-facts){#toc-fun-facts}
+  - [[18.2]{.toc-section-number} Exit Status](#exit-status){#toc-exit-status}
+    - [[18.2.1]{.toc-section-number} Other Exit Status Values](#other-exit-status-values){#toc-other-exit-status-values}
+  - [[18.3]{.toc-section-number} Environment Variables](#env-var){#toc-env-var}
+    - [[18.3.1]{.toc-section-number} Setting Environment Variables](#setting-environment-variables){#toc-setting-environment-variables}
+    - [[18.3.2]{.toc-section-number} Unix-like Alternative Environment Variables](#unix-like-alternative-environment-variables){#toc-unix-like-alternative-environment-variables}
+- [[19]{.toc-section-number} The C Preprocessor](#the-c-preprocessor){#toc-the-c-preprocessor}
+  - [[19.1]{.toc-section-number} `#include`](#include){#toc-include}
+  - [[19.2]{.toc-section-number} Simple Macros](#simple-macros){#toc-simple-macros}
+  - [[19.3]{.toc-section-number} Conditional Compilation](#conditional-compilation){#toc-conditional-compilation}
+    - [[19.3.1]{.toc-section-number} If Defined, `#ifdef` and `#endif`](#if-defined-ifdef-and-endif){#toc-if-defined-ifdef-and-endif}
+    - [[19.3.2]{.toc-section-number} If Not Defined, `#ifndef`](#if-not-defined-ifndef){#toc-if-not-defined-ifndef}
+    - [[19.3.3]{.toc-section-number} `#else`](#else){#toc-else}
+    - [[19.3.4]{.toc-section-number} General Conditional: `#if`, `#elif`](#general-conditional-if-elif){#toc-general-conditional-if-elif}
+    - [[19.3.5]{.toc-section-number} Losing a Macro: `#undef`](#losing-a-macro-undef){#toc-losing-a-macro-undef}
+  - [[19.4]{.toc-section-number} Built-in Macros](#built-in-macros){#toc-built-in-macros}
+    - [[19.4.1]{.toc-section-number} Mandatory Macros](#mandatory-macros){#toc-mandatory-macros}
+    - [[19.4.2]{.toc-section-number} Optional Macros](#optional-macros){#toc-optional-macros}
+  - [[19.5]{.toc-section-number} Macros with Arguments](#macros-with-arguments){#toc-macros-with-arguments}
+    - [[19.5.1]{.toc-section-number} Macros with One Argument](#macros-with-one-argument){#toc-macros-with-one-argument}
+    - [[19.5.2]{.toc-section-number} Macros with More than One Argument](#macros-with-more-than-one-argument){#toc-macros-with-more-than-one-argument}
+    - [[19.5.3]{.toc-section-number} Macros with Variable Arguments](#macros-with-variable-arguments){#toc-macros-with-variable-arguments}
+    - [[19.5.4]{.toc-section-number} Stringification](#stringification){#toc-stringification}
+    - [[19.5.5]{.toc-section-number} Concatenation](#concatenation){#toc-concatenation}
+  - [[19.6]{.toc-section-number} Multiline Macros](#multiline-macros){#toc-multiline-macros}
+  - [[19.7]{.toc-section-number} Example: An Assert Macro](#my-assert){#toc-my-assert}
+  - [[19.8]{.toc-section-number} The `#error` Directive](#the-error-directive){#toc-the-error-directive}
+  - [[19.9]{.toc-section-number} The `#pragma` Directive](#pragma){#toc-pragma}
+    - [[19.9.1]{.toc-section-number} Non-Standard Pragmas](#non-standard-pragmas){#toc-non-standard-pragmas}
+    - [[19.9.2]{.toc-section-number} Standard Pragmas](#standard-pragmas){#toc-standard-pragmas}
+    - [[19.9.3]{.toc-section-number} `_Pragma` Operator](#pragma-operator){#toc-pragma-operator}
+  - [[19.10]{.toc-section-number} The `#line` Directive](#the-line-directive){#toc-the-line-directive}
+  - [[19.11]{.toc-section-number} The Null Directive](#the-null-directive){#toc-the-null-directive}
+- [[20]{.toc-section-number} `struct` s II: More Fun with `struct` s](#structs-ii-more-fun-with-structs){#toc-structs-ii-more-fun-with-structs}
+  - [[20.1]{.toc-section-number} Initializers of Nested `struct` s and Arrays](#initializers-of-nested-structs-and-arrays){#toc-initializers-of-nested-structs-and-arrays}
+  - [[20.2]{.toc-section-number} Anonymous `struct` s](#anonymous-structs){#toc-anonymous-structs}
+  - [[20.3]{.toc-section-number} Self-Referential `struct` s](#self-referential-structs){#toc-self-referential-structs}
+  - [[20.4]{.toc-section-number} Flexible Array Members](#flexible-array-members){#toc-flexible-array-members}
+  - [[20.5]{.toc-section-number} Padding Bytes](#struct-padding-bytes){#toc-struct-padding-bytes}
+  - [[20.6]{.toc-section-number} `offsetof`](#offsetof){#toc-offsetof}
+  - [[20.7]{.toc-section-number} Fake OOP](#fake-oop){#toc-fake-oop}
+  - [[20.8]{.toc-section-number} Bit-Fields](#bit-fields){#toc-bit-fields}
+    - [[20.8.1]{.toc-section-number} Non-Adjacent Bit-Fields](#non-adjacent-bit-fields){#toc-non-adjacent-bit-fields}
+    - [[20.8.2]{.toc-section-number} Signed or Unsigned `int` s](#signed-or-unsigned-ints){#toc-signed-or-unsigned-ints}
+    - [[20.8.3]{.toc-section-number} Unnamed Bit-Fields](#unnamed-bit-fields){#toc-unnamed-bit-fields}
+    - [[20.8.4]{.toc-section-number} Zero-Width Unnamed Bit-Fields](#zero-width-unnamed-bit-fields){#toc-zero-width-unnamed-bit-fields}
+  - [[20.9]{.toc-section-number} Unions](#unions){#toc-unions}
+    - [[20.9.1]{.toc-section-number} Unions and Type Punning](#union-type-punning){#toc-union-type-punning}
+    - [[20.9.2]{.toc-section-number} Pointers to `union` s](#pointers-to-unions){#toc-pointers-to-unions}
+    - [[20.9.3]{.toc-section-number} Common Initial Sequences in Unions](#common-initial-sequences-in-unions){#toc-common-initial-sequences-in-unions}
+  - [[20.10]{.toc-section-number} Unions and Unnamed Structs](#unions-and-unnamed-structs){#toc-unions-and-unnamed-structs}
+  - [[20.11]{.toc-section-number} Passing and Returning `struct` s and `union` s](#passing-and-returning-structs-and-unions){#toc-passing-and-returning-structs-and-unions}
+- [[21]{.toc-section-number} Characters and Strings II](#characters-and-strings-ii){#toc-characters-and-strings-ii}
+  - [[21.1]{.toc-section-number} Escape Sequences](#escape-sequences){#toc-escape-sequences}
+    - [[21.1.1]{.toc-section-number} Frequently-used Escapes](#frequently-used-escapes){#toc-frequently-used-escapes}
+    - [[21.1.2]{.toc-section-number} Rarely-used Escapes](#rarely-used-escapes){#toc-rarely-used-escapes}
+    - [[21.1.3]{.toc-section-number} Numeric Escapes](#numeric-escapes){#toc-numeric-escapes}
+- [[22]{.toc-section-number} Enumerated Types: `enum`](#enumerated-types-enum){#toc-enumerated-types-enum}
+  - [[22.1]{.toc-section-number} Behavior of `enum`](#behavior-of-enum){#toc-behavior-of-enum}
+    - [[22.1.1]{.toc-section-number} Numbering](#numbering){#toc-numbering}
+    - [[22.1.2]{.toc-section-number} Trailing Commas](#trailing-commas){#toc-trailing-commas}
+    - [[22.1.3]{.toc-section-number} Scope](#scope-1){#toc-scope-1}
+    - [[22.1.4]{.toc-section-number} Style](#style){#toc-style}
+  - [[22.2]{.toc-section-number} Your `enum` is a Type](#your-enum-is-a-type){#toc-your-enum-is-a-type}
+- [[23]{.toc-section-number} Pointers III: Pointers to Pointers and More](#pointers-iii-pointers-to-pointers-and-more){#toc-pointers-iii-pointers-to-pointers-and-more}
+  - [[23.1]{.toc-section-number} Pointers to Pointers](#pointers-to-pointers){#toc-pointers-to-pointers}
+    - [[23.1.1]{.toc-section-number} Pointer Pointers and `const`](#pointer-pointers-and-const){#toc-pointer-pointers-and-const}
+  - [[23.2]{.toc-section-number} Multibyte Values](#multibyte-values){#toc-multibyte-values}
+  - [[23.3]{.toc-section-number} The `NULL` Pointer and Zero](#the-null-pointer-and-zero){#toc-the-null-pointer-and-zero}
+  - [[23.4]{.toc-section-number} Pointers as Integers](#pointers-as-integers){#toc-pointers-as-integers}
+  - [[23.5]{.toc-section-number} Casting Pointers to other Pointers](#casting-pointers-to-other-pointers){#toc-casting-pointers-to-other-pointers}
+  - [[23.6]{.toc-section-number} Pointer Differences](#ptr_differences){#toc-ptr_differences}
+  - [[23.7]{.toc-section-number} Pointers to Functions](#pointers-to-functions){#toc-pointers-to-functions}
+- [[24]{.toc-section-number} Bitwise Operations](#bitwise-operations){#toc-bitwise-operations}
+  - [[24.1]{.toc-section-number} Bitwise AND, OR, XOR, and NOT](#bitwise-and-or-xor-and-not){#toc-bitwise-and-or-xor-and-not}
+  - [[24.2]{.toc-section-number} Bitwise Shift](#bitwise-shift){#toc-bitwise-shift}
+- [[25]{.toc-section-number} Variadic Functions](#variadic-functions){#toc-variadic-functions}
+  - [[25.1]{.toc-section-number} Ellipses in Function Signatures](#ellipses-in-function-signatures){#toc-ellipses-in-function-signatures}
+  - [[25.2]{.toc-section-number} Getting the Extra Arguments](#getting-the-extra-arguments){#toc-getting-the-extra-arguments}
+  - [[25.3]{.toc-section-number} `va_list` Functionality](#va_list-functionality){#toc-va_list-functionality}
+  - [[25.4]{.toc-section-number} Library Functions That Use `va_list` s](#library-functions-that-use-va_lists){#toc-library-functions-that-use-va_lists}
+- [[26]{.toc-section-number} Locale and Internationalization](#locale-and-internationalization){#toc-locale-and-internationalization}
+  - [[26.1]{.toc-section-number} Setting the Localization, Quick and Dirty](#setting-the-localization-quick-and-dirty){#toc-setting-the-localization-quick-and-dirty}
+  - [[26.2]{.toc-section-number} Getting the Monetary Locale Settings](#getting-the-monetary-locale-settings){#toc-getting-the-monetary-locale-settings}
+    - [[26.2.1]{.toc-section-number} Monetary Digit Grouping](#monetary-digit-grouping){#toc-monetary-digit-grouping}
+    - [[26.2.2]{.toc-section-number} Separators and Sign Position](#separators-and-sign-position){#toc-separators-and-sign-position}
+    - [[26.2.3]{.toc-section-number} Example Values](#example-values){#toc-example-values}
+  - [[26.3]{.toc-section-number} Localization Specifics](#localization-specifics){#toc-localization-specifics}
+- [[27]{.toc-section-number} Unicode, Wide Characters, and All That](#unicode-wide-characters-and-all-that){#toc-unicode-wide-characters-and-all-that}
+  - [[27.1]{.toc-section-number} What is Unicode?](#what-is-unicode){#toc-what-is-unicode}
+  - [[27.2]{.toc-section-number} Code Points](#code-points){#toc-code-points}
+  - [[27.3]{.toc-section-number} Encoding](#encoding){#toc-encoding}
+  - [[27.4]{.toc-section-number} Source and Execution Character Sets](#src-exec-charset){#toc-src-exec-charset}
+  - [[27.5]{.toc-section-number} Unicode in C](#unicode-in-c){#toc-unicode-in-c}
+  - [[27.6]{.toc-section-number} A Quick Note on UTF-8 Before We Swerve into the Weeds](#utf8-quick){#toc-utf8-quick}
+  - [[27.7]{.toc-section-number} Different Character Types](#different-character-types){#toc-different-character-types}
+    - [[27.7.1]{.toc-section-number} Multibyte Characters](#multibyte-characters){#toc-multibyte-characters}
+    - [[27.7.2]{.toc-section-number} Wide Characters](#wide-characters){#toc-wide-characters}
+  - [[27.8]{.toc-section-number} Using Wide Characters and `wchar_t`](#using-wide-characters-and-wchar_t){#toc-using-wide-characters-and-wchar_t}
+    - [[27.8.1]{.toc-section-number} Multibyte to `wchar_t` Conversions](#multibyte-to-wchar_t-conversions){#toc-multibyte-to-wchar_t-conversions}
+  - [[27.9]{.toc-section-number} Wide Character Functionality](#wide-character-functionality){#toc-wide-character-functionality}
+    - [[27.9.1]{.toc-section-number} `wint_t`](#wint_t){#toc-wint_t}
+    - [[27.9.2]{.toc-section-number} I/O Stream Orientation](#io-stream-orientation){#toc-io-stream-orientation}
+    - [[27.9.3]{.toc-section-number} I/O Functions](#io-functions){#toc-io-functions}
+    - [[27.9.4]{.toc-section-number} Type Conversion Functions](#type-conversion-functions){#toc-type-conversion-functions}
+    - [[27.9.5]{.toc-section-number} String and Memory Copying Functions](#string-and-memory-copying-functions){#toc-string-and-memory-copying-functions}
+    - [[27.9.6]{.toc-section-number} String and Memory Comparing Functions](#string-and-memory-comparing-functions){#toc-string-and-memory-comparing-functions}
+    - [[27.9.7]{.toc-section-number} String Searching Functions](#string-searching-functions){#toc-string-searching-functions}
+    - [[27.9.8]{.toc-section-number} Length/Miscellaneous Functions](#lengthmiscellaneous-functions){#toc-lengthmiscellaneous-functions}
+    - [[27.9.9]{.toc-section-number} Character Classification Functions](#character-classification-functions){#toc-character-classification-functions}
+  - [[27.10]{.toc-section-number} Parse State, Restartable Functions](#parse-state-restartable-functions){#toc-parse-state-restartable-functions}
+  - [[27.11]{.toc-section-number} Unicode Encodings and C](#unicode-encodings-and-c){#toc-unicode-encodings-and-c}
+    - [[27.11.1]{.toc-section-number} UTF-8](#utf-8){#toc-utf-8}
+    - [[27.11.2]{.toc-section-number} UTF-16, UTF-32, `char16_t`, and `char32_t`](#utf-16-utf-32-char16_t-and-char32_t){#toc-utf-16-utf-32-char16_t-and-char32_t}
+    - [[27.11.3]{.toc-section-number} Multibyte Conversions](#multibyte-conversions){#toc-multibyte-conversions}
+    - [[27.11.4]{.toc-section-number} Third-Party Libraries](#utf-3rd-party){#toc-utf-3rd-party}
+- [[28]{.toc-section-number} Exiting a Program](#exiting-a-program){#toc-exiting-a-program}
+  - [[28.1]{.toc-section-number} Normal Exits](#normal-exits){#toc-normal-exits}
+    - [[28.1.1]{.toc-section-number} Returning From `main()`](#returning-from-main){#toc-returning-from-main}
+    - [[28.1.2]{.toc-section-number} `exit()`](#exit){#toc-exit}
+    - [[28.1.3]{.toc-section-number} Setting Up Exit Handlers with `atexit()`](#setting-up-exit-handlers-with-atexit){#toc-setting-up-exit-handlers-with-atexit}
+  - [[28.2]{.toc-section-number} Quicker Exits with `quick_exit()`](#quicker-exits-with-quick_exit){#toc-quicker-exits-with-quick_exit}
+  - [[28.3]{.toc-section-number} Nuke it from Orbit: `_Exit()`](#nuke-it-from-orbit-_exit){#toc-nuke-it-from-orbit-\_exit}
+  - [[28.4]{.toc-section-number} Exiting Sometimes: `assert()`](#exiting-sometimes-assert){#toc-exiting-sometimes-assert}
+  - [[28.5]{.toc-section-number} Abnormal Exit: `abort()`](#abnormal-exit-abort){#toc-abnormal-exit-abort}
+- [[29]{.toc-section-number} Signal Handling](#signal-handling){#toc-signal-handling}
+  - [[29.1]{.toc-section-number} What Are Signals?](#what-are-signals){#toc-what-are-signals}
+  - [[29.2]{.toc-section-number} Handling Signals with `signal()`](#handling-signals-with-signal){#toc-handling-signals-with-signal}
+  - [[29.3]{.toc-section-number} Writing Signal Handlers](#writing-signal-handlers){#toc-writing-signal-handlers}
+  - [[29.4]{.toc-section-number} What Can We Actually Do?](#what-can-we-actually-do){#toc-what-can-we-actually-do}
+  - [[29.5]{.toc-section-number} Friends Don't Let Friends `signal()`](#friends-dont-let-friends-signal){#toc-friends-dont-let-friends-signal}
+- [[30]{.toc-section-number} Variable-Length Arrays (VLAs)](#variable-length-arrays-vlas){#toc-variable-length-arrays-vlas}
+  - [[30.1]{.toc-section-number} The Basics](#the-basics){#toc-the-basics}
+  - [[30.2]{.toc-section-number} `sizeof` and VLAs](#sizeof-and-vlas){#toc-sizeof-and-vlas}
+  - [[30.3]{.toc-section-number} Multidimensional VLAs](#multidimensional-vlas){#toc-multidimensional-vlas}
+  - [[30.4]{.toc-section-number} Passing One-Dimensional VLAs to Functions](#passing-one-dimensional-vlas-to-functions){#toc-passing-one-dimensional-vlas-to-functions}
+  - [[30.5]{.toc-section-number} Passing Multi-Dimensional VLAs to Functions](#passing-multi-dimensional-vlas-to-functions){#toc-passing-multi-dimensional-vlas-to-functions}
+    - [[30.5.1]{.toc-section-number} Partial Multidimensional VLAs](#partial-multidimensional-vlas){#toc-partial-multidimensional-vlas}
+  - [[30.6]{.toc-section-number} Compatibility with Regular Arrays](#compatibility-with-regular-arrays){#toc-compatibility-with-regular-arrays}
+  - [[30.7]{.toc-section-number} `typedef` and VLAs](#typedef-and-vlas){#toc-typedef-and-vlas}
+  - [[30.8]{.toc-section-number} Jumping Pitfalls](#jumping-pitfalls){#toc-jumping-pitfalls}
+  - [[30.9]{.toc-section-number} General Issues](#vla-general-issues){#toc-vla-general-issues}
+- [[31]{.toc-section-number} `goto`](#goto){#toc-goto}
+  - [[31.1]{.toc-section-number} A Simple Example](#a-simple-example){#toc-a-simple-example}
+  - [[31.2]{.toc-section-number} Labeled `continue`](#labeled-continue){#toc-labeled-continue}
+  - [[31.3]{.toc-section-number} Bailing Out](#bailing-out){#toc-bailing-out}
+  - [[31.4]{.toc-section-number} Labeled `break`](#labeled-break){#toc-labeled-break}
+  - [[31.5]{.toc-section-number} Multi-level Cleanup](#multi-level-cleanup){#toc-multi-level-cleanup}
+  - [[31.6]{.toc-section-number} Tail Call Optimization](#tail-call-optimization){#toc-tail-call-optimization}
+  - [[31.7]{.toc-section-number} Restarting Interrupted System Calls](#restarting-interrupted-system-calls){#toc-restarting-interrupted-system-calls}
+  - [[31.8]{.toc-section-number} `goto` and Thread Preemption](#goto-and-thread-preemption){#toc-goto-and-thread-preemption}
+  - [[31.9]{.toc-section-number} `goto` and Variable Scope](#goto-and-variable-scope){#toc-goto-and-variable-scope}
+  - [[31.10]{.toc-section-number} `goto` and Variable-Length Arrays](#goto-and-variable-length-arrays){#toc-goto-and-variable-length-arrays}
+- [[32]{.toc-section-number} Types Part V: Compound Literals and Generic Selections](#types-part-v-compound-literals-and-generic-selections){#toc-types-part-v-compound-literals-and-generic-selections}
+  - [[32.1]{.toc-section-number} Compound Literals](#compound-literals){#toc-compound-literals}
+    - [[32.1.1]{.toc-section-number} Passing Unnamed Objects to Functions](#passing-unnamed-objects-to-functions){#toc-passing-unnamed-objects-to-functions}
+    - [[32.1.2]{.toc-section-number} Unnamed `struct` s](#unnamed-structs){#toc-unnamed-structs}
+    - [[32.1.3]{.toc-section-number} Pointers to Unnamed Objects](#pointers-to-unnamed-objects){#toc-pointers-to-unnamed-objects}
+    - [[32.1.4]{.toc-section-number} Unnamed Objects and Scope](#unnamed-objects-and-scope){#toc-unnamed-objects-and-scope}
+    - [[32.1.5]{.toc-section-number} Silly Unnamed Object Example](#silly-unnamed-object-example){#toc-silly-unnamed-object-example}
+  - [[32.2]{.toc-section-number} Generic Selections](#type-generics){#toc-type-generics}
+- [[33]{.toc-section-number} Arrays Part II](#arrays-part-ii){#toc-arrays-part-ii}
+  - [[33.1]{.toc-section-number} Type Qualifiers for Arrays in Parameter Lists](#type-qualifiers-for-arrays-in-parameter-lists){#toc-type-qualifiers-for-arrays-in-parameter-lists}
+  - [[33.2]{.toc-section-number} `static` for Arrays in Parameter Lists](#static-for-arrays-in-parameter-lists){#toc-static-for-arrays-in-parameter-lists}
+  - [[33.3]{.toc-section-number} Equivalent Initializers](#equivalent-initializers){#toc-equivalent-initializers}
+- [[34]{.toc-section-number} Long Jumps with `setjmp`, `longjmp`](#setjmp-longjmp){#toc-setjmp-longjmp}
+  - [[34.1]{.toc-section-number} Using `setjmp` and `longjmp`](#using-setjmp-and-longjmp){#toc-using-setjmp-and-longjmp}
+  - [[34.2]{.toc-section-number} Pitfalls](#pitfalls){#toc-pitfalls}
+    - [[34.2.1]{.toc-section-number} The Values of Local Variables](#the-values-of-local-variables){#toc-the-values-of-local-variables}
+    - [[34.2.2]{.toc-section-number} How Much State is Saved?](#how-much-state-is-saved){#toc-how-much-state-is-saved}
+    - [[34.2.3]{.toc-section-number} You Can't Name Anything `setjmp`](#you-cant-name-anything-setjmp){#toc-you-cant-name-anything-setjmp}
+    - [[34.2.4]{.toc-section-number} You Can't `setjmp()` in a Larger Expression](#you-cant-setjmp-in-a-larger-expression){#toc-you-cant-setjmp-in-a-larger-expression}
+    - [[34.2.5]{.toc-section-number} When Can't You `longjmp()`?](#when-cant-you-longjmp){#toc-when-cant-you-longjmp}
+    - [[34.2.6]{.toc-section-number} You Can't Pass `0` to `longjmp()`](#you-cant-pass-0-to-longjmp){#toc-you-cant-pass-0-to-longjmp}
+    - [[34.2.7]{.toc-section-number} `longjmp()` and Variable Length Arrays](#longjmp-and-variable-length-arrays){#toc-longjmp-and-variable-length-arrays}
+- [[35]{.toc-section-number} Incomplete Types](#incomplete-types){#toc-incomplete-types}
+  - [[35.1]{.toc-section-number} Use Case: Self-Referential Structures](#use-case-self-referential-structures){#toc-use-case-self-referential-structures}
+  - [[35.2]{.toc-section-number} Incomplete Type Error Messages](#incomplete-type-error-messages){#toc-incomplete-type-error-messages}
+  - [[35.3]{.toc-section-number} Other Incomplete Types](#other-incomplete-types){#toc-other-incomplete-types}
+  - [[35.4]{.toc-section-number} Use Case: Arrays in Header Files](#use-case-arrays-in-header-files){#toc-use-case-arrays-in-header-files}
+  - [[35.5]{.toc-section-number} Completing Incomplete Types](#completing-incomplete-types){#toc-completing-incomplete-types}
+- [[36]{.toc-section-number} Complex Numbers](#complex-numbers){#toc-complex-numbers}
+  - [[36.1]{.toc-section-number} Complex Types](#complex-types){#toc-complex-types}
+  - [[36.2]{.toc-section-number} Assigning Complex Numbers](#assigning-complex-numbers){#toc-assigning-complex-numbers}
+  - [[36.3]{.toc-section-number} Constructing, Deconstructing, and Printing](#constructing-deconstructing-and-printing){#toc-constructing-deconstructing-and-printing}
+  - [[36.4]{.toc-section-number} Complex Arithmetic and Comparisons](#complex-arithmetic-and-comparisons){#toc-complex-arithmetic-and-comparisons}
+  - [[36.5]{.toc-section-number} Complex Math](#complex-math){#toc-complex-math}
+    - [[36.5.1]{.toc-section-number} Trigonometry Functions](#trigonometry-functions){#toc-trigonometry-functions}
+    - [[36.5.2]{.toc-section-number} Exponential and Logarithmic Functions](#exponential-and-logarithmic-functions){#toc-exponential-and-logarithmic-functions}
+    - [[36.5.3]{.toc-section-number} Power and Absolute Value Functions](#power-and-absolute-value-functions){#toc-power-and-absolute-value-functions}
+    - [[36.5.4]{.toc-section-number} Manipulation Functions](#manipulation-functions){#toc-manipulation-functions}
+- [[37]{.toc-section-number} Fixed Width Integer Types](#fixed-width-integer-types){#toc-fixed-width-integer-types}
+  - [[37.1]{.toc-section-number} The Bit-Sized Types](#the-bit-sized-types){#toc-the-bit-sized-types}
+  - [[37.2]{.toc-section-number} Maximum Integer Size Type](#maximum-integer-size-type){#toc-maximum-integer-size-type}
+  - [[37.3]{.toc-section-number} Using Fixed Size Constants](#using-fixed-size-constants){#toc-using-fixed-size-constants}
+  - [[37.4]{.toc-section-number} Limits of Fixed Size Integers](#limits-of-fixed-size-integers){#toc-limits-of-fixed-size-integers}
+  - [[37.5]{.toc-section-number} Format Specifiers](#format-specifiers){#toc-format-specifiers}
+- [[38]{.toc-section-number} Date and Time Functionality](#date-and-time-functionality){#toc-date-and-time-functionality}
+  - [[38.1]{.toc-section-number} Quick Terminology and Information](#quick-terminology-and-information){#toc-quick-terminology-and-information}
+  - [[38.2]{.toc-section-number} Date Types](#date-types){#toc-date-types}
+  - [[38.3]{.toc-section-number} Initialization and Conversion Between Types](#initialization-and-conversion-between-types){#toc-initialization-and-conversion-between-types}
+    - [[38.3.1]{.toc-section-number} Converting `time_t` to `struct tm`](#converting-time_t-to-struct-tm){#toc-converting-time_t-to-struct-tm}
+    - [[38.3.2]{.toc-section-number} Converting `struct tm` to `time_t`](#converting-struct-tm-to-time_t){#toc-converting-struct-tm-to-time_t}
+  - [[38.4]{.toc-section-number} Formatted Date Output](#formatted-date-output){#toc-formatted-date-output}
+  - [[38.5]{.toc-section-number} More Resolution with `timespec_get()`](#more-resolution-with-timespec_get){#toc-more-resolution-with-timespec_get}
+  - [[38.6]{.toc-section-number} Differences Between Times](#differences-between-times){#toc-differences-between-times}
+- [[39]{.toc-section-number} Multithreading](#multithreading){#toc-multithreading}
+  - [[39.1]{.toc-section-number} Background](#background){#toc-background}
+  - [[39.2]{.toc-section-number} Things You Can Do](#things-you-can-do){#toc-things-you-can-do}
+  - [[39.3]{.toc-section-number} Data Races and the Standard Library](#data-races-and-the-standard-library){#toc-data-races-and-the-standard-library}
+  - [[39.4]{.toc-section-number} Creating and Waiting for Threads](#creating-and-waiting-for-threads){#toc-creating-and-waiting-for-threads}
+  - [[39.5]{.toc-section-number} Detaching Threads](#detaching-threads){#toc-detaching-threads}
+  - [[39.6]{.toc-section-number} Thread Local Data](#thread-local-data){#toc-thread-local-data}
+    - [[39.6.1]{.toc-section-number} `_Thread_local` Storage-Class](#thread-local){#toc-thread-local}
+    - [[39.6.2]{.toc-section-number} Another Option: Thread-Specific Storage](#another-option-thread-specific-storage){#toc-another-option-thread-specific-storage}
+  - [[39.7]{.toc-section-number} Mutexes](#mutex){#toc-mutex}
+    - [[39.7.1]{.toc-section-number} Different Mutex Types](#different-mutex-types){#toc-different-mutex-types}
+  - [[39.8]{.toc-section-number} Condition Variables](#condition-variables){#toc-condition-variables}
+    - [[39.8.1]{.toc-section-number} Timed Condition Wait](#timed-condition-wait){#toc-timed-condition-wait}
+    - [[39.8.2]{.toc-section-number} Broadcast: Wake Up All Waiting Threads](#broadcast-wake-up-all-waiting-threads){#toc-broadcast-wake-up-all-waiting-threads}
+  - [[39.9]{.toc-section-number} Running a Function One Time](#running-a-function-one-time){#toc-running-a-function-one-time}
+- [[40]{.toc-section-number} Atomics](#chapter-atomics){#toc-chapter-atomics}
+  - [[40.1]{.toc-section-number} Testing for Atomic Support](#testing-for-atomic-support){#toc-testing-for-atomic-support}
+  - [[40.2]{.toc-section-number} Atomic Variables](#atomic-variables){#toc-atomic-variables}
+  - [[40.3]{.toc-section-number} Synchronization](#synchronization){#toc-synchronization}
+  - [[40.4]{.toc-section-number} Acquire and Release](#acquire-and-release){#toc-acquire-and-release}
+  - [[40.5]{.toc-section-number} Sequential Consistency](#sequential-consistency){#toc-sequential-consistency}
+  - [[40.6]{.toc-section-number} Atomic Assignments and Operators](#atomic-assignments-and-operators){#toc-atomic-assignments-and-operators}
+  - [[40.7]{.toc-section-number} Library Functions that Automatically Synchronize](#library-functions-that-automatically-synchronize){#toc-library-functions-that-automatically-synchronize}
+  - [[40.8]{.toc-section-number} Atomic Type Specifier, Qualifier](#atomic-type-specifier-qualifier){#toc-atomic-type-specifier-qualifier}
+  - [[40.9]{.toc-section-number} Lock-Free Atomic Variables](#lock-free-atomic){#toc-lock-free-atomic}
+    - [[40.9.1]{.toc-section-number} Signal Handlers and Lock-Free Atomics](#signal-handlers-and-lock-free-atomics){#toc-signal-handlers-and-lock-free-atomics}
+  - [[40.10]{.toc-section-number} Atomic Flags](#atomic-flags){#toc-atomic-flags}
+  - [[40.11]{.toc-section-number} Atomic `struct` s and `union` s](#atomic-structs-and-unions){#toc-atomic-structs-and-unions}
+  - [[40.12]{.toc-section-number} Atomic Pointers](#atomic-pointers){#toc-atomic-pointers}
+  - [[40.13]{.toc-section-number} Memory Order](#memory-order){#toc-memory-order}
+    - [[40.13.1]{.toc-section-number} Sequential Consistency](#sequential-consistency-1){#toc-sequential-consistency-1}
+    - [[40.13.2]{.toc-section-number} Acquire](#acquire){#toc-acquire}
+    - [[40.13.3]{.toc-section-number} Release](#release){#toc-release}
+    - [[40.13.4]{.toc-section-number} Consume](#consume){#toc-consume}
+    - [[40.13.5]{.toc-section-number} Acquire/Release](#acquirerelease){#toc-acquirerelease}
+    - [[40.13.6]{.toc-section-number} Relaxed](#relaxed){#toc-relaxed}
+  - [[40.14]{.toc-section-number} Fences](#fences){#toc-fences}
+  - [[40.15]{.toc-section-number} References](#references){#toc-references}
+- [[41]{.toc-section-number} Function Specifiers, Alignment Specifiers/Operators](#function-specifiers-alignment-specifiersoperators){#toc-function-specifiers-alignment-specifiersoperators}
+  - [[41.1]{.toc-section-number} Function Specifiers](#function-specifiers){#toc-function-specifiers}
+    - [[41.1.1]{.toc-section-number} `inline` for Speed---Maybe](#inline-for-speedmaybe){#toc-inline-for-speedmaybe}
+    - [[41.1.2]{.toc-section-number} `noreturn` and `_Noreturn`](#noreturn){#toc-noreturn}
+  - [[41.2]{.toc-section-number} Alignment Specifiers and Operators](#alignment-specifiers-and-operators){#toc-alignment-specifiers-and-operators}
+    - [[41.2.1]{.toc-section-number} `alignas` and `_Alignas`](#alignas-and-_alignas){#toc-alignas-and-\_alignas}
+    - [[41.2.2]{.toc-section-number} `alignof` and `_Alignof`](#alignof-and-_alignof){#toc-alignof-and-\_alignof}

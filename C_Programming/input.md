@@ -1,984 +1,3 @@
----
-tip: translate by openai@2023-07-20 08:31:54
-generator: pandoc
-title: Beej\'s Guide to C Programming
-viewport: width=device-width, initial-scale=1.0, user-scalable=yes
----
-::: {#title-block-header}
-
-# Beej\'s Guide to C Programming {#beejs-guide-to-c-programming .title}
-
-Brian "Beej Jorgensen" Hall
-v0.9.13, Copyright © March 29, 2023
-:::
-
-- [[1]{.toc-section-number} Foreword](#foreword){#toc-foreword}
-  - [[1.1]{.toc-section-number} Audience](#audience){#toc-audience}
-  - [[1.2]{.toc-section-number} How to Read This Book](#how-to-read-this-book){#toc-how-to-read-this-book}
-  - [[1.3]{.toc-section-number} Platform and Compiler](#platform-and-compiler){#toc-platform-and-compiler}
-  - [[1.4]{.toc-section-number} Official Homepage](#official-homepage){#toc-official-homepage}
-  - [[1.5]{.toc-section-number} Email Policy](#email-policy){#toc-email-policy}
-  - [[1.6]{.toc-section-number} Mirroring](#mirroring){#toc-mirroring}
-  - [[1.7]{.toc-section-number} Note for Translators](#note-for-translators){#toc-note-for-translators}
-  - [[1.8]{.toc-section-number} Copyright and Distribution](#copyright-and-distribution){#toc-copyright-and-distribution}
-  - [[1.9]{.toc-section-number} Dedication](#dedication){#toc-dedication}
-- [[2]{.toc-section-number} Hello, World!](#hello-world){#toc-hello-world}
-  - [[2.1]{.toc-section-number} What to Expect from C](#what-to-expect-from-c){#toc-what-to-expect-from-c}
-  - [[2.2]{.toc-section-number} Hello, World!](#hello-world-1){#toc-hello-world-1}
-  - [[2.3]{.toc-section-number} Compilation Details](#compilation-details){#toc-compilation-details}
-  - [[2.4]{.toc-section-number} Building with `gcc`](#building-with-gcc){#toc-building-with-gcc}
-  - [[2.5]{.toc-section-number} Building with `clang`](#building-with-clang){#toc-building-with-clang}
-  - [[2.6]{.toc-section-number} Building from IDEs](#building-from-ides){#toc-building-from-ides}
-  - [[2.7]{.toc-section-number} C Versions](#c-versions){#toc-c-versions}
-- [[3]{.toc-section-number} Variables and Statements](#variables-and-statements){#toc-variables-and-statements}
-  - [[3.1]{.toc-section-number} Variables](#variables){#toc-variables}
-    - [[3.1.1]{.toc-section-number} Variable Names](#variable-names){#toc-variable-names}
-    - [[3.1.2]{.toc-section-number} Variable Types](#variable-types){#toc-variable-types}
-    - [[3.1.3]{.toc-section-number} Boolean Types](#boolean-types){#toc-boolean-types}
-  - [[3.2]{.toc-section-number} Operators and Expressions](#operators){#toc-operators}
-    - [[3.2.1]{.toc-section-number} Arithmetic](#arithmetic){#toc-arithmetic}
-    - [[3.2.2]{.toc-section-number} Ternary Operator](#ternary-operator){#toc-ternary-operator}
-    - [[3.2.3]{.toc-section-number} Pre-and-Post Increment-and-Decrement](#pre-and-post-increment-and-decrement){#toc-pre-and-post-increment-and-decrement}
-    - [[3.2.4]{.toc-section-number} The Comma Operator](#the-comma-operator){#toc-the-comma-operator}
-    - [[3.2.5]{.toc-section-number} Conditional Operators](#conditional-operators){#toc-conditional-operators}
-    - [[3.2.6]{.toc-section-number} Boolean Operators](#boolean-operators){#toc-boolean-operators}
-    - [[3.2.7]{.toc-section-number} The `sizeof` Operator](#sizeof-operator){#toc-sizeof-operator}
-  - [[3.3]{.toc-section-number} Flow Control](#flow-control){#toc-flow-control}
-    - [[3.3.1]{.toc-section-number} The `if`-`else` statement](#ifstat){#toc-ifstat}
-    - [[3.3.2]{.toc-section-number} The `while` statement](#whilestat){#toc-whilestat}
-    - [[3.3.3]{.toc-section-number} The `do-while` statement](#dowhilestat){#toc-dowhilestat}
-    - [[3.3.4]{.toc-section-number} The `for` statement](#forstat){#toc-forstat}
-    - [[3.3.5]{.toc-section-number} The `switch` Statement](#switch-statement){#toc-switch-statement}
-- [[4]{.toc-section-number} Functions](#functions){#toc-functions}
-  - [[4.1]{.toc-section-number} Passing by Value](#passvalue){#toc-passvalue}
-  - [[4.2]{.toc-section-number} Function Prototypes](#prototypes){#toc-prototypes}
-  - [[4.3]{.toc-section-number} Empty Parameter Lists](#empty-parameter-lists){#toc-empty-parameter-lists}
-- [[5]{.toc-section-number} Pointers---Cower In Fear!](#pointers){#toc-pointers}
-  - [[5.1]{.toc-section-number} Memory and Variables](#ptmem){#toc-ptmem}
-  - [[5.2]{.toc-section-number} Pointer Types](#pttypes){#toc-pttypes}
-  - [[5.3]{.toc-section-number} Dereferencing](#deref){#toc-deref}
-  - [[5.4]{.toc-section-number} Passing Pointers as Arguments](#ptpass){#toc-ptpass}
-  - [[5.5]{.toc-section-number} The `NULL` Pointer](#the-null-pointer){#toc-the-null-pointer}
-  - [[5.6]{.toc-section-number} A Note on Declaring Pointers](#a-note-on-declaring-pointers){#toc-a-note-on-declaring-pointers}
-  - [[5.7]{.toc-section-number} `sizeof` and Pointers](#sizeof-and-pointers){#toc-sizeof-and-pointers}
-- [[6]{.toc-section-number} Arrays](#arrays){#toc-arrays}
-  - [[6.1]{.toc-section-number} Easy Example](#easy-example){#toc-easy-example}
-  - [[6.2]{.toc-section-number} Getting the Length of an Array](#getting-the-length-of-an-array){#toc-getting-the-length-of-an-array}
-  - [[6.3]{.toc-section-number} Array Initializers](#array-initializers){#toc-array-initializers}
-  - [[6.4]{.toc-section-number} Out of Bounds!](#out-of-bounds){#toc-out-of-bounds}
-  - [[6.5]{.toc-section-number} Multidimensional Arrays](#multidimensional-arrays){#toc-multidimensional-arrays}
-  - [[6.6]{.toc-section-number} Arrays and Pointers](#arrays-and-pointers){#toc-arrays-and-pointers}
-    - [[6.6.1]{.toc-section-number} Getting a Pointer to an Array](#getting-a-pointer-to-an-array){#toc-getting-a-pointer-to-an-array}
-    - [[6.6.2]{.toc-section-number} Passing Single Dimensional Arrays to Functions](#passing1darrays){#toc-passing1darrays}
-    - [[6.6.3]{.toc-section-number} Changing Arrays in Functions](#changing-arrays-in-functions){#toc-changing-arrays-in-functions}
-    - [[6.6.4]{.toc-section-number} Passing Multidimensional Arrays to Functions](#passing-multidimensional-arrays-to-functions){#toc-passing-multidimensional-arrays-to-functions}
-- [[7]{.toc-section-number} Strings](#strings){#toc-strings}
-  - [[7.1]{.toc-section-number} String Literals](#string-literals){#toc-string-literals}
-  - [[7.2]{.toc-section-number} String Variables](#string-variables){#toc-string-variables}
-  - [[7.3]{.toc-section-number} String Variables as Arrays](#string-variables-as-arrays){#toc-string-variables-as-arrays}
-  - [[7.4]{.toc-section-number} String Initializers](#string-initializers){#toc-string-initializers}
-  - [[7.5]{.toc-section-number} Getting String Length](#getting-string-length){#toc-getting-string-length}
-  - [[7.6]{.toc-section-number} String Termination](#string-termination){#toc-string-termination}
-  - [[7.7]{.toc-section-number} Copying a String](#copying-a-string){#toc-copying-a-string}
-- [[8]{.toc-section-number} Structs](#structs){#toc-structs}
-  - [[8.1]{.toc-section-number} Declaring a Struct](#declaring-a-struct){#toc-declaring-a-struct}
-  - [[8.2]{.toc-section-number} Struct Initializers](#struct-initializers){#toc-struct-initializers}
-  - [[8.3]{.toc-section-number} Passing Structs to Functions](#passing-structs-to-functions){#toc-passing-structs-to-functions}
-  - [[8.4]{.toc-section-number} The Arrow Operator](#the-arrow-operator){#toc-the-arrow-operator}
-  - [[8.5]{.toc-section-number} Copying and Returning `struct` s](#copying-and-returning-structs){#toc-copying-and-returning-structs}
-  - [[8.6]{.toc-section-number} Comparing `struct` s](#comparing-structs){#toc-comparing-structs}
-- [[9]{.toc-section-number} File Input/Output](#file-inputoutput){#toc-file-inputoutput}
-  - [[9.1]{.toc-section-number} The `FILE*` Data Type](#the-file-data-type){#toc-the-file-data-type}
-  - [[9.2]{.toc-section-number} Reading Text Files](#reading-text-files){#toc-reading-text-files}
-  - [[9.3]{.toc-section-number} End of File: `EOF`](#end-of-file-eof){#toc-end-of-file-eof}
-    - [[9.3.1]{.toc-section-number} Reading a Line at a Time](#reading-a-line-at-a-time){#toc-reading-a-line-at-a-time}
-  - [[9.4]{.toc-section-number} Formatted Input](#formatted-input){#toc-formatted-input}
-  - [[9.5]{.toc-section-number} Writing Text Files](#writing-text-files){#toc-writing-text-files}
-  - [[9.6]{.toc-section-number} Binary File I/O](#binary-file-io){#toc-binary-file-io}
-    - [[9.6.1]{.toc-section-number} `struct` and Number Caveats](#struct-and-number-caveats){#toc-struct-and-number-caveats}
-- [[10]{.toc-section-number} `typedef`: Making New Types](#typedef-making-new-types){#toc-typedef-making-new-types}
-  - [[10.1]{.toc-section-number} `typedef` in Theory](#typedef-in-theory){#toc-typedef-in-theory}
-    - [[10.1.1]{.toc-section-number} Scoping](#scoping){#toc-scoping}
-  - [[10.2]{.toc-section-number} `typedef` in Practice](#typedef-in-practice){#toc-typedef-in-practice}
-    - [[10.2.1]{.toc-section-number} `typedef` and `struct` s](#typedef-struct){#toc-typedef-struct}
-    - [[10.2.2]{.toc-section-number} `typedef` and Other Types](#typedef-and-other-types){#toc-typedef-and-other-types}
-    - [[10.2.3]{.toc-section-number} `typedef` and Pointers](#typedef-and-pointers){#toc-typedef-and-pointers}
-    - [[10.2.4]{.toc-section-number} `typedef` and Capitalization](#typedef-and-capitalization){#toc-typedef-and-capitalization}
-  - [[10.3]{.toc-section-number} Arrays and `typedef`](#arrays-and-typedef){#toc-arrays-and-typedef}
-- [[11]{.toc-section-number} Pointers II: Arithmetic](#pointers2){#toc-pointers2}
-  - [[11.1]{.toc-section-number} Pointer Arithmetic](#pointer-arithmetic){#toc-pointer-arithmetic}
-    - [[11.1.1]{.toc-section-number} Adding to Pointers](#adding-to-pointers){#toc-adding-to-pointers}
-    - [[11.1.2]{.toc-section-number} Changing Pointers](#changing-pointers){#toc-changing-pointers}
-    - [[11.1.3]{.toc-section-number} Subtracting Pointers](#subtracting-pointers){#toc-subtracting-pointers}
-  - [[11.2]{.toc-section-number} Array/Pointer Equivalence](#arraypointerequiv){#toc-arraypointerequiv}
-    - [[11.2.1]{.toc-section-number} Array/Pointer Equivalence in Function Calls](#arraypointer-equivalence-in-function-calls){#toc-arraypointer-equivalence-in-function-calls}
-  - [[11.3]{.toc-section-number} `void` Pointers](#void-pointers){#toc-void-pointers}
-- [[12]{.toc-section-number} Manual Memory Allocation](#manual-memory-allocation){#toc-manual-memory-allocation}
-  - [[12.1]{.toc-section-number} Allocating and Deallocating, `malloc()` and `free()`](#allocating-and-deallocating-malloc-and-free){#toc-allocating-and-deallocating-malloc-and-free}
-  - [[12.2]{.toc-section-number} Error Checking](#error-checking){#toc-error-checking}
-  - [[12.3]{.toc-section-number} Allocating Space for an Array](#allocating-space-for-an-array){#toc-allocating-space-for-an-array}
-  - [[12.4]{.toc-section-number} An Alternative: `calloc()`](#an-alternative-calloc){#toc-an-alternative-calloc}
-  - [[12.5]{.toc-section-number} Changing Allocated Size with `realloc()`](#changing-allocated-size-with-realloc){#toc-changing-allocated-size-with-realloc}
-    - [[12.5.1]{.toc-section-number} Reading in Lines of Arbitrary Length](#reading-in-lines-of-arbitrary-length){#toc-reading-in-lines-of-arbitrary-length}
-    - [[12.5.2]{.toc-section-number} `realloc()` with `NULL`](#realloc-with-null){#toc-realloc-with-null}
-  - [[12.6]{.toc-section-number} Aligned Allocations](#aligned-allocations){#toc-aligned-allocations}
-- [[13]{.toc-section-number} Scope](#scope){#toc-scope}
-  - [[13.1]{.toc-section-number} Block Scope](#block-scope){#toc-block-scope}
-    - [[13.1.1]{.toc-section-number} Where To Define Variables](#where-to-define-variables){#toc-where-to-define-variables}
-    - [[13.1.2]{.toc-section-number} Variable Hiding](#variable-hiding){#toc-variable-hiding}
-  - [[13.2]{.toc-section-number} File Scope](#file-scope){#toc-file-scope}
-  - [[13.3]{.toc-section-number} `for`-loop Scope](#for-loop-scope){#toc-for-loop-scope}
-  - [[13.4]{.toc-section-number} A Note on Function Scope](#a-note-on-function-scope){#toc-a-note-on-function-scope}
-- [[14]{.toc-section-number} Types II: Way More Types!](#types-ii-way-more-types){#toc-types-ii-way-more-types}
-  - [[14.1]{.toc-section-number} Signed and Unsigned Integers](#signed-and-unsigned-integers){#toc-signed-and-unsigned-integers}
-  - [[14.2]{.toc-section-number} Character Types](#character-types){#toc-character-types}
-  - [[14.3]{.toc-section-number} More Integer Types: `short`, `long`, `long long`](#more-integer-types-short-long-long-long){#toc-more-integer-types-short-long-long-long}
-  - [[14.4]{.toc-section-number} More Float: `double` and `long double`](#more-float-double-and-long-double){#toc-more-float-double-and-long-double}
-    - [[14.4.1]{.toc-section-number} How Many Decimal Digits?](#how-many-decimal-digits){#toc-how-many-decimal-digits}
-    - [[14.4.2]{.toc-section-number} Converting to Decimal and Back](#converting-to-decimal-and-back){#toc-converting-to-decimal-and-back}
-  - [[14.5]{.toc-section-number} Constant Numeric Types](#constant-numeric-types){#toc-constant-numeric-types}
-    - [[14.5.1]{.toc-section-number} Hexadecimal and Octal](#hexadecimal-and-octal){#toc-hexadecimal-and-octal}
-    - [[14.5.2]{.toc-section-number} Integer Constants](#integer-constants){#toc-integer-constants}
-    - [[14.5.3]{.toc-section-number} Floating Point Constants](#floating-point-constants){#toc-floating-point-constants}
-- [[15]{.toc-section-number} Types III: Conversions](#types-iii-conversions){#toc-types-iii-conversions}
-  - [[15.1]{.toc-section-number} String Conversions](#string-conversions){#toc-string-conversions}
-    - [[15.1.1]{.toc-section-number} Numeric Value to String](#numeric-value-to-string){#toc-numeric-value-to-string}
-    - [[15.1.2]{.toc-section-number} String to Numeric Value](#string-to-numeric-value){#toc-string-to-numeric-value}
-  - [[15.2]{.toc-section-number} `char` Conversions](#char-conversions){#toc-char-conversions}
-  - [[15.3]{.toc-section-number} Numeric Conversions](#numeric-conversions){#toc-numeric-conversions}
-    - [[15.3.1]{.toc-section-number} Boolean](#boolean){#toc-boolean}
-    - [[15.3.2]{.toc-section-number} Integer to Integer Conversions](#integer-to-integer-conversions){#toc-integer-to-integer-conversions}
-    - [[15.3.3]{.toc-section-number} Integer and Floating Point Conversions](#integer-and-floating-point-conversions){#toc-integer-and-floating-point-conversions}
-  - [[15.4]{.toc-section-number} Implicit Conversions](#implicit-conversions){#toc-implicit-conversions}
-    - [[15.4.1]{.toc-section-number} The Integer Promotions](#integer-promotions){#toc-integer-promotions}
-    - [[15.4.2]{.toc-section-number} The Usual Arithmetic Conversions](#usual-arithmetic-conversions){#toc-usual-arithmetic-conversions}
-    - [[15.4.3]{.toc-section-number} `void*`](#void){#toc-void}
-  - [[15.5]{.toc-section-number} Explicit Conversions](#explicit-conversions){#toc-explicit-conversions}
-    - [[15.5.1]{.toc-section-number} Casting](#casting){#toc-casting}
-- [[16]{.toc-section-number} Types IV: Qualifiers and Specifiers](#types-iv-qualifiers-and-specifiers){#toc-types-iv-qualifiers-and-specifiers}
-  - [[16.1]{.toc-section-number} Type Qualifiers](#type-qualifiers){#toc-type-qualifiers}
-    - [[16.1.1]{.toc-section-number} `const`](#const){#toc-const}
-    - [[16.1.2]{.toc-section-number} `restrict`](#restrict){#toc-restrict}
-    - [[16.1.3]{.toc-section-number} `volatile`](#volatile){#toc-volatile}
-    - [[16.1.4]{.toc-section-number} `_Atomic`](#atomic){#toc-atomic}
-  - [[16.2]{.toc-section-number} Storage-Class Specifiers](#storage-class-specifiers){#toc-storage-class-specifiers}
-    - [[16.2.1]{.toc-section-number} `auto`](#auto){#toc-auto}
-    - [[16.2.2]{.toc-section-number} `static`](#static){#toc-static}
-    - [[16.2.3]{.toc-section-number} `extern`](#extern){#toc-extern}
-    - [[16.2.4]{.toc-section-number} `register`](#register){#toc-register}
-    - [[16.2.5]{.toc-section-number} `_Thread_local`](#thread_local){#toc-thread_local}
-- [[17]{.toc-section-number} Multifile Projects](#multifile-projects){#toc-multifile-projects}
-  - [[17.1]{.toc-section-number} Includes and Function Prototypes](#includes-func-protos){#toc-includes-func-protos}
-  - [[17.2]{.toc-section-number} Dealing with Repeated Includes](#dealing-with-repeated-includes){#toc-dealing-with-repeated-includes}
-  - [[17.3]{.toc-section-number} `static` and `extern`](#static-and-extern){#toc-static-and-extern}
-  - [[17.4]{.toc-section-number} Compiling with Object Files](#compiling-with-object-files){#toc-compiling-with-object-files}
-- [[18]{.toc-section-number} The Outside Environment](#the-outside-environment){#toc-the-outside-environment}
-  - [[18.1]{.toc-section-number} Command Line Arguments](#command-line-arguments){#toc-command-line-arguments}
-    - [[18.1.1]{.toc-section-number} The Last `argv` is `NULL`](#the-last-argv-is-null){#toc-the-last-argv-is-null}
-    - [[18.1.2]{.toc-section-number} The Alternate: `char **argv`](#the-alternate-char-argv){#toc-the-alternate-char-argv}
-    - [[18.1.3]{.toc-section-number} Fun Facts](#fun-facts){#toc-fun-facts}
-  - [[18.2]{.toc-section-number} Exit Status](#exit-status){#toc-exit-status}
-    - [[18.2.1]{.toc-section-number} Other Exit Status Values](#other-exit-status-values){#toc-other-exit-status-values}
-  - [[18.3]{.toc-section-number} Environment Variables](#env-var){#toc-env-var}
-    - [[18.3.1]{.toc-section-number} Setting Environment Variables](#setting-environment-variables){#toc-setting-environment-variables}
-    - [[18.3.2]{.toc-section-number} Unix-like Alternative Environment Variables](#unix-like-alternative-environment-variables){#toc-unix-like-alternative-environment-variables}
-- [[19]{.toc-section-number} The C Preprocessor](#the-c-preprocessor){#toc-the-c-preprocessor}
-  - [[19.1]{.toc-section-number} `#include`](#include){#toc-include}
-  - [[19.2]{.toc-section-number} Simple Macros](#simple-macros){#toc-simple-macros}
-  - [[19.3]{.toc-section-number} Conditional Compilation](#conditional-compilation){#toc-conditional-compilation}
-    - [[19.3.1]{.toc-section-number} If Defined, `#ifdef` and `#endif`](#if-defined-ifdef-and-endif){#toc-if-defined-ifdef-and-endif}
-    - [[19.3.2]{.toc-section-number} If Not Defined, `#ifndef`](#if-not-defined-ifndef){#toc-if-not-defined-ifndef}
-    - [[19.3.3]{.toc-section-number} `#else`](#else){#toc-else}
-    - [[19.3.4]{.toc-section-number} General Conditional: `#if`, `#elif`](#general-conditional-if-elif){#toc-general-conditional-if-elif}
-    - [[19.3.5]{.toc-section-number} Losing a Macro: `#undef`](#losing-a-macro-undef){#toc-losing-a-macro-undef}
-  - [[19.4]{.toc-section-number} Built-in Macros](#built-in-macros){#toc-built-in-macros}
-    - [[19.4.1]{.toc-section-number} Mandatory Macros](#mandatory-macros){#toc-mandatory-macros}
-    - [[19.4.2]{.toc-section-number} Optional Macros](#optional-macros){#toc-optional-macros}
-  - [[19.5]{.toc-section-number} Macros with Arguments](#macros-with-arguments){#toc-macros-with-arguments}
-    - [[19.5.1]{.toc-section-number} Macros with One Argument](#macros-with-one-argument){#toc-macros-with-one-argument}
-    - [[19.5.2]{.toc-section-number} Macros with More than One Argument](#macros-with-more-than-one-argument){#toc-macros-with-more-than-one-argument}
-    - [[19.5.3]{.toc-section-number} Macros with Variable Arguments](#macros-with-variable-arguments){#toc-macros-with-variable-arguments}
-    - [[19.5.4]{.toc-section-number} Stringification](#stringification){#toc-stringification}
-    - [[19.5.5]{.toc-section-number} Concatenation](#concatenation){#toc-concatenation}
-  - [[19.6]{.toc-section-number} Multiline Macros](#multiline-macros){#toc-multiline-macros}
-  - [[19.7]{.toc-section-number} Example: An Assert Macro](#my-assert){#toc-my-assert}
-  - [[19.8]{.toc-section-number} The `#error` Directive](#the-error-directive){#toc-the-error-directive}
-  - [[19.9]{.toc-section-number} The `#pragma` Directive](#pragma){#toc-pragma}
-    - [[19.9.1]{.toc-section-number} Non-Standard Pragmas](#non-standard-pragmas){#toc-non-standard-pragmas}
-    - [[19.9.2]{.toc-section-number} Standard Pragmas](#standard-pragmas){#toc-standard-pragmas}
-    - [[19.9.3]{.toc-section-number} `_Pragma` Operator](#pragma-operator){#toc-pragma-operator}
-  - [[19.10]{.toc-section-number} The `#line` Directive](#the-line-directive){#toc-the-line-directive}
-  - [[19.11]{.toc-section-number} The Null Directive](#the-null-directive){#toc-the-null-directive}
-- [[20]{.toc-section-number} `struct` s II: More Fun with `struct` s](#structs-ii-more-fun-with-structs){#toc-structs-ii-more-fun-with-structs}
-  - [[20.1]{.toc-section-number} Initializers of Nested `struct` s and Arrays](#initializers-of-nested-structs-and-arrays){#toc-initializers-of-nested-structs-and-arrays}
-  - [[20.2]{.toc-section-number} Anonymous `struct` s](#anonymous-structs){#toc-anonymous-structs}
-  - [[20.3]{.toc-section-number} Self-Referential `struct` s](#self-referential-structs){#toc-self-referential-structs}
-  - [[20.4]{.toc-section-number} Flexible Array Members](#flexible-array-members){#toc-flexible-array-members}
-  - [[20.5]{.toc-section-number} Padding Bytes](#struct-padding-bytes){#toc-struct-padding-bytes}
-  - [[20.6]{.toc-section-number} `offsetof`](#offsetof){#toc-offsetof}
-  - [[20.7]{.toc-section-number} Fake OOP](#fake-oop){#toc-fake-oop}
-  - [[20.8]{.toc-section-number} Bit-Fields](#bit-fields){#toc-bit-fields}
-    - [[20.8.1]{.toc-section-number} Non-Adjacent Bit-Fields](#non-adjacent-bit-fields){#toc-non-adjacent-bit-fields}
-    - [[20.8.2]{.toc-section-number} Signed or Unsigned `int` s](#signed-or-unsigned-ints){#toc-signed-or-unsigned-ints}
-    - [[20.8.3]{.toc-section-number} Unnamed Bit-Fields](#unnamed-bit-fields){#toc-unnamed-bit-fields}
-    - [[20.8.4]{.toc-section-number} Zero-Width Unnamed Bit-Fields](#zero-width-unnamed-bit-fields){#toc-zero-width-unnamed-bit-fields}
-  - [[20.9]{.toc-section-number} Unions](#unions){#toc-unions}
-    - [[20.9.1]{.toc-section-number} Unions and Type Punning](#union-type-punning){#toc-union-type-punning}
-    - [[20.9.2]{.toc-section-number} Pointers to `union` s](#pointers-to-unions){#toc-pointers-to-unions}
-    - [[20.9.3]{.toc-section-number} Common Initial Sequences in Unions](#common-initial-sequences-in-unions){#toc-common-initial-sequences-in-unions}
-  - [[20.10]{.toc-section-number} Unions and Unnamed Structs](#unions-and-unnamed-structs){#toc-unions-and-unnamed-structs}
-  - [[20.11]{.toc-section-number} Passing and Returning `struct` s and `union` s](#passing-and-returning-structs-and-unions){#toc-passing-and-returning-structs-and-unions}
-- [[21]{.toc-section-number} Characters and Strings II](#characters-and-strings-ii){#toc-characters-and-strings-ii}
-  - [[21.1]{.toc-section-number} Escape Sequences](#escape-sequences){#toc-escape-sequences}
-    - [[21.1.1]{.toc-section-number} Frequently-used Escapes](#frequently-used-escapes){#toc-frequently-used-escapes}
-    - [[21.1.2]{.toc-section-number} Rarely-used Escapes](#rarely-used-escapes){#toc-rarely-used-escapes}
-    - [[21.1.3]{.toc-section-number} Numeric Escapes](#numeric-escapes){#toc-numeric-escapes}
-- [[22]{.toc-section-number} Enumerated Types: `enum`](#enumerated-types-enum){#toc-enumerated-types-enum}
-  - [[22.1]{.toc-section-number} Behavior of `enum`](#behavior-of-enum){#toc-behavior-of-enum}
-    - [[22.1.1]{.toc-section-number} Numbering](#numbering){#toc-numbering}
-    - [[22.1.2]{.toc-section-number} Trailing Commas](#trailing-commas){#toc-trailing-commas}
-    - [[22.1.3]{.toc-section-number} Scope](#scope-1){#toc-scope-1}
-    - [[22.1.4]{.toc-section-number} Style](#style){#toc-style}
-  - [[22.2]{.toc-section-number} Your `enum` is a Type](#your-enum-is-a-type){#toc-your-enum-is-a-type}
-- [[23]{.toc-section-number} Pointers III: Pointers to Pointers and More](#pointers-iii-pointers-to-pointers-and-more){#toc-pointers-iii-pointers-to-pointers-and-more}
-  - [[23.1]{.toc-section-number} Pointers to Pointers](#pointers-to-pointers){#toc-pointers-to-pointers}
-    - [[23.1.1]{.toc-section-number} Pointer Pointers and `const`](#pointer-pointers-and-const){#toc-pointer-pointers-and-const}
-  - [[23.2]{.toc-section-number} Multibyte Values](#multibyte-values){#toc-multibyte-values}
-  - [[23.3]{.toc-section-number} The `NULL` Pointer and Zero](#the-null-pointer-and-zero){#toc-the-null-pointer-and-zero}
-  - [[23.4]{.toc-section-number} Pointers as Integers](#pointers-as-integers){#toc-pointers-as-integers}
-  - [[23.5]{.toc-section-number} Casting Pointers to other Pointers](#casting-pointers-to-other-pointers){#toc-casting-pointers-to-other-pointers}
-  - [[23.6]{.toc-section-number} Pointer Differences](#ptr_differences){#toc-ptr_differences}
-  - [[23.7]{.toc-section-number} Pointers to Functions](#pointers-to-functions){#toc-pointers-to-functions}
-- [[24]{.toc-section-number} Bitwise Operations](#bitwise-operations){#toc-bitwise-operations}
-  - [[24.1]{.toc-section-number} Bitwise AND, OR, XOR, and NOT](#bitwise-and-or-xor-and-not){#toc-bitwise-and-or-xor-and-not}
-  - [[24.2]{.toc-section-number} Bitwise Shift](#bitwise-shift){#toc-bitwise-shift}
-- [[25]{.toc-section-number} Variadic Functions](#variadic-functions){#toc-variadic-functions}
-  - [[25.1]{.toc-section-number} Ellipses in Function Signatures](#ellipses-in-function-signatures){#toc-ellipses-in-function-signatures}
-  - [[25.2]{.toc-section-number} Getting the Extra Arguments](#getting-the-extra-arguments){#toc-getting-the-extra-arguments}
-  - [[25.3]{.toc-section-number} `va_list` Functionality](#va_list-functionality){#toc-va_list-functionality}
-  - [[25.4]{.toc-section-number} Library Functions That Use `va_list` s](#library-functions-that-use-va_lists){#toc-library-functions-that-use-va_lists}
-- [[26]{.toc-section-number} Locale and Internationalization](#locale-and-internationalization){#toc-locale-and-internationalization}
-  - [[26.1]{.toc-section-number} Setting the Localization, Quick and Dirty](#setting-the-localization-quick-and-dirty){#toc-setting-the-localization-quick-and-dirty}
-  - [[26.2]{.toc-section-number} Getting the Monetary Locale Settings](#getting-the-monetary-locale-settings){#toc-getting-the-monetary-locale-settings}
-    - [[26.2.1]{.toc-section-number} Monetary Digit Grouping](#monetary-digit-grouping){#toc-monetary-digit-grouping}
-    - [[26.2.2]{.toc-section-number} Separators and Sign Position](#separators-and-sign-position){#toc-separators-and-sign-position}
-    - [[26.2.3]{.toc-section-number} Example Values](#example-values){#toc-example-values}
-  - [[26.3]{.toc-section-number} Localization Specifics](#localization-specifics){#toc-localization-specifics}
-- [[27]{.toc-section-number} Unicode, Wide Characters, and All That](#unicode-wide-characters-and-all-that){#toc-unicode-wide-characters-and-all-that}
-  - [[27.1]{.toc-section-number} What is Unicode?](#what-is-unicode){#toc-what-is-unicode}
-  - [[27.2]{.toc-section-number} Code Points](#code-points){#toc-code-points}
-  - [[27.3]{.toc-section-number} Encoding](#encoding){#toc-encoding}
-  - [[27.4]{.toc-section-number} Source and Execution Character Sets](#src-exec-charset){#toc-src-exec-charset}
-  - [[27.5]{.toc-section-number} Unicode in C](#unicode-in-c){#toc-unicode-in-c}
-  - [[27.6]{.toc-section-number} A Quick Note on UTF-8 Before We Swerve into the Weeds](#utf8-quick){#toc-utf8-quick}
-  - [[27.7]{.toc-section-number} Different Character Types](#different-character-types){#toc-different-character-types}
-    - [[27.7.1]{.toc-section-number} Multibyte Characters](#multibyte-characters){#toc-multibyte-characters}
-    - [[27.7.2]{.toc-section-number} Wide Characters](#wide-characters){#toc-wide-characters}
-  - [[27.8]{.toc-section-number} Using Wide Characters and `wchar_t`](#using-wide-characters-and-wchar_t){#toc-using-wide-characters-and-wchar_t}
-    - [[27.8.1]{.toc-section-number} Multibyte to `wchar_t` Conversions](#multibyte-to-wchar_t-conversions){#toc-multibyte-to-wchar_t-conversions}
-  - [[27.9]{.toc-section-number} Wide Character Functionality](#wide-character-functionality){#toc-wide-character-functionality}
-    - [[27.9.1]{.toc-section-number} `wint_t`](#wint_t){#toc-wint_t}
-    - [[27.9.2]{.toc-section-number} I/O Stream Orientation](#io-stream-orientation){#toc-io-stream-orientation}
-    - [[27.9.3]{.toc-section-number} I/O Functions](#io-functions){#toc-io-functions}
-    - [[27.9.4]{.toc-section-number} Type Conversion Functions](#type-conversion-functions){#toc-type-conversion-functions}
-    - [[27.9.5]{.toc-section-number} String and Memory Copying Functions](#string-and-memory-copying-functions){#toc-string-and-memory-copying-functions}
-    - [[27.9.6]{.toc-section-number} String and Memory Comparing Functions](#string-and-memory-comparing-functions){#toc-string-and-memory-comparing-functions}
-    - [[27.9.7]{.toc-section-number} String Searching Functions](#string-searching-functions){#toc-string-searching-functions}
-    - [[27.9.8]{.toc-section-number} Length/Miscellaneous Functions](#lengthmiscellaneous-functions){#toc-lengthmiscellaneous-functions}
-    - [[27.9.9]{.toc-section-number} Character Classification Functions](#character-classification-functions){#toc-character-classification-functions}
-  - [[27.10]{.toc-section-number} Parse State, Restartable Functions](#parse-state-restartable-functions){#toc-parse-state-restartable-functions}
-  - [[27.11]{.toc-section-number} Unicode Encodings and C](#unicode-encodings-and-c){#toc-unicode-encodings-and-c}
-    - [[27.11.1]{.toc-section-number} UTF-8](#utf-8){#toc-utf-8}
-    - [[27.11.2]{.toc-section-number} UTF-16, UTF-32, `char16_t`, and `char32_t`](#utf-16-utf-32-char16_t-and-char32_t){#toc-utf-16-utf-32-char16_t-and-char32_t}
-    - [[27.11.3]{.toc-section-number} Multibyte Conversions](#multibyte-conversions){#toc-multibyte-conversions}
-    - [[27.11.4]{.toc-section-number} Third-Party Libraries](#utf-3rd-party){#toc-utf-3rd-party}
-- [[28]{.toc-section-number} Exiting a Program](#exiting-a-program){#toc-exiting-a-program}
-  - [[28.1]{.toc-section-number} Normal Exits](#normal-exits){#toc-normal-exits}
-    - [[28.1.1]{.toc-section-number} Returning From `main()`](#returning-from-main){#toc-returning-from-main}
-    - [[28.1.2]{.toc-section-number} `exit()`](#exit){#toc-exit}
-    - [[28.1.3]{.toc-section-number} Setting Up Exit Handlers with `atexit()`](#setting-up-exit-handlers-with-atexit){#toc-setting-up-exit-handlers-with-atexit}
-  - [[28.2]{.toc-section-number} Quicker Exits with `quick_exit()`](#quicker-exits-with-quick_exit){#toc-quicker-exits-with-quick_exit}
-  - [[28.3]{.toc-section-number} Nuke it from Orbit: `_Exit()`](#nuke-it-from-orbit-_exit){#toc-nuke-it-from-orbit-\_exit}
-  - [[28.4]{.toc-section-number} Exiting Sometimes: `assert()`](#exiting-sometimes-assert){#toc-exiting-sometimes-assert}
-  - [[28.5]{.toc-section-number} Abnormal Exit: `abort()`](#abnormal-exit-abort){#toc-abnormal-exit-abort}
-- [[29]{.toc-section-number} Signal Handling](#signal-handling){#toc-signal-handling}
-  - [[29.1]{.toc-section-number} What Are Signals?](#what-are-signals){#toc-what-are-signals}
-  - [[29.2]{.toc-section-number} Handling Signals with `signal()`](#handling-signals-with-signal){#toc-handling-signals-with-signal}
-  - [[29.3]{.toc-section-number} Writing Signal Handlers](#writing-signal-handlers){#toc-writing-signal-handlers}
-  - [[29.4]{.toc-section-number} What Can We Actually Do?](#what-can-we-actually-do){#toc-what-can-we-actually-do}
-  - [[29.5]{.toc-section-number} Friends Don't Let Friends `signal()`](#friends-dont-let-friends-signal){#toc-friends-dont-let-friends-signal}
-- [[30]{.toc-section-number} Variable-Length Arrays (VLAs)](#variable-length-arrays-vlas){#toc-variable-length-arrays-vlas}
-  - [[30.1]{.toc-section-number} The Basics](#the-basics){#toc-the-basics}
-  - [[30.2]{.toc-section-number} `sizeof` and VLAs](#sizeof-and-vlas){#toc-sizeof-and-vlas}
-  - [[30.3]{.toc-section-number} Multidimensional VLAs](#multidimensional-vlas){#toc-multidimensional-vlas}
-  - [[30.4]{.toc-section-number} Passing One-Dimensional VLAs to Functions](#passing-one-dimensional-vlas-to-functions){#toc-passing-one-dimensional-vlas-to-functions}
-  - [[30.5]{.toc-section-number} Passing Multi-Dimensional VLAs to Functions](#passing-multi-dimensional-vlas-to-functions){#toc-passing-multi-dimensional-vlas-to-functions}
-    - [[30.5.1]{.toc-section-number} Partial Multidimensional VLAs](#partial-multidimensional-vlas){#toc-partial-multidimensional-vlas}
-  - [[30.6]{.toc-section-number} Compatibility with Regular Arrays](#compatibility-with-regular-arrays){#toc-compatibility-with-regular-arrays}
-  - [[30.7]{.toc-section-number} `typedef` and VLAs](#typedef-and-vlas){#toc-typedef-and-vlas}
-  - [[30.8]{.toc-section-number} Jumping Pitfalls](#jumping-pitfalls){#toc-jumping-pitfalls}
-  - [[30.9]{.toc-section-number} General Issues](#vla-general-issues){#toc-vla-general-issues}
-- [[31]{.toc-section-number} `goto`](#goto){#toc-goto}
-  - [[31.1]{.toc-section-number} A Simple Example](#a-simple-example){#toc-a-simple-example}
-  - [[31.2]{.toc-section-number} Labeled `continue`](#labeled-continue){#toc-labeled-continue}
-  - [[31.3]{.toc-section-number} Bailing Out](#bailing-out){#toc-bailing-out}
-  - [[31.4]{.toc-section-number} Labeled `break`](#labeled-break){#toc-labeled-break}
-  - [[31.5]{.toc-section-number} Multi-level Cleanup](#multi-level-cleanup){#toc-multi-level-cleanup}
-  - [[31.6]{.toc-section-number} Tail Call Optimization](#tail-call-optimization){#toc-tail-call-optimization}
-  - [[31.7]{.toc-section-number} Restarting Interrupted System Calls](#restarting-interrupted-system-calls){#toc-restarting-interrupted-system-calls}
-  - [[31.8]{.toc-section-number} `goto` and Thread Preemption](#goto-and-thread-preemption){#toc-goto-and-thread-preemption}
-  - [[31.9]{.toc-section-number} `goto` and Variable Scope](#goto-and-variable-scope){#toc-goto-and-variable-scope}
-  - [[31.10]{.toc-section-number} `goto` and Variable-Length Arrays](#goto-and-variable-length-arrays){#toc-goto-and-variable-length-arrays}
-- [[32]{.toc-section-number} Types Part V: Compound Literals and Generic Selections](#types-part-v-compound-literals-and-generic-selections){#toc-types-part-v-compound-literals-and-generic-selections}
-  - [[32.1]{.toc-section-number} Compound Literals](#compound-literals){#toc-compound-literals}
-    - [[32.1.1]{.toc-section-number} Passing Unnamed Objects to Functions](#passing-unnamed-objects-to-functions){#toc-passing-unnamed-objects-to-functions}
-    - [[32.1.2]{.toc-section-number} Unnamed `struct` s](#unnamed-structs){#toc-unnamed-structs}
-    - [[32.1.3]{.toc-section-number} Pointers to Unnamed Objects](#pointers-to-unnamed-objects){#toc-pointers-to-unnamed-objects}
-    - [[32.1.4]{.toc-section-number} Unnamed Objects and Scope](#unnamed-objects-and-scope){#toc-unnamed-objects-and-scope}
-    - [[32.1.5]{.toc-section-number} Silly Unnamed Object Example](#silly-unnamed-object-example){#toc-silly-unnamed-object-example}
-  - [[32.2]{.toc-section-number} Generic Selections](#type-generics){#toc-type-generics}
-- [[33]{.toc-section-number} Arrays Part II](#arrays-part-ii){#toc-arrays-part-ii}
-  - [[33.1]{.toc-section-number} Type Qualifiers for Arrays in Parameter Lists](#type-qualifiers-for-arrays-in-parameter-lists){#toc-type-qualifiers-for-arrays-in-parameter-lists}
-  - [[33.2]{.toc-section-number} `static` for Arrays in Parameter Lists](#static-for-arrays-in-parameter-lists){#toc-static-for-arrays-in-parameter-lists}
-  - [[33.3]{.toc-section-number} Equivalent Initializers](#equivalent-initializers){#toc-equivalent-initializers}
-- [[34]{.toc-section-number} Long Jumps with `setjmp`, `longjmp`](#setjmp-longjmp){#toc-setjmp-longjmp}
-  - [[34.1]{.toc-section-number} Using `setjmp` and `longjmp`](#using-setjmp-and-longjmp){#toc-using-setjmp-and-longjmp}
-  - [[34.2]{.toc-section-number} Pitfalls](#pitfalls){#toc-pitfalls}
-    - [[34.2.1]{.toc-section-number} The Values of Local Variables](#the-values-of-local-variables){#toc-the-values-of-local-variables}
-    - [[34.2.2]{.toc-section-number} How Much State is Saved?](#how-much-state-is-saved){#toc-how-much-state-is-saved}
-    - [[34.2.3]{.toc-section-number} You Can't Name Anything `setjmp`](#you-cant-name-anything-setjmp){#toc-you-cant-name-anything-setjmp}
-    - [[34.2.4]{.toc-section-number} You Can't `setjmp()` in a Larger Expression](#you-cant-setjmp-in-a-larger-expression){#toc-you-cant-setjmp-in-a-larger-expression}
-    - [[34.2.5]{.toc-section-number} When Can't You `longjmp()`?](#when-cant-you-longjmp){#toc-when-cant-you-longjmp}
-    - [[34.2.6]{.toc-section-number} You Can't Pass `0` to `longjmp()`](#you-cant-pass-0-to-longjmp){#toc-you-cant-pass-0-to-longjmp}
-    - [[34.2.7]{.toc-section-number} `longjmp()` and Variable Length Arrays](#longjmp-and-variable-length-arrays){#toc-longjmp-and-variable-length-arrays}
-- [[35]{.toc-section-number} Incomplete Types](#incomplete-types){#toc-incomplete-types}
-  - [[35.1]{.toc-section-number} Use Case: Self-Referential Structures](#use-case-self-referential-structures){#toc-use-case-self-referential-structures}
-  - [[35.2]{.toc-section-number} Incomplete Type Error Messages](#incomplete-type-error-messages){#toc-incomplete-type-error-messages}
-  - [[35.3]{.toc-section-number} Other Incomplete Types](#other-incomplete-types){#toc-other-incomplete-types}
-  - [[35.4]{.toc-section-number} Use Case: Arrays in Header Files](#use-case-arrays-in-header-files){#toc-use-case-arrays-in-header-files}
-  - [[35.5]{.toc-section-number} Completing Incomplete Types](#completing-incomplete-types){#toc-completing-incomplete-types}
-- [[36]{.toc-section-number} Complex Numbers](#complex-numbers){#toc-complex-numbers}
-  - [[36.1]{.toc-section-number} Complex Types](#complex-types){#toc-complex-types}
-  - [[36.2]{.toc-section-number} Assigning Complex Numbers](#assigning-complex-numbers){#toc-assigning-complex-numbers}
-  - [[36.3]{.toc-section-number} Constructing, Deconstructing, and Printing](#constructing-deconstructing-and-printing){#toc-constructing-deconstructing-and-printing}
-  - [[36.4]{.toc-section-number} Complex Arithmetic and Comparisons](#complex-arithmetic-and-comparisons){#toc-complex-arithmetic-and-comparisons}
-  - [[36.5]{.toc-section-number} Complex Math](#complex-math){#toc-complex-math}
-    - [[36.5.1]{.toc-section-number} Trigonometry Functions](#trigonometry-functions){#toc-trigonometry-functions}
-    - [[36.5.2]{.toc-section-number} Exponential and Logarithmic Functions](#exponential-and-logarithmic-functions){#toc-exponential-and-logarithmic-functions}
-    - [[36.5.3]{.toc-section-number} Power and Absolute Value Functions](#power-and-absolute-value-functions){#toc-power-and-absolute-value-functions}
-    - [[36.5.4]{.toc-section-number} Manipulation Functions](#manipulation-functions){#toc-manipulation-functions}
-- [[37]{.toc-section-number} Fixed Width Integer Types](#fixed-width-integer-types){#toc-fixed-width-integer-types}
-  - [[37.1]{.toc-section-number} The Bit-Sized Types](#the-bit-sized-types){#toc-the-bit-sized-types}
-  - [[37.2]{.toc-section-number} Maximum Integer Size Type](#maximum-integer-size-type){#toc-maximum-integer-size-type}
-  - [[37.3]{.toc-section-number} Using Fixed Size Constants](#using-fixed-size-constants){#toc-using-fixed-size-constants}
-  - [[37.4]{.toc-section-number} Limits of Fixed Size Integers](#limits-of-fixed-size-integers){#toc-limits-of-fixed-size-integers}
-  - [[37.5]{.toc-section-number} Format Specifiers](#format-specifiers){#toc-format-specifiers}
-- [[38]{.toc-section-number} Date and Time Functionality](#date-and-time-functionality){#toc-date-and-time-functionality}
-  - [[38.1]{.toc-section-number} Quick Terminology and Information](#quick-terminology-and-information){#toc-quick-terminology-and-information}
-  - [[38.2]{.toc-section-number} Date Types](#date-types){#toc-date-types}
-  - [[38.3]{.toc-section-number} Initialization and Conversion Between Types](#initialization-and-conversion-between-types){#toc-initialization-and-conversion-between-types}
-    - [[38.3.1]{.toc-section-number} Converting `time_t` to `struct tm`](#converting-time_t-to-struct-tm){#toc-converting-time_t-to-struct-tm}
-    - [[38.3.2]{.toc-section-number} Converting `struct tm` to `time_t`](#converting-struct-tm-to-time_t){#toc-converting-struct-tm-to-time_t}
-  - [[38.4]{.toc-section-number} Formatted Date Output](#formatted-date-output){#toc-formatted-date-output}
-  - [[38.5]{.toc-section-number} More Resolution with `timespec_get()`](#more-resolution-with-timespec_get){#toc-more-resolution-with-timespec_get}
-  - [[38.6]{.toc-section-number} Differences Between Times](#differences-between-times){#toc-differences-between-times}
-- [[39]{.toc-section-number} Multithreading](#multithreading){#toc-multithreading}
-  - [[39.1]{.toc-section-number} Background](#background){#toc-background}
-  - [[39.2]{.toc-section-number} Things You Can Do](#things-you-can-do){#toc-things-you-can-do}
-  - [[39.3]{.toc-section-number} Data Races and the Standard Library](#data-races-and-the-standard-library){#toc-data-races-and-the-standard-library}
-  - [[39.4]{.toc-section-number} Creating and Waiting for Threads](#creating-and-waiting-for-threads){#toc-creating-and-waiting-for-threads}
-  - [[39.5]{.toc-section-number} Detaching Threads](#detaching-threads){#toc-detaching-threads}
-  - [[39.6]{.toc-section-number} Thread Local Data](#thread-local-data){#toc-thread-local-data}
-    - [[39.6.1]{.toc-section-number} `_Thread_local` Storage-Class](#thread-local){#toc-thread-local}
-    - [[39.6.2]{.toc-section-number} Another Option: Thread-Specific Storage](#another-option-thread-specific-storage){#toc-another-option-thread-specific-storage}
-  - [[39.7]{.toc-section-number} Mutexes](#mutex){#toc-mutex}
-    - [[39.7.1]{.toc-section-number} Different Mutex Types](#different-mutex-types){#toc-different-mutex-types}
-  - [[39.8]{.toc-section-number} Condition Variables](#condition-variables){#toc-condition-variables}
-    - [[39.8.1]{.toc-section-number} Timed Condition Wait](#timed-condition-wait){#toc-timed-condition-wait}
-    - [[39.8.2]{.toc-section-number} Broadcast: Wake Up All Waiting Threads](#broadcast-wake-up-all-waiting-threads){#toc-broadcast-wake-up-all-waiting-threads}
-  - [[39.9]{.toc-section-number} Running a Function One Time](#running-a-function-one-time){#toc-running-a-function-one-time}
-- [[40]{.toc-section-number} Atomics](#chapter-atomics){#toc-chapter-atomics}
-  - [[40.1]{.toc-section-number} Testing for Atomic Support](#testing-for-atomic-support){#toc-testing-for-atomic-support}
-  - [[40.2]{.toc-section-number} Atomic Variables](#atomic-variables){#toc-atomic-variables}
-  - [[40.3]{.toc-section-number} Synchronization](#synchronization){#toc-synchronization}
-  - [[40.4]{.toc-section-number} Acquire and Release](#acquire-and-release){#toc-acquire-and-release}
-  - [[40.5]{.toc-section-number} Sequential Consistency](#sequential-consistency){#toc-sequential-consistency}
-  - [[40.6]{.toc-section-number} Atomic Assignments and Operators](#atomic-assignments-and-operators){#toc-atomic-assignments-and-operators}
-  - [[40.7]{.toc-section-number} Library Functions that Automatically Synchronize](#library-functions-that-automatically-synchronize){#toc-library-functions-that-automatically-synchronize}
-  - [[40.8]{.toc-section-number} Atomic Type Specifier, Qualifier](#atomic-type-specifier-qualifier){#toc-atomic-type-specifier-qualifier}
-  - [[40.9]{.toc-section-number} Lock-Free Atomic Variables](#lock-free-atomic){#toc-lock-free-atomic}
-    - [[40.9.1]{.toc-section-number} Signal Handlers and Lock-Free Atomics](#signal-handlers-and-lock-free-atomics){#toc-signal-handlers-and-lock-free-atomics}
-  - [[40.10]{.toc-section-number} Atomic Flags](#atomic-flags){#toc-atomic-flags}
-  - [[40.11]{.toc-section-number} Atomic `struct` s and `union` s](#atomic-structs-and-unions){#toc-atomic-structs-and-unions}
-  - [[40.12]{.toc-section-number} Atomic Pointers](#atomic-pointers){#toc-atomic-pointers}
-  - [[40.13]{.toc-section-number} Memory Order](#memory-order){#toc-memory-order}
-    - [[40.13.1]{.toc-section-number} Sequential Consistency](#sequential-consistency-1){#toc-sequential-consistency-1}
-    - [[40.13.2]{.toc-section-number} Acquire](#acquire){#toc-acquire}
-    - [[40.13.3]{.toc-section-number} Release](#release){#toc-release}
-    - [[40.13.4]{.toc-section-number} Consume](#consume){#toc-consume}
-    - [[40.13.5]{.toc-section-number} Acquire/Release](#acquirerelease){#toc-acquirerelease}
-    - [[40.13.6]{.toc-section-number} Relaxed](#relaxed){#toc-relaxed}
-  - [[40.14]{.toc-section-number} Fences](#fences){#toc-fences}
-  - [[40.15]{.toc-section-number} References](#references){#toc-references}
-- [[41]{.toc-section-number} Function Specifiers, Alignment Specifiers/Operators](#function-specifiers-alignment-specifiersoperators){#toc-function-specifiers-alignment-specifiersoperators}
-  - [[41.1]{.toc-section-number} Function Specifiers](#function-specifiers){#toc-function-specifiers}
-    - [[41.1.1]{.toc-section-number} `inline` for Speed---Maybe](#inline-for-speedmaybe){#toc-inline-for-speedmaybe}
-    - [[41.1.2]{.toc-section-number} `noreturn` and `_Noreturn`](#noreturn){#toc-noreturn}
-  - [[41.2]{.toc-section-number} Alignment Specifiers and Operators](#alignment-specifiers-and-operators){#toc-alignment-specifiers-and-operators}
-    - [[41.2.1]{.toc-section-number} `alignas` and `_Alignas`](#alignas-and-_alignas){#toc-alignas-and-\_alignas}
-    - [[41.2.2]{.toc-section-number} `alignof` and `_Alignof`](#alignof-and-_alignof){#toc-alignof-and-\_alignof}
-
-# [1] Foreword {#foreword number="1"}
-
-> _C is not a big language, and it is not well served by a big book._
->
-> --Brian W. Kernighan, Dennis M. Ritchie
-
-No point in wasting words here, folks, let's jump straight into the C code:
-
-> 没有必要在这里浪费话语，伙计们，让我们直接跳到 C 代码：
-
-::: {#cb1 .sourceCode}
-
-```c
-E((ck?main((z?(stat(M,&t)?P+=a+'{'?0:3:
-execv(M,k),a=G,i=P,y=G&255,
-sprintf(Q,y/'@'-3?A(*L(V(%d+%d)+%d,0)
-```
-
-:::
-
-And they lived happily ever after. The End.
-
-What's this? You say something's still not clear about this whole C programming language thing?
-
-> 这是什么？你说关于这个 C 编程语言的事情还不清楚？
-
-Well, to be quite honest, I'm not even sure what the above code does. It's a snippet from one of the entries in the 2001 [International Obfuscated C Code Contest](https://www.ioccc.org/)[^1^](#fn1){#fnref1 .footnote-ref role="doc-noteref"}, a wonderful competition wherein the entrants attempt to write the most unreadable C code possible, with often surprising results.
-
-> 嗯，老实说，我甚至不确定上面的代码是做什么的。这是 2001 年[国际 C 代码混淆比赛](https://www.ioccc.org/)[^1^](#fn1){#fnref1 .footnote-ref role="doc-noteref"}中的一个条目的片段，这是一个很棒的比赛，参赛者试图编写尽可能不可读的 C 代码，结果常常令人惊讶。
-
-The bad news is that if you're a beginner in this whole thing, all C code you see probably looks obfuscated! The good news is, it's not going to be that way for long.
-
-> 坏消息是，如果你是这一切的新手，你看到的所有 C 代码可能看起来很晦涩难懂！好消息是，这种情况不会持续太久。
-
-What we'll try to do over the course of this guide is lead you from complete and utter sheer lost confusion on to the sort of enlightened bliss that can only be obtained through pure C programming. Right on.
-
-> 我们在本指南中将尝试做的是，带领你从完全迷失的混乱中走向只能通过纯 C 编程获得的开明的幸福。就是这样。
-
-In the old days, C was a simpler language. A good number of the features contained in this book and a _lot_ of the features in the Library Reference volume didn't exist when K&R wrote the famous second edition of their book in 1988. Nevertheless, the language remains small at its core, and I hope I've presented it here in a way that starts with that simple core and builds outward.
-
-> 在过去，C 是一种更简单的语言。本书中包含的许多功能以及库参考手册中的大量功能在 1988 年 K＆R 写下着名的第二版书籍时都不存在。尽管如此，该语言在其核心处仍然很小，我希望我在这里以一种从简单的核心开始并向外构建的方式呈现它。
-
-And that's my excuse for writing such a hilariously large book for such a small, concise language.
-
-> 这就是我为什么要为如此简洁的语言写一本如此巨大又滑稽的书的借口。
-
-## [1.1] Audience {#audience number="1.1"}
-
-This guide assumes that you've already got some programming knowledge under your belt from another language, such as [Python](https://en.wikipedia.org/wiki/Python_(programming_language))[^2^](#fn2){#fnref2 .footnote-ref role="doc-noteref"}, [JavaScript](https://en.wikipedia.org/wiki/JavaScript)[^3^](#fn3){#fnref3 .footnote-ref role="doc-noteref"}, [Java](https://en.wikipedia.org/wiki/Java_(programming_language))[^4^](#fn4){#fnref4 .footnote-ref role="doc-noteref"}, [Rust](https://en.wikipedia.org/wiki/Rust_(programming_language))[^5^](#fn5){#fnref5 .footnote-ref role="doc-noteref"}, [Go](https://en.wikipedia.org/wiki/Go_(programming_language))[^6^](#fn6){#fnref6 .footnote-ref role="doc-noteref"}, [Swift](https://en.wikipedia.org/wiki/Swift_(programming_language))[^7^](#fn7){#fnref7 .footnote-ref role="doc-noteref"}, etc. ([Objective-C](https://en.wikipedia.org/wiki/Objective-C)[^8^](#fn8){#fnref8 .footnote-ref role="doc-noteref"} devs will have a particularly easy time of it!)
-
-> 本指南假定你已经从另一种语言，如 [Python](https://en.wikipedia.org/wiki/Python_(programming_language))[^2^](#fn2){#fnref2 .footnote-ref role="doc-noteref"}, [JavaScript](https://en.wikipedia.org/wiki/JavaScript)[^3^](#fn3){#fnref3 .footnote-ref role="doc-noteref"}, [Java](https://en.wikipedia.org/wiki/Java_(programming_language))[^4^](#fn4){#fnref4 .footnote-ref role="doc-noteref"}, [Rust](https://en.wikipedia.org/wiki/Rust_(programming_language))[^5^](#fn5){#fnref5 .footnote-ref role="doc-noteref"}, [Go](https://en.wikipedia.org/wiki/Go_(programming_language))[^6^](#fn6){#fnref6 .footnote-ref role="doc-noteref"}, [Swift](https://en.wikipedia.org/wiki/Swift_(programming_language))[^7^](#fn7){#fnref7 .footnote-ref role="doc-noteref"}等中获得了一些编程知识([Objective-C](https://en.wikipedia.org/wiki/Objective-C)[^8^](#fn8){#fnref8 .footnote-ref role="doc-noteref"}开发人员将特别容易！）。
-
-We're going to assume you know what variables are, what loops do, how functions work, and so on.
-
-> 我们假设你知道变量是什么，循环做什么，函数是如何工作的等等。
-
-If that's not you for whatever reason the best I can hope to provide is some honest entertainment for your reading pleasure. The only thing I can reasonably promise is that this guide won't end on a cliffhanger... or _will_ it?
-
-> 如果不是你的原因，我最多能提供的就是一些诚实的娱乐，以供你阅读。我唯一可以合理承诺的是，这份指南不会以悬念结尾...还是会？
-
-## [1.2] How to Read This Book {#how-to-read-this-book number="1.2"}
-
-The guide is in two volumes, and this is the first: the tutorial volume!
-
-The second volume is the [library reference](https://beej.us/guide/bgclr/)[^9^](#fn9){#fnref9 .footnote-ref role="doc-noteref"}, and it's far more reference than tutorial.
-
-> 第二卷是[图书馆参考](https://beej.us/guide/bgclr/)[^9^](#fn9){#fnref9 .footnote-ref role="doc-noteref"}, 它比教程更具参考价值。
-
-If you're new, go through the tutorial part in order, generally. The higher you get in chapters, the less important it is to go in order.
-
-> 如果你是新手，一般来说，要按照教程部分的顺序进行操作。随着章节的增加，按照顺序操作的重要性就会降低。
-
-And no matter your skill level, the reference part is there with complete examples of the standard library function calls to help refresh your memory whenever needed. Good for reading over a bowl of cereal or other time.
-
-> 无论您的技能水平如何，参考部分都提供了标准库函数调用的完整示例，以帮助您在需要时重新清晰记忆。很适合在吃麦片或其他时间阅读。
-
-Finally, glancing at the index (if you're reading the print version), the reference section entries are italicized.
-
-> 最后，如果你正在阅读印刷版本，瞥一眼索引，参考节条目用斜体字。
-
-## [1.3] Platform and Compiler {#platform-and-compiler number="1.3"}
-
-I'll try to stick to Plain Ol'-Fashioned [ISO-standard C](https://en.wikipedia.org/wiki/ANSI_C)[^10^](#fn10){#fnref10 .footnote-ref role="doc-noteref"}. Well, for the most part. Here and there I might go crazy and start talking about [POSIX](https://en.wikipedia.org/wiki/POSIX)[^11^](#fn11){#fnref11 .footnote-ref role="doc-noteref"} or something, but we'll see.
-
-> 我会尽量只使用普通的 ISO 标准 C(参见维基百科：ANSI C）。大部分时候是这样，但有时候我可能会疯狂一点，开始谈论 POSIX(参见维基百科：POSIX）或其他的东西，但我们拭目以待。
-
-**Unix** users (e.g. Linux, BSD, etc.) try running `cc` or `gcc` from the command line--you might already have a compiler installed. If you don't, search your distribution for installing `gcc` or `clang`.
-
-> **Unix** 用户(例如 Linux、BSD 等）可以尝试从命令行运行 `cc` 或 `gcc`--您可能已经安装了编译器。如果没有，请在您的发行版中搜索安装 `gcc` 或 `clang`。
-
-**Windows** users should check out [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)[^12^](#fn12){#fnref12 .footnote-ref role="doc-noteref"}. Or, if you're looking for a more Unix-like experience (recommended!), install [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)[^13^](#fn13){#fnref13 .footnote-ref role="doc-noteref"} and `gcc`.
-
-> Windows 用户应该查看 [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)[^12^](#fn12){#fnref12 .footnote-ref role="doc-noteref"}。或者，如果您正在寻找更类 Unix 的体验(推荐！），安装 [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)[^13^](#fn13){#fnref13 .footnote-ref role="doc-noteref"}和 `gcc`。
-
-**Mac** users will want to install [XCode](https://developer.apple.com/xcode/)[^14^](#fn14){#fnref14 .footnote-ref role="doc-noteref"}, and in particular the command line tools.
-
-> **Mac** 用户需要安装 [XCode](https://developer.apple.com/xcode/)[^14^](#fn14){#fnref14 .footnote-ref role="doc-noteref"}，尤其是命令行工具。
-
-There are a lot of compilers out there, and virtually all of them will work for this book. And a C++ compiler will compile a lot of (but not all!) C code. Best use a proper C compiler if you can.
-
-> 有很多编译器可供选择，几乎所有的编译器都可以用于本书。C++ 编译器可以编译很多(但不是全部！）C 代码。如果可以的话，最好使用一个正确的 C 编译器。
-
-## [1.4] Official Homepage {#official-homepage number="1.4"}
-
-This official location of this document is [https://beej.us/guide/bgc/](https://beej.us/guide/bgc/)[^15^](#fn15){#fnref15 .footnote-ref role="doc-noteref"}. Maybe this'll change in the future, but it's more likely that all the other guides are migrated off Chico State computers.
-
-> 这份文件的官方位置是 [https://beej.us/guide/bgc/](https://beej.us/guide/bgc/)[^15^](#fn15){#fnref15 .footnote-ref role="doc-noteref"}。也许这会在未来改变，但更有可能的是，所有其他指南都会迁移到 Chico State 计算机上。
-
-## [1.5] Email Policy {#email-policy number="1.5"}
-
-I'm generally available to help out with email questions so feel free to write in, but I can't guarantee a response. I lead a pretty busy life and there are times when I just can't answer a question you have. When that's the case, I usually just delete the message. It's nothing personal; I just won't ever have the time to give the detailed answer you require.
-
-> 一般来说，我可以帮助处理电子邮件问题，所以随时可以写信给我，但我不能保证一定会有回复。我的生活很忙碌，有时候我就是无法回答你的问题。在这种情况下，我通常会直接删除邮件。这不是个人原因，只是我没有时间给出你所需要的详细答案。
-
-As a rule, the more complex the question, the less likely I am to respond. If you can narrow down your question before mailing it and be sure to include any pertinent information (like platform, compiler, error messages you're getting, and anything else you think might help me troubleshoot), you're much more likely to get a response.
-
-> 一般来说，问题越复杂，我回答的可能性就越小。如果你在发邮件之前能够缩小问题的范围，并确保包括所有相关信息(比如平台、编译器、错误信息以及你认为可能有助于我调试的其他任何信息），你更有可能得到回复。
-
-If you don't get a response, hack on it some more, try to find the answer, and if it's still elusive, then write me again with the information you've found and hopefully it will be enough for me to help out.
-
-> 如果您没有得到回复，请继续努力，尝试找到答案，如果仍然无法解决，请再次给我发送您找到的信息，希望这些信息足以帮助我。
-
-Now that I've badgered you about how to write and not write me, I'd just like to let you know that I _fully_ appreciate all the praise the guide has received over the years. It's a real morale boost, and it gladdens me to hear that it is being used for good! `:-)` Thank you!
-
-> 现在我已经向你们唠叨了关于如何写信给我，我只想让你们知道，我完全欣赏这本指南多年来所获得的赞誉。这是一种真正的士气提振，听到它被用于善良的事情，我感到高兴！:-) 谢谢！
-
-## [1.6] Mirroring {#mirroring number="1.6"}
-
-You are more than welcome to mirror this site, whether publicly or privately. If you publicly mirror the site and want me to link to it from the main page, drop me a line at [`beej@beej.us`](mailto:beej@beej.us).
-
-> 您可以公开或私下镜像本站，欢迎您的加入。如果您公开镜像本站，并希望我在主页上为您链接，请发送邮件至[`beej@beej.us`](mailto:beej@beej.us)。
-
-## [1.7] Note for Translators {#note-for-translators number="1.7"}
-
-If you want to translate the guide into another language, write me at [`beej@beej.us`](beej@beej.us) and I'll link to your translation from the main page. Feel free to add your name and contact info to the translation.
-
-> 如果您想将指南翻译成另一种语言，请给我发邮件至[`beej@beej.us`](beej@beej.us)，我会在主页上链接到您的翻译。您可以在翻译中添加您的名字和联系信息。
-
-Please note the license restrictions in the Copyright and Distribution section, below.
-
-> 请注意下面版权和发行部分的许可限制。
-
-## [1.8] Copyright and Distribution {#copyright-and-distribution number="1.8"}
-
-Beej's Guide to C is Copyright © 2021 Brian "Beej Jorgensen" Hall.
-
-With specific exceptions for source code and translations, below, this work is licensed under the Creative Commons Attribution-Noncommercial-No Derivative Works 3.0 License. To view a copy of this license, visit [`https://creativecommons.org/licenses/by-nc-nd/3.0/`](https://creativecommons.org/licenses/by-nc-nd/3.0/) or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
-
-> 除源代码和翻译外，本作品根据知识共享署名-非商业性使用-禁止演绎 3.0 许可协议授权。要查看此许可协议的副本，请访问 [https://creativecommons.org/licenses/by-nc-nd/3.0/](https://creativecommons.org/licenses/by-nc-nd/3.0/) 或发送信函至知识共享，地址为：171 Second Street, Suite 300, San Francisco, California, 94105, USA.
-
-One specific exception to the "No Derivative Works" portion of the license is as follows: this guide may be freely translated into any language, provided the translation is accurate, and the guide is reprinted in its entirety. The same license restrictions apply to the translation as to the original guide. The translation may also include the name and contact information for the translator.
-
-> 例外情况：本指南可被自由翻译成任何语言，只要翻译准确，并且指南被完整地重印。对翻译的许可限制与原指南相同。翻译也可以包括翻译者的姓名和联系信息。
-
-The C source code presented in this document is hereby granted to the public domain, and is completely free of any license restriction.
-
-> 本文档中提供的 C 源代码特此授予公共领域，完全免于任何许可限制。
-
-Educators are freely encouraged to recommend or supply copies of this guide to their students.
-
-> 教育工作者可自由推荐或提供本指南的副本给他们的学生。
-
-Contact [`beej@beej.us`](beej@beej.us) for more information.
-
-## [1.9] Dedication {#dedication number="1.9"}
-
-The hardest things about writing these guides are:
-
-- Learning the material in enough detail to be able to explain it
-- Figuring out the best way to explain it clearly, a seemingly-endless iterative process
-- Putting myself out there as a so-called _authority_, when really I'm just a regular human trying to make sense of it all, just like everyone else
-
-> 我自称是一个权威，其实我只是一个和其他人一样，努力理解这一切的普通人。
-
-- Keeping at it when so many other things draw my attention
-
-A lot of people have helped me through this process, and I want to acknowledge those who have made this book possible.
-
-> 许多人在这个过程中帮助了我，我要感谢那些使这本书成为可能的人。
-
-- Everyone on the Internet who decided to help share their knowledge in one form or another. The free sharing of instructive information is what makes the Internet the great place that it is.
-
-> 所有在互联网上决定帮助分享他们的知识以某种形式或另一种形式的人。免费分享指导信息是使互联网成为伟大的地方的原因。
-
-- The volunteers at [cppreference.com](https://en.cppreference.com/)[^16^](#fn16){#fnref16 .footnote-ref role="doc-noteref"} who provide the bridge that leads from the spec to the real world.
-
-> 志愿者们在 cppreference.com 上提供了一座桥梁，将规范与现实世界联系起来。
-
-- The helpful and knowledgeable folks on [comp.lang.c](https://groups.google.com/g/comp.lang.c)[^17^](#fn17){#fnref17 .footnote-ref role="doc-noteref"} and [r/C_Programming](https://www.reddit.com/r/C_Programming/)[^18^](#fn18){#fnref18 .footnote-ref role="doc-noteref"} who got me through the tougher parts of the language.
-
-> 人们在 [comp.lang.c](https://groups.google.com/g/comp.lang.c)[^17^](#fn17){#fnref17 .footnote-ref role="doc-noteref"}和 [r/C_Programming](https://www.reddit.com/r/C_Programming/)[^18^](#fn18){#fnref18 .footnote-ref role="doc-noteref"}上提供的有用和知识渊博的帮助让我完成了语言的更困难的部分。
-
-- Everyone who submitted corrections and pull-requests on everything from misleading instructions to typos.
-
-> 所有提交了纠正和拉取请求的人，从误导性指令到拼写错误，都有所帮助。
-
-Thank you! ♥
-
-# [2] Hello, World! {#hello-world number="2"}
-
-## [2.1] What to Expect from C {#what-to-expect-from-c number="2.1"}
-
-> _"Where do these stairs go?"_ > _"They go up."_
-> ---Ray Stantz and Peter Venkman, Ghostbusters
-
-C is a low-level language.
-
-It didn't use to be. Back in the day when people carved punch cards out of granite, C was an incredible way to be free of the drudgery of lower-level languages like [assembly](https://en.wikipedia.org/wiki/Assembly_language)[^19^](#fn19){#fnref19 .footnote-ref role="doc-noteref"}.
-
-> 以前不是这样的。 在人们用花岗岩刻出穿孔卡的日子里，C 语言是一种摆脱像汇编语言这样低级语言的苦役的不可思议的方式。
-
-But now in these modern times, current-generation languages offer all kinds of features that didn't exist in 1972 when C was invented. This means C is a pretty basic language with not a lot of features. It can do _anything_, but it can make you work for it.
-
-> 但是现在在这个现代时代，当前一代的语言提供了 1972 年 C 语言发明时不存在的各种功能。这意味着 C 是一种非常基础的语言，没有很多功能。它可以做任何事情，但是你需要付出努力才能实现。
-
-So why would we even use it today?
-
-- As a learning tool: not only is C a venerable piece of computing history, but it is connected to the [bare metal](https://en.wikipedia.org/wiki/Bare_machine)[^20^](#fn20){#fnref20 .footnote-ref role="doc-noteref"} in a way that present-day languages are not. When you learn C, you learn about how software interfaces with computer memory at a low level. There are no seatbelts. You'll write software that crashes, I assure you. And that's all part of the fun!
-
-> 作为一种学习工具：C 不仅是一段古老的计算历史，而且它与裸机 [^20^](#fn20){#fnref20 .footnote-ref role="doc-noteref"}的连接方式，是当今语言所不具备的。当你学习 C 语言时，你会了解软件如何在低级别与计算机内存进行交互。这里没有安全带。我向你保证，你会编写出会崩溃的软件，而这也是有趣的一部分！
-
-- As a useful tool: C still is used for certain applications, such as building [operating systems](https://en.wikipedia.org/wiki/Operating_system)[^21^](#fn21){#fnref21 .footnote-ref role="doc-noteref"} or in [embedded systems](https://en.wikipedia.org/wiki/Embedded_system)[^22^](#fn22){#fnref22 .footnote-ref role="doc-noteref"}. (Though the [Rust](https://en.wikipedia.org/wiki/Rust_(programming_language))[^23^](#fn23){#fnref23 .footnote-ref role="doc-noteref"} programming language is eyeing both these fields!)
-
-> C 仍然被用于某些应用，如构建操作系统 [^21^]或嵌入式系统 [^22^]，作为一个有用的工具。(尽管 [Rust](https://en.wikipedia.org/wiki/Rust_(programming_language))[^23^](#fn23){#fnref23 .footnote-ref role="doc-noteref"}编程语言正在盯着这两个领域！）
-
-If you're familiar with another language, a lot of things about C are easy. C inspired many other languages, and you'll see bits of it in Go, Rust, Swift, Python, JavaScript, Java, and all kinds of other languages. Those parts will be familiar.
-
-> 如果你熟悉另一种语言，很多关于 C 的事情就会变得容易。C 启发了许多其他语言，你会在 Go、Rust、Swift、Python、JavaScript、Java 等各种语言中看到它的影子。这些部分你应该会熟悉。
-
-The one thing about C that hangs people up is _pointers_. Virtually everything else is familiar, but pointers are the weird one. The concept behind pointers is likely one you already know, but C forces you to be explicit about it, using operators you've likely never seen before.
-
-> C 的一件让人抓狂的事情就是指针。几乎其他的都很熟悉，但指针就是那个怪物。指针的概念可能你已经知道了，但 C 要求你必须明确表达，使用你以前从未见过的运算符。
-
-It's especially insidious because once you [_grok_](https://en.wikipedia.org/wiki/Grok)[^24^](#fn24){#fnref24 .footnote-ref role="doc-noteref"} pointers, they're suddenly easy. But up until that moment, they're slippery eels.
-
-> 它尤其阴险，因为一旦你理解指针，它们就变得很容易。但是在那一刻之前，它们就像滑溜的鳗鱼一样难以捉摸。
-
-Everything else in C is just memorizing another way (or sometimes the same way!) of doing something you've done already. Pointers are the weird bit. And, arguably, even pointers are variations on a theme you're probably familiar with.
-
-> 所有其他的 C 都只是记住另一种(有时是相同的方式！）去做你已经做过的事情。指针是奇怪的部分。而且，可以说，即使是指针也是你可能已经熟悉的主题的变化。
-
-So get ready for a rollicking adventure as close to the core of the computer as you can get without assembly, in the most influential computer language of all time[^25^](#fn25){#fnref25 .footnote-ref role="doc-noteref"}. Hang on!
-
-> 准备好迎接一段充满乐趣的冒险吧！这是一次可以让你接近计算机核心的冒险，而且使用的是史上最具影响力的计算机语言[^25^](#fn25）{#fnref25 .footnote-ref role="doc-noteref"}。拭目以待吧！
-
-## [2.2] Hello, World! {#hello-world-1 number="2.2"}
-
-This is the canonical example of a C program. Everyone uses it. (Note that the numbers to the left are for reader reference only, and are not part of the source code.)
-
-> 这是 C 程序的典型示例。每个人都在使用它。(注意，左侧的数字仅供读者参考，不是源代码的一部分。）
-
-::: {#cb2 .sourceCode}
-
-```{.sourceCode .numberSource .c .numberLines}
-/* Hello world program */
-
-#include <stdio.h>
-
-int main(void)
-{
-    printf("Hello, World!\n");  // Actually do the work here
-}
-```
-
-:::
-
-We're going to don our long-sleeved heavy-duty rubber gloves, grab a scalpel, and rip into this thing to see what makes it tick. So, scrub up, because here we go. Cutting very gently...
-
-> 我们要穿上长袖重型橡胶手套，拿起一把手术刀，深入研究它到底是怎么回事。所以，洗洗手，因为我们要开始了。轻轻地切割...
-
-Let's get the easy thing out of the way: anything between the digraphs `/*` and `*/` is a comment and will be completely ignored by the compiler. Same goes for anything on a line after a `//`. This allows you to leave messages to yourself and others, so that when you come back and read your code in the distant future, you'll know what the heck it was you were trying to do. Believe me, you will forget; it happens.
-
-> 让我们先把容易的事情搞定：任何在双字符 `/*` 和 `*/` 之间的东西都是注释，编译器会完全忽略它们。在一行的 `//` 之后也是一样。这样可以给自己和其他人留言，这样当你在将来回来读你的代码时，你就知道你当时在试图做什么了。相信我，你会忘记的；这种事情经常发生。
-
-Now, what is this `#include`? GROSS! Well, it tells the C Preprocessor to pull the contents of another file and insert it into the code right _there_.
-
-> 现在，这是什么 `#include`？太糟糕了！嗯，它告诉 C 预处理器抓取另一个文件的内容，并将其插入到代码的那里。
-
-Wait---what's a C Preprocessor? Good question. There are two stages[^26^](#fn26){#fnref26 .footnote-ref role="doc-noteref"} to compilation: the preprocessor and the compiler. Anything that starts with pound sign, or "octothorpe", (`#`) is something the preprocessor operates on before the compiler even gets started. Common _preprocessor directives_, as they're called, are `#include` and `#define`. More on that later.
-
-> 等等---什么是 C 预处理器？好问题。编译有两个阶段：[^26^](#fn26){#fnref26 .footnote-ref role="doc-noteref"}预处理器和编译器。任何以井号开头，或者“八角”(`#`）开头的东西，都是在编译器开始之前由预处理器处理的东西。常见的_预处理指令_，又称之为 `#include` 和 `#define`。稍后会讲到更多。
-
-Before we go on, why would I even begin to bother pointing out that a pound sign is called an octothorpe? The answer is simple: I think the word octothorpe is so excellently funny, I have to gratuitously spread its name around whenever I get the opportunity. Octothorpe. Octothorpe, octothorpe, octothorpe.
-
-> 在我们继续之前，为什么我要提出一个磅号被称为八角号？答案很简单：我认为八角号这个词非常有趣，每当我有机会时，我都要把它的名字传播出去。八角号。八角号，八角号，八角号。
-
-So _anyway_. After the C preprocessor has finished preprocessing everything, the results are ready for the compiler to take them and produce [assembly code](https://en.wikipedia.org/wiki/Assembly_language)[^27^](#fn27){#fnref27 .footnote-ref role="doc-noteref"}, [machine code](https://en.wikipedia.org/wiki/Machine_code)[^28^](#fn28){#fnref28 .footnote-ref role="doc-noteref"}, or whatever it's about to do. Machine code is the "language" the CPU understands, and it can understand it _very rapidly_. This is one of the reasons C programs tend to be quick.
-
-> 好吧。在预处理器完成预处理之后，结果就准备好了，编译器可以拿起它们并生成[汇编语言](https://en.wikipedia.org/wiki/Assembly_language)[^27^](#fn27){#fnref27 .footnote-ref role="doc-noteref"}、[机器码](https://en.wikipedia.org/wiki/Machine_code)[^28^](#fn28){#fnref28 .footnote-ref role="doc-noteref"}或者它要做的任何事情。机器码是 CPU 理解的“语言”，它可以非常快速地理解它。这就是 C 程序通常很快的原因之一。
-
-Don't worry about the technical details of compilation for now; just know that your source runs through the preprocessor, then the output of that runs through the compiler, then that produces an executable for you to run.
-
-> 不用担心编译的技术细节，现在只需要知道你的源代码会先经过预处理器，然后输出会经过编译器，然后产生一个可以执行的程式给你。
-
-What about the rest of the line? What's `<stdio.h>`? That is what is known as a _header file_. It's the dot-h at the end that gives it away. In fact it's the "Standard I/O" (`stdio`) header file that you will grow to know and love. It gives us access to a bunch of I/O functionality[^29^](#fn29){#fnref29 .footnote-ref role="doc-noteref"}. For our demo program, we're outputting the string "Hello, World!", so we in particular need access to the `printf()` function to do this. The `<stdio.h>` file gives us this access. Basically, if we tried to use `printf()` without `#include <stdio.h>`, the compiler would have complained to us about it.
-
-> 其余的行呢？什么是 <stdio.h>？这就是所谓的头文件。它以.h 结尾，这就是它的特征。实际上，这是你将会熟悉和喜爱的“标准 I/O”(stdio）头文件。它给我们提供了大量的 I/O 功能[^29^](#fn29）{#fnref29 .footnote-ref role="doc-noteref"}。对于我们的演示程序，我们需要输出字符串“Hello，World！”，因此我们特别需要访问 printf(）函数来实现这一点。<stdio.h> 文件给了我们这种访问权限。基本上，如果我们试图在没有#include <stdio.h> 的情况下使用 printf(），编译器会向我们抱怨它。
-
-How did I know I needed to `#include <stdio.h>` for `printf()`? Answer: it's in the documentation. If you're on a Unix system, `man 3 printf` and it'll tell you right at the top of the man page what header files are required. Or see the reference section in this book. `:-)`
-
-> 我怎么知道我需要 `#include <stdio.h>` 才能使用 `printf()`？答案：这在文档中有说明。如果你使用的是 Unix 系统，可以输入 `man 3 printf`，它会在 man 页面的顶部告诉你需要包含哪些头文件。或者参考本书的参考资料部分。:-)
-
-Holy moly. That was all to cover the first line! But, let's face it, it has been completely dissected. No mystery shall remain!
-
-> 哇！我们已经彻底剖析了第一行！但是，让我们面对现实吧，没有任何神秘可言了！
-
-So take a breather...look back over the sample code. Only a couple easy lines to go.
-
-> 所以休息一下...回顾一下样例代码。只剩下几行简单的代码了。
-
-Welcome back from your break! I know you didn't really take a break; I was just humoring you.
-
-> 欢迎回来！我知道你没有真的休息；我只是在逗你玩。
-
-The next line is `main()`. This is the definition of the function `main()`; everything between the squirrelly braces (`{` and `}`) is part of the function definition.
-
-> 下一行是 `main()`。这是函数 `main()` 的定义；括号(`{` 和 `}`）之间的所有内容都是函数定义的一部分。
-
-(How do you _call_ a different function, anyway? The answer lies in the `printf()` line, but we'll get to that in a minute.)
-
-> 你怎么去调用一个不同的函数？答案就在 `printf()` 行里，不过我们稍后再来讨论这个问题。
-
-Now, the main function is a special one in many ways, but one way stands above the rest: it is the function that will be called automatically when your program starts executing. Nothing of yours gets called before `main()`. In the case of our example, this works fine since all we want to do is print a line and exit.
-
-> 现在，主函数在很多方面都是特殊的，但有一种方式高于其他方式：当你的程序开始执行时，它将被自动调用。在你的东西之前没有调用'main(）'。在我们的例子中，这很好，因为我们要做的就是打印一行并退出。
-
-Oh, that's another thing: once the program executes past the end of `main()`, down there at the closing squirrelly brace, the program will exit, and you'll be back at your command prompt.
-
-> 哦，那又是另一件事：一旦程序在 `main(）` 的末尾执行完毕，在那里的闭括号，程序将退出，你会回到你的命令提示符。
-
-So now we know that that program has brought in a header file, `stdio.h`, and declared a `main()` function that will execute when the program is started. What are the goodies in `main()`?
-
-> 现在我们知道这个程序已经引入了一个头文件 `stdio.h`，并声明了一个 `main()` 函数，当程序启动时将执行该函数。`main()` 里有什么精彩内容？
-
-I am so happy you asked. Really! We only have the one goodie: a call to the function `printf()`. You can tell this is a function call and not a function definition in a number of ways, but one indicator is the lack of squirrelly braces after it. And you end the function call with a semicolon so the compiler knows it's the end of the expression. You'll be putting semicolons after almost everything, as you'll see.
-
-> 我很高兴你问了。真的！我们只有一个好东西：调用函数 `printf()`。你可以通过多种方式来判断这是一个函数调用而不是函数定义，但一个指标是它后面没有多余的大括号。你要用分号结束函数调用，这样编译器就知道这是表达式的结尾了。你会发现几乎每件事情都要加分号。
-
-You're passing one argument to the function `printf()`: a string to be printed when you call it. Oh, yeah---we're calling a function! We rock! Wait, wait---don't get cocky. What's that crazy `\n` at the end of the string? Well, most characters in the string will print out just like they are stored. But there are certain characters that you can't print on screen well that are embedded as two-character backslash codes. One of the most popular is `\n` (read "backslash-N" or simply "newline") that corresponds to the _newline_ character. This is the character that causes further printing to continue at the beginning of the next line instead of the current. It's like hitting return at the end of the line.
-
-> 你正在给函数 `printf()` 传递一个参数：调用它时要打印的字符串。哦，是的——我们正在调用一个函数！我们太棒了！等等——不要太自负。字符串末尾的那个疯狂的 `\n` 是什么？嗯，大多数字符串中的字符都会按照它们存储的方式打印出来。但也有一些你无法在屏幕上打印的字符，它们以双字符反斜杠编码的形式嵌入。其中最常用的是 `\n`(读作“反斜杠-N”或简称“换行”），它对应于_换行_字符。这个字符会导致后续的打印继续在下一行的开头而不是当前行。就像在行末按下回车键一样。
-
-So copy that code into a file called `hello.c` and build it. On a Unix-like platform (e.g. Linux, BSD, Mac, or WSL), from the command line you'll build with a command like so:
-
-> 将该代码复制到一个叫做 `hello.c` 的文件中，然后进行构建。 在类 Unix 平台(例如 Linux，BSD，Mac 或 WSL）上，从命令行您将使用如下命令进行构建：
-
-::: {#cb3 .sourceCode}
-
-```{.sourceCode .zsh}
-gcc -o hello hello.c
-```
-
-:::
-
-(This means "compile `hello.c`, and output an executable called `hello`".)
-
-> 编译 `hello.c`，输出一个可执行文件叫做 `hello`。
-
-After that's done, you should have a file called `hello` that you can run with this command:
-
-> 完成之后，您应该有一个叫做 `hello` 的文件，您可以使用以下命令运行它：
-
-::: {#cb4 .sourceCode}
-
-```{.sourceCode .default}
-./hello
-```
-
-:::
-
-(The leading `./` tells the shell to "run from the current directory".)
-
-And see what happens:
-
-::: {#cb5 .sourceCode}
-
-```{.sourceCode .default}
-Hello, World!
-```
-
-:::
-
-It's done and tested! Ship it!
-
-## [2.3] Compilation Details {#compilation-details number="2.3"}
-
-Let's talk a bit more about how to build C programs, and what happens behind the scenes there.
-
-> 让我们谈谈如何构建 C 程序以及在其背后发生的事情。
-
-Like other languages, C has _source code_. But, depending on what language you're coming from, you might never have had to _compile_ your source code into an _executable_.
-
-> 像其他语言一样，C 有源代码。但是，根据你来自的语言，你可能从未必须将源代码编译成可执行文件。
-
-Compilation is the process of taking your C source code and turning it into a program that your operating system can execute.
-
-> 编译是将您的 C 源代码转换为操作系统可以执行的程序的过程。
-
-JavaScript and Python devs aren't used to a separate compilation step at all--though behind the scenes it's happening! Python compiles your source code into something called _bytecode_ that the Python virtual machine can execute. Java devs are used to compilation, but that produces bytecode for the Java Virtual Machine.
-
-> JavaScript 和 Python 开发人员根本不习惯独立的编译步骤--尽管在幕后它正在发生！Python 将您的源代码编译成称为_字节码_的东西，Python 虚拟机可以执行它。Java 开发人员习惯了编译，但这会为 Java 虚拟机生成字节码。
-
-When compiling C, _machine code_ is generated. This is the 1s and 0s that can be executed directly and speedily by the CPU.
-
-> 当编译 C 语言时，会生成_机器代码_。这是可以被 CPU 直接快速执行的 1 和 0。
-
-> Languages that typically aren't compiled are called _interpreted_ languages. But as we mentioned with Java and Python, they also have a compilation step. And there's no rule saying that C can't be interpreted. (There are C interpreters out there!) In short, it's a bunch of gray areas. Compilation in general is just taking source code and turning it into another, more easily-executed form.
-
-The C compiler is the program that does the compilation.
-
-As we've already said, `gcc` is a compiler that's installed on a lot of [Unix-like operating systems](https://en.wikipedia.org/wiki/Unix)[^30^](#fn30){#fnref30 .footnote-ref role="doc-noteref"}. And it's commonly run from the command line in a terminal, but not always. You can run it from your IDE, as well.
-
-> 我们已经说过，`GCC` 是一个安装在许多类 Unix 操作系统上的编译器。通常可以从终端的命令行运行它，但不是总是如此。您也可以从您的 IDE 中运行它。
-
-So how do we do command line builds?
-
-## [2.4] Building with `gcc` {#building-with-gcc number="2.4"}
-
-If you have a source file called `hello.c` in the current directory, you can build that into a program called `hello` with this command typed in a terminal:
-
-> 如果当前目录有一个叫做 `hello.c` 的源文件，你可以使用终端输入的这条命令把它编译成一个叫做 `hello` 的程序：
-
-::: {#cb6 .sourceCode}
-
-```{.sourceCode .zsh}
-gcc -o hello hello.c
-```
-
-:::
-
-The `-o` means "output to this file"[^31^](#fn31){#fnref31 .footnote-ref role="doc-noteref"}. And there's `hello.c` at the end, the name of the file we want to compile.
-
-> `-o` 意味着"输出到这个文件"[^31^](#fn31){#fnref31 .footnote-ref role="doc-noteref"}。最后有一个 `hello.c`，这是我们要编译的文件的名字。
-
-If your source is broken up into multiple files, you can compile them all together (almost as if they were one file, but the rules are actually more complex than that) by putting all the `.c` files on the command line:
-
-> 如果您的源代码分成多个文件，您可以将它们全部编译在一起(几乎就像是一个文件，但实际上规则比这更复杂），只需将所有 `.c` 文件放在命令行上：
-
-::: {#cb7 .sourceCode}
-
-```{.sourceCode .zsh}
-gcc -o awesomegame ui.c characters.c npc.c items.c
-```
-
-:::
-
-and they'll all get built together into a big executable.
-
-That's enough to get started---later we'll talk details about multiple source files, object files, and all kinds of fun stuff.
-
-> 够了，开始吧---稍后我们会讨论关于多个源文件、目标文件以及各种有趣的东西的细节。
-
-## [2.5] Building with `clang` {#building-with-clang number="2.5"}
-
-On Macs, the stock compiler isn't `gcc`---it's `clang`. But a wrapper is also installed so you can run `gcc` and have it still work.
-
-> 在 Mac 上，默认的编译器不是 gcc，而是 clang。但是也安装了一个包装器，所以你可以运行 gcc，它仍然可以正常工作。
-
-You can also install the `gcc` compiler proper through [Homebrew](https://formulae.brew.sh/formula/gcc)[^32^](#fn32){#fnref32 .footnote-ref role="doc-noteref"} or some other means.
-
-> 你也可以通过 [Homebrew](https://formulae.brew.sh/formula/gcc)[^32^](#fn32){#fnref32 .footnote-ref role="doc-noteref"}或其他方式正确安装 `gcc` 编译器。
-
-## [2.6] Building from IDEs {#building-from-ides number="2.6"}
-
-If you're using an _Integrated Development Environment_ (IDE), you probably don't have to build from the command line.
-
-> 如果你使用集成开发环境(IDE），你可能不需要从命令行构建。
-
-With Visual Studio, `CTRL-F7` will build, and `CTRL-F5` will run.
-
-With VS Code, you can hit `F5` to run via the debugger. (You'll have to install the C/C++ Extension.)
-
-> 使用 VS Code，您可以按下 `F5` 来通过调试器运行(您需要安装 C/C++ 扩展）。
-
-With XCode, you can build with `COMMAND-B` and run with `COMMAND-R`. To get the command line tools, Google for "XCode command line tools" and you'll find instructions for installing them.
-
-> 使用 XCode，您可以使用 `COMMAND-B` 构建，并使用 `COMMAND-R` 运行。要获取命令行工具，请在 Google 上搜索“XCode 命令行工具”，您将找到安装说明。
-
-For getting started, I encourage you to also try to build from the command line---it's history!
-
-> 为了开始，我鼓励你也尝试从命令行构建---这是历史！
-
-## [2.7] C Versions {#c-versions number="2.7"}
-
-C has come a long way over the years, and it had many named version numbers to describe which dialect of the language you're using.
-
-> C 在过去的几年里取得了很大的进步，它有许多命名的版本号来描述您正在使用的语言方言。
-
-These generally refer to the year of the specification.
-
-The most famous are C89, C99, C11, and C2x. We'll focus on the latter in this book.
-
-> 最着名的是 C89、C99、C11 和 C2x。我们将在本书中主要关注后者。
-
-But here's a more complete table:
-
----
-
-Version Description
-
----
-
-K&R C 1978, the original. Named after Brian Kernighan and Dennis Ritchie. Ritchie designed and coded the language, and Kernighan co-authored the book on it. You rarely see original K&R code today. If you do, it'll look odd, like Middle English looks odd to modern English readers.
-
-> 1978 年的 K&R C，最初的版本。以布莱恩·克尼根和丹尼斯·里奇的名字命名。里奇设计和编写了这门语言，克尼根共同撰写了有关它的书籍。如今，你很少能看到原始的 K&R 代码。如果你看到了，它会看起来很奇怪，就像中世纪英语对现代英语读者来说看起来很奇怪一样。
-
-**C89**, ANSI C, C90 In 1989, the American National Standards Institute (ANSI) produced a C language specification that set the tone for C that persists to this day. A year later, the reins were handed to the International Organization for Standardization (ISO) that produced the identical C90.
-
-> 1989 年，美国国家标准学会(ANSI）制定了一项 C 语言规范，为当今的 C 语言设定了基调。一年后，国际标准化组织(ISO）接管，制定了相同的 C90。
-
-C95 A rarely-mentioned addition to C89 that included wide character support.
-
-> C95 是 C89 的一个很少提及的补充，它包括对宽字符的支持。
-
-**C99** The first big overhaul with lots of language additions. The thing most people remember is the addition of `//`-style comments. This is the most popular version of C in use as of this writing.
-
-> **C99** 第一次大规模的改版，增加了许多语言特性。大多数人记得的是增加了 `//`-风格的注释。这是目前使用最广泛的 C 版本。
-
-**C11** This major version update includes Unicode support and multi-threading. Be advised that if you start using these language features, you might be sacrificing portability with places that are stuck in C99 land. But, honestly, 1999 is getting to be a while back now.
-
-> **C11** 这个主要版本更新包括 Unicode 支持和多线程。请注意，如果你开始使用这些语言特性，可能会牺牲可移植性，因为一些地方仍然停留在 C99 版本。但是，说实话，1999 年已经有一段时间了。
-
-C17, C18 Bugfix update to C11. C17 seems to be the official name, but the publication was delayed until 2018. As far as I can tell, these two are interchangeable, with C17 being preferred.
-
-> C17、C18 错误修复更新到 C11。C17 似乎是官方名称，但发布被推迟到 2018 年。据我所知，这两者是可以互换的，优先使用 C17。
-
-## C2x What's coming next! Expected to eventually become C23.
-
-You can force GCC to use one of these standards with the `-std=` command line argument. If you want it to be picky about the standard, add `-pedantic`.
-
-> 你可以使用 `-std=` 命令行参数强制 GCC 使用其中一个标准。如果你希望它对标准挑剔，请添加 `-pedantic`。
-
-For example:
-
-::: {#cb8 .sourceCode}
-
-```{.sourceCode .zsh}
-gcc -std=c11 -pedantic foo.c
-```
-
-:::
-
-For this book, I compile programs for C2x with all warnings set:
-
-::: {#cb9 .sourceCode}
-
-```{.sourceCode .zsh}
-gcc -Wall -Wextra -std=c2x -pedantic foo.c
-```
-
-:::
 
 # [3] Variables and Statements {#variables-and-statements number="3"}
 
@@ -1004,9 +23,9 @@ We're going to take a second here and take a peek down the rabbit hole that is p
 
 > 我们在这里停下来，看一看指针的兔子洞。别担心。
 
-You can think of memory as a big array of bytes[^33^](#fn33){#fnref33 .footnote-ref role="doc-noteref"}. Data is stored in this "array"[^34^](#fn34){#fnref34 .footnote-ref role="doc-noteref"}. If a number is larger than a single byte, it is stored in multiple bytes. Because memory is like an array, each byte of memory can be referred to by its index. This index into memory is also called an _address_, or a _location_, or a _pointer_.
+You can think of memory as a big array of bytes[^33^]. Data is stored in this "array"[^34^]. If a number is larger than a single byte, it is stored in multiple bytes. Because memory is like an array, each byte of memory can be referred to by its index. This index into memory is also called an _address_, or a _location_, or a _pointer_.
 
-> 可以把内存想象成一个大的字节数组 [^33^](#fn33){#fnref33 .footnote-ref role="doc-noteref"}。数据存储在这个“数组”中 [^34^](#fn34){#fnref34 .footnote-ref role="doc-noteref"}。如果一个数字大于一个字节，它就会被存储在多个字节中。由于内存就像一个数组，每个内存字节都可以通过其索引来引用。这种内存索引也被称为地址、位置或指针。
+> 可以把内存想象成一个大的字节数组 [^33^]。数据存储在这个“数组”中 [^34^]。如果一个数字大于一个字节，它就会被存储在多个字节中。由于内存就像一个数组，每个内存字节都可以通过其索引来引用。这种内存索引也被称为地址、位置或指针。
 
 When you have a variable in C, the value of that variable is in memory _somewhere_, at some address. Of course. After all, where else would it be? But it's a pain to refer to a value by its numeric address, so we make a name for it instead, and that's what the variable is.
 
@@ -1054,13 +73,13 @@ Type Example C Type
 
 Integer `3490` `int`
 
-Floating point `3.14159` `float`[^35^](#fn35){#fnref35 .footnote-ref role="doc-noteref"}
+Floating point `3.14159` `float`[^35^]
 
-> 浮点数 3.14159(float）[^35^]{#fnref35 .footnote-ref role="doc-noteref"}
+> 浮点数 3.14159(float)[^35^]{#fnref35 .footnote-ref role="doc-noteref"}
 
 Character (single) `'c'` `char`
 
-## String `"Hello, world!"` `char *`[^36^](#fn36) {#fnref36 .footnote-ref role="doc-noteref"}
+## String `"Hello, world!"` `char *`[^36^]
 
 C makes an effort to convert automatically between most numeric types when you ask it to. But other than that, all conversions are manual, notably between string and numeric.
 
@@ -1078,7 +97,7 @@ Let's take our previous "Hello, world" code and add a couple variables to it:
 
 ::: {#cb10 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -1094,13 +113,13 @@ int main(void)
 
 There! We've declared a couple of variables. We haven't used them yet, and they're both uninitialized. One holds an integer number, and the other holds a floating point number (a real number, basically, if you have a math background).
 
-> 好了！我们宣布了几个变量。我们还没有使用它们，它们都是未初始化的。一个保存整数，另一个保存浮点数(基本上是实数，如果你有数学背景）。
+> 好了！我们宣布了几个变量。我们还没有使用它们，它们都是未初始化的。一个保存整数，另一个保存浮点数(基本上是实数，如果你有数学背景)。
 
-Uninitialized variables have indeterminate value[^37^](#fn37){#fnref37 .footnote-ref role="doc-noteref"}. They have to be initialized or else you must assume they contain some nonsense number.
+Uninitialized variables have indeterminate value[^37^]. They have to be initialized or else you must assume they contain some nonsense number.
 
 > 未初始化的变量具有不确定的值[^37^] (#fn37){#fnref37 .footnote-ref role="doc-noteref"}。它们必须被初始化，否则你必须假定它们包含一些无意义的数字。
 
-> This is one of the places C can "get you". Much of the time, in my experience, the indeterminate value is zero... but it can vary from run to run! Never assume the value will be zero, even if you see it is. _Always_ explicitly initialize variables to some value before you use them[^38^](#fn38){#fnref38 .footnote-ref role="doc-noteref"}.
+> This is one of the places C can "get you". Much of the time, in my experience, the indeterminate value is zero... but it can vary from run to run! Never assume the value will be zero, even if you see it is. _Always_ explicitly initialize variables to some value before you use them[^38^].
 
 What's this? You want to store some numbers in those variables? Insanity!
 
@@ -1108,7 +127,7 @@ Let's go ahead and do that:
 
 ::: {#cb11 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int main(void)
 {
     int i;
@@ -1125,7 +144,7 @@ Killer. We've stored a value. Let's print it.
 
 We're going to do that by passing _two_ amazing arguments to the `printf()` function. The first argument is a string that describes what to print and how to print it (called the _format string_), and the second is the value to print, namely whatever is in the variable `i`.
 
-> 我们将通过向 `printf()` 函数传递_两个_令人惊叹的参数来完成这一点。第一个参数是描述要打印什么以及如何打印的字符串(称为_格式字符串_），第二个是要打印的值，即变量 `i` 中的值。
+> 我们将通过向 `printf()` 函数传递_两个_令人惊叹的参数来完成这一点。第一个参数是描述要打印什么以及如何打印的字符串(称为_格式字符串_)，第二个是要打印的值，即变量 `i` 中的值。
 
 `printf()` hunts through the format string for a variety of special sequences which start with a percent sign (`%`) that tell it what to print. For example, if it finds a `%d`, it looks to the next parameter that was passed, and prints it out as an integer. If it finds a `%f`, it prints the value out as a float. If it finds a `%s`, it prints a string.
 
@@ -1133,7 +152,7 @@ As such, we can print out the value of various types like so:
 
 ::: {#cb12 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -1196,7 +215,7 @@ If you `#include <stdbool.h>`, you also get access to some symbolic names that m
 
 ::: {#cb15 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -1223,7 +242,7 @@ C operators should be familiar to you from other languages. Let's blast through 
 
 (There are a bunch more details than this, but we're going to do enough in this section to get started.)
 
-> (有更多的细节，但我们将在本节中做足够的工作来开始）
+> (有更多的细节，但我们将在本节中做足够的工作来开始)
 
 ### [3.2.1] Arithmetic {#arithmetic number="3.2.1"}
 
@@ -1259,7 +278,7 @@ i %= 5;  // Same as "i = i % 5"
 
 There is no exponentiation. You'll have to use one of the `pow()` function variants from `math.h`.
 
-> 没有指数运算。您必须使用 math.h 中的 pow(）函数变体之一。
+> 没有指数运算。您必须使用 math.h 中的 pow()函数变体之一。
 
 Let's get into some of the weirder stuff you might not have in your other languages!
 
@@ -1509,7 +528,7 @@ if (a <= 10)
 
 We can chain together or alter conditional expressions with Boolean operators for _and_, _or_, and _not_.
 
-> 我们可以用布尔运算符(and、or 和 not）来连接或改变条件表达式。
+> 我们可以用布尔运算符(and、or 和 not)来连接或改变条件表达式。
 
 Operator Boolean meaning
 
@@ -1564,15 +583,15 @@ but I needed the example!
 
 This operator tells you the size (in bytes) that a particular variable or data type uses in memory.
 
-> 这个操作符告诉你特定变量或数据类型在内存中使用的大小(以字节为单位）。
+> 这个操作符告诉你特定变量或数据类型在内存中使用的大小(以字节为单位)。
 
 More particularly, it tells you the size (in bytes) that the _type of a particular expression_ (which might be just a single variable) uses in memory.
 
-> 更具体地说，它告诉你特定表达式(可能只是一个变量）的类型在内存中所占用的大小(以字节为单位）。
+> 更具体地说，它告诉你特定表达式(可能只是一个变量)的类型在内存中所占用的大小(以字节为单位)。
 
 This can be different on different systems, except for `char` and its variants (which are always 1 byte).
 
-> 在不同的系统上，这可能会有所不同，除了 `char` 及其变体(总是 1 个字节）。
+> 在不同的系统上，这可能会有所不同，除了 `char` 及其变体(总是 1 个字节)。
 
 And this might not seem very useful now, but we'll be making references to it here and there, so it's worth covering.
 
@@ -1582,7 +601,7 @@ Since this computes the number of bytes needed to store a type, you might think 
 
 > 由于这个计算需要存储类型所需的字节数，你可能会认为它会返回一个 `int`。或者...由于大小不能为负，也许是一个 `unsigned`？
 
-But it turns out C has a special type to represent the return value from `sizeof`. It's `size_t`, pronounced "_size tee_"[^39^](#fn39){#fnref39 .footnote-ref role="doc-noteref"}. All we know is that it's an unsigned integer type that can hold the size in bytes of anything you can give to `sizeof`.
+But it turns out C has a special type to represent the return value from `sizeof`. It's `size_t`, pronounced "_size tee_"[^39^]. All we know is that it's an unsigned integer type that can hold the size in bytes of anything you can give to `sizeof`.
 
 > 但事实证明，C 有一种特殊类型来表示 `sizeof` 的返回值。它叫做 `size_t`，发音为“_size tee_”。我们只知道它是一种无符号整数类型，可以容纳你给 `sizeof` 的任何东西的字节数。
 
@@ -1612,7 +631,7 @@ Remember: it's the size in bytes of the _type_ of the expression, not the size o
 
 ...Where we'll see you can take the `sizeof` a type (note the parentheses are required around a type name, unlike an expression):
 
-> 在哪里，我们可以看到你可以获取一个类型的大小(注意类型名称周围需要括号，不像表达式）：
+> 在哪里，我们可以看到你可以获取一个类型的大小(注意类型名称周围需要括号，不像表达式)：
 
 ::: {#cb37 .sourceCode}
 
@@ -1623,7 +642,7 @@ printf("%zu\n", sizeof(char));  // Prints 1 on all systems
 
 :::
 
-It's important to note that `sizeof` is a _compile-time_ operation[^40^](#fn40){#fnref40 .footnote-ref role="doc-noteref"}. The result of the expression is determined entirely at compile-time, not at runtime.
+It's important to note that `sizeof` is a _compile-time_ operation[^40^]. The result of the expression is determined entirely at compile-time, not at runtime.
 
 > 重要指出的是，`sizeof` 是一个编译时操作[^40^] (#fn40) {#fnref40 .footnote-ref role="doc-noteref"}。表达式的结果完全是在编译时确定的，而不是在运行时。
 
@@ -1655,7 +674,7 @@ if (x == 10) printf("x is 10\n");
 
 This is also sometimes written on a separate line. (Whitespace is largely irrelevant in C---it's not like Python.)
 
-> 这有时也会写在单独的一行上。(在 C 中空格基本上没有意义——它不像 Python 那样。）
+> 这有时也会写在单独的一行上。(在 C 中空格基本上没有意义——它不像 Python 那样。)
 
 ::: {#cb39 .sourceCode}
 
@@ -1895,7 +914,7 @@ All these examples might have been better done with a `for` loop. Let's do somet
 
 ::: {#cb49 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>   // For printf
 #include <stdlib.h>  // For rand
 
@@ -1912,7 +931,7 @@ int main(void)
 
 :::
 
-Side note: did you run that more than once? If you did, did you notice the same sequence of numbers came up again. And again. And again? This is because `rand()` is a pseudorandom number generator that must be _seeded_ with a different number in order to generate a different sequence. Look up the [`srand()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-srand)[^41^](#fn41){#fnref41 .footnote-ref role="doc-noteref"} function for more details.
+Side note: did you run that more than once? If you did, did you notice the same sequence of numbers came up again. And again. And again? This is because `rand()` is a pseudorandom number generator that must be _seeded_ with a different number in order to generate a different sequence. Look up the [`srand()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-srand)[^41^] function for more details.
 
 > 边注：你运行了多次吗？如果你运行了，你有没有注意到相同的数字序列出现了又一次？这是因为 `rand()` 是一种伪随机数生成器，必须使用不同的数字进行种子化才能生成不同的序列。查看[`srand()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-srand)函数了解更多详情。
 
@@ -1956,7 +975,7 @@ for (i = 0; i < 10; i++) {
 
 That's right, folks---they do exactly the same thing. But you can see how the `for` statement is a little more compact and easy on the eyes. (JavaScript users will fully appreciate its C origins at this point.)
 
-> 没错，伙计们——它们做的事情完全一样。但你可以看到 `for` 语句更紧凑，更容易看懂。(JavaScript 用户在这一点上会充分体会它的 C 语言来源。）
+> 没错，伙计们——它们做的事情完全一样。但你可以看到 `for` 语句更紧凑，更容易看懂。(JavaScript 用户在这一点上会充分体会它的 C 语言来源。)
 
 It's split into three parts, separated by semicolons. The first is the initialization, the second is the loop condition, and the third is what should happen at the end of the block if the loop condition is true. All three of these parts are optional.
 
@@ -2019,7 +1038,7 @@ Let's do an example where the user enters a number of goats and we print out a g
 
 ::: {#cb54 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -2053,7 +1072,7 @@ int main(void)
 
 In that example, if the user enters, say, `2`, the `switch` will jump to the `case 2` and execute from there. When (if) it hits a `break`, it jumps out of the `switch`.
 
-> 在这个例子中，如果用户输入 2，`switch` 就会跳到 `case 2` 并从那里开始执行。当(如果）遇到 `break` 时，它就会跳出 `switch`。
+> 在这个例子中，如果用户输入 2，`switch` 就会跳到 `case 2` 并从那里开始执行。当(如果)遇到 `break` 时，它就会跳出 `switch`。
 
 Also, you might see that `default` label there at the bottom. This is what happens when no cases match.
 
@@ -2061,7 +1080,7 @@ Also, you might see that `default` label there at the bottom. This is what happe
 
 Every `case`, including `default`, is optional. And they can occur in any order, but it's really typical for `default`, if any, to be listed last.
 
-> 每个情况(包括默认情况）都是可选的，它们可以以任何顺序出现，但如果有默认情况，通常会放在最后。
+> 每个情况(包括默认情况)都是可选的，它们可以以任何顺序出现，但如果有默认情况，通常会放在最后。
 
 So the whole thing acts like an `if`-`else` cascade:
 
@@ -2131,9 +1150,9 @@ ProTip: _ALWAYS_ put a comment in the code where you intend to fall through, lik
 
 > ProTip：_总是_在您打算跳转的代码中添加注释，就像我上面做的那样。这将使其他程序员不必怀疑您是否有此意图。
 
-In fact, this is one of the common places to introduce bugs in C programs: forgetting to put a `break` in your `case`. You gotta do it if you don't want to just roll into the next case[^42^](#fn42){#fnref42 .footnote-ref role="doc-noteref"}.
+In fact, this is one of the common places to introduce bugs in C programs: forgetting to put a `break` in your `case`. You gotta do it if you don't want to just roll into the next case[^42^].
 
-> 事实上，这是 C 程序中常见的错误引入地方之一：忘记在 `case` 中添加 `break`。如果你不想让它跳到下一个 `case`，你就得这么做 [^42^](#fn42){#fnref42 .footnote-ref role="doc-noteref"}。
+> 事实上，这是 C 程序中常见的错误引入地方之一：忘记在 `case` 中添加 `break`。如果你不想让它跳到下一个 `case`，你就得这么做 [^42^]。
 
 Earlier I said that `switch` works with integer types---keep it that way. Don't use floating point or string types in there. One loophole-ish thing here is that you can use character types because those are secretly integers themselves. So this is perfectly acceptable:
 
@@ -2185,7 +1204,7 @@ Let's take a look at a function. This is a function that takes an `int` as an ar
 
 ::: {#cb58 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int plus_one(int n)  // The "definition"
@@ -2213,7 +1232,7 @@ Continuing the program down into `main()`, we can see the call to the function, 
 
 ::: {#cb59 .sourceCode startfrom="8"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int main(void)
 {
     int i = 10, j;
@@ -2240,7 +1259,7 @@ You can also return `void` to indicate that you don't return a value:
 
 ::: {#cb60 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 // This function takes no arguments and returns no value:
@@ -2282,7 +1301,7 @@ So let's look at an example here. Study it and see if you can determine the outp
 
 ::: {#cb61 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void increment(int a)
@@ -2330,7 +1349,7 @@ Then we increment `a` to `11`. But we're not touching `i` at all! It remains `10
 
 Finally, the function is complete. All its local variables are discarded (bye, `a`!) and we return to `main()`, where `i` is still `10`.
 
-> 最后，函数完成了，它的所有局部变量都被丢弃了(再见，`a`！），我们回到 `main()`，`i` 仍然是 `10`。
+> 最后，函数完成了，它的所有局部变量都被丢弃了(再见，`a`！)，我们回到 `main()`，`i` 仍然是 `10`。
 
 And we print it, getting `10`, and we're done.
 
@@ -2354,7 +1373,7 @@ So if you recall back in the ice age a few sections ago, I mentioned that you ha
 
 This isn't quite strictly true. You can notify the compiler in advance that you'll be using a function of a certain type that has a certain parameter list. That way the function can be defined anywhere (even in a different file), as long as the _function prototype_ has been declared before you call that function.
 
-> 这并不完全正确。你可以提前通知编译器你将使用一个特定类型的函数，具有特定的参数列表。这样，只要在调用该函数之前声明了函数原型，就可以在任何地方定义该函数(甚至在不同的文件中）。
+> 这并不完全正确。你可以提前通知编译器你将使用一个特定类型的函数，具有特定的参数列表。这样，只要在调用该函数之前声明了函数原型，就可以在任何地方定义该函数(甚至在不同的文件中)。
 
 Fortunately, the function prototype is really quite easy. It's merely a copy of the first line of the function definition with a semicolon tacked on the end for good measure. For example, this code calls a function that is defined later, because a prototype has been declared first:
 
@@ -2362,7 +1381,7 @@ Fortunately, the function prototype is really quite easy. It's merely a copy of 
 
 ::: {#cb62 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int foo(void);  // This is the prototype!
@@ -2389,7 +1408,7 @@ int foo(void)  // This is the definition, just like the prototype!
 
 If you don't declare your function before you use it (either with a prototype or its definition), you're performing something called an _implicit declaration_. This was allowed in the first C standard (C89), and that standard has rules about it, but is no longer allowed today. And there is no legitimate reason to rely on it in new code.
 
-> 如果你在使用函数之前没有声明它(使用原型或定义），你就在执行一种叫做隐式声明的操作。这在第一个 C 标准(C89）中是允许的，该标准有关于它的规则，但今天不再允许。在新代码中没有合法的理由依赖它。
+> 如果你在使用函数之前没有声明它(使用原型或定义)，你就在执行一种叫做隐式声明的操作。这在第一个 C 标准(C89)中是允许的，该标准有关于它的规则，但今天不再允许。在新代码中没有合法的理由依赖它。
 
 You might notice something about the sample code we've been using... That is, we've been using the good old `printf()` function without defining it or declaring a prototype! How do we get away with this lawlessness? We don't, actually. There is a prototype; it's in that header file `stdio.h` that we included with `#include`, remember? So we're still legit, officer!
 
@@ -2397,7 +1416,7 @@ You might notice something about the sample code we've been using... That is, we
 
 ## [4.3] Empty Parameter Lists {#empty-parameter-lists number="4.3"}
 
-You might see these from time to time in older code, but you shouldn't ever code one up in new code. Always use `void` to indicate that a function takes no parameters. There's never[^43^](#fn43){#fnref43 .footnote-ref role="doc-noteref"} a reason to do this in modern code.
+You might see these from time to time in older code, but you shouldn't ever code one up in new code. Always use `void` to indicate that a function takes no parameters. There's never[^43^] a reason to do this in modern code.
 
 > 你可能会时不时地在旧代码中看到它们，但你永远不应该在新代码中编写它们。总是使用 `void` 来表示函数不带参数。在现代代码中，没有理由这样做。
 
@@ -2425,7 +1444,7 @@ void foo()  // Should really have a `void` in there
 
 While the spec spells out that the behavior in this instance is _as-if_ you'd indicated `void` (C11 §6.7.6.3¶14), the `void` type is there for a reason. Use it.
 
-> 尽管规范中明确指出，在这种情况下的行为就像您指示 `void` 一样(C11 §6.7.6.3¶14），但 `void` 类型是有原因的。请使用它。
+> 尽管规范中明确指出，在这种情况下的行为就像您指示 `void` 一样(C11 §6.7.6.3¶14)，但 `void` 类型是有原因的。请使用它。
 
 But in the case of a function prototype, there is a _significant_ difference between using `void` and not:
 
@@ -2474,9 +1493,9 @@ This is very much the same, except we have to be more explicit with C about when
 
 ## [5.1] Memory and Variables {#ptmem number="5.1"}
 
-Computer memory holds data of all kinds, right? It'll hold `float` s, `int` s, or whatever you have. To make memory easy to cope with, each byte of memory is identified by an integer. These integers increase sequentially as you move up through memory[^44^](#fn44){#fnref44 .footnote-ref role="doc-noteref"}. You can think of it as a bunch of numbered boxes, where each box holds a byte[^45^](#fn45){#fnref45 .footnote-ref role="doc-noteref"} of data. Or like a big array where each element holds a byte, if you come from a language with arrays. The number that represents each box is called its _address_.
+Computer memory holds data of all kinds, right? It'll hold `float` s, `int` s, or whatever you have. To make memory easy to cope with, each byte of memory is identified by an integer. These integers increase sequentially as you move up through memory[^44^]. You can think of it as a bunch of numbered boxes, where each box holds a byte[^45^] of data. Or like a big array where each element holds a byte, if you come from a language with arrays. The number that represents each box is called its _address_.
 
-> 计算机内存可以存储各种数据，对吗？它可以存储 `float`、`int` 或者你想要的任何东西。为了让内存更容易处理，每个字节的内存都有一个整数来标识。随着你在内存中向上移动，这些整数会逐渐增加[^44^](#fn44）{#fnref44 .footnote-ref role="doc-noteref"}。你可以把它想象成一堆有编号的盒子，每个盒子里装着一个字节的数据[^45^](#fn45）{#fnref45 .footnote-ref role="doc-noteref"}。或者像一个大数组，如果你来自一种有数组的语言，每个元素里装着一个字节。表示每个盒子的数字叫做它的_地址_。
+> 计算机内存可以存储各种数据，对吗？它可以存储 `float`、`int` 或者你想要的任何东西。为了让内存更容易处理，每个字节的内存都有一个整数来标识。随着你在内存中向上移动，这些整数会逐渐增加[^44^]。你可以把它想象成一堆有编号的盒子，每个盒子里装着一个字节的数据[^45^]。或者像一个大数组，如果你来自一种有数组的语言，每个元素里装着一个字节。表示每个盒子的数字叫做它的_地址_。
 
 Now, not all data types use just a byte. For instance, an `int` is often four bytes, as is a `float`, but it really depends on the system. You can use the `sizeof` operator to determine how many bytes of memory a certain type uses.
 
@@ -2494,7 +1513,7 @@ printf("an int uses %zu bytes of memory\n", sizeof(int));
 
 :::
 
-> **Memory Fun Facts**: When you have a data type (like your typical `int`) that uses more than a byte of memory, the bytes that make up the data are always adjacent to one another in memory. Sometimes they're in the order that you expect, and sometimes they're not[^46^](#fn46){#fnref46 .footnote-ref role="doc-noteref"}. While C doesn't guarantee any particular memory order (it's platform-dependent), it's still generally possible to write code in a way that's platform-independent where you don't have to even consider these pesky byte orderings.
+> **Memory Fun Facts**: When you have a data type (like your typical `int`) that uses more than a byte of memory, the bytes that make up the data are always adjacent to one another in memory. Sometimes they're in the order that you expect, and sometimes they're not[^46^]. While C doesn't guarantee any particular memory order (it's platform-dependent), it's still generally possible to write code in a way that's platform-independent where you don't have to even consider these pesky byte orderings.
 
 So _anyway_, if we can get on with it and get a drum roll and some foreboding music playing for the definition of a pointer, _a pointer is a variable that holds an address_. Imagine the classical score from 2001: A Space Odyssey at this point. Ba bum ba bum ba bum BAAAAH!
 
@@ -2522,7 +1541,7 @@ And a pointer variable holds that address number. Just like a `float` variable m
 
 Imagine you have a bunch of Post-it® notes all numbered in sequence with their address. (The first one is at index numbered `0`, the next at index `1`, and so on.)
 
-> 想象你有一堆按顺序编号的 Post-it® 便签，(第一个编号为 `0`，接下来是 `1`，依此类推）。
+> 想象你有一堆按顺序编号的 Post-it® 便签，(第一个编号为 `0`，接下来是 `1`，依此类推)。
 
 In addition to the number representing their positions, you can also write another number of your choice on each. It could be the number of dogs you have. Or the number of moons around Mars...
 
@@ -2552,7 +1571,7 @@ When we have that, we say we have a "pointer to" that data. And we can follow th
 
 (Though it doesn't seem particularly useful yet, this all becomes indispensable when used with function calls. Bear with me until we get there.)
 
-> (虽然它看起来没有特别有用，但是当与函数调用一起使用时，这一切就变得不可或缺了。请耐心等待，直到我们到达那里。）
+> (虽然它看起来没有特别有用，但是当与函数调用一起使用时，这一切就变得不可或缺了。请耐心等待，直到我们到达那里。)
 
 So if we have an `int`, say, and we want a pointer to it, what we want is some way to get the address of that `int`, right? After all, the pointer just holds the _address of_ the data. What operator do you suppose we'd use to find the _address of_ the `int`?
 
@@ -2560,15 +1579,15 @@ So if we have an `int`, say, and we want a pointer to it, what we want is some w
 
 Well, by a shocking surprise that must come as something of a shock to you, gentle reader, we use the `address-of` operator (which happens to be an ampersand: "`&`")to find the address of the data. Ampersand.
 
-> 嗯，这可能会让你感到震惊，亲爱的读者，我们使用“地址符”(它恰好是一个“&”符号）来找到数据的地址。“&”符号。
+> 嗯，这可能会让你感到震惊，亲爱的读者，我们使用“地址符”(它恰好是一个“&”符号)来找到数据的地址。“&”符号。
 
-So for a quick example, we'll introduce a new _format specifier_ for `printf()` so you can print a pointer. You know already how `%d` prints a decimal integer, yes? Well, `%p` prints a pointer. Now, this pointer is going to look like a garbage number (and it might be printed in hexadecimal[^47^](#fn47){#fnref47 .footnote-ref role="doc-noteref"} instead of decimal), but it is merely the index into memory the data is stored in. (Or the index into memory that the first byte of data is stored in, if the data is multi-byte.) In virtually all circumstances, including this one, the actual value of the number printed is unimportant to you, and I show it here only for demonstration of the `address-of` operator.
+So for a quick example, we'll introduce a new _format specifier_ for `printf()` so you can print a pointer. You know already how `%d` prints a decimal integer, yes? Well, `%p` prints a pointer. Now, this pointer is going to look like a garbage number (and it might be printed in hexadecimal[^47^] instead of decimal), but it is merely the index into memory the data is stored in. (Or the index into memory that the first byte of data is stored in, if the data is multi-byte.) In virtually all circumstances, including this one, the actual value of the number printed is unimportant to you, and I show it here only for demonstration of the `address-of` operator.
 
-> 举个例子，我们来介绍一个新的 `printf()` 格式说明符，这样你就可以打印指针了。你已经知道 `％d` 打印十进制整数，对吗？好的，`％p` 打印指针。现在，这个指针看起来像一个垃圾数字(它可能以十六进制[^47^](＃fn47）{＃fnref47 .footnote-ref role =“doc-noteref”}而不是十进制打印），但它只是存储数据的内存索引。 (或者，如果数据是多字节的，则是存储第一个字节数据的内存索引。）在几乎所有情况下，包括这种情况，打印出的数字的实际值对你来说都是无关紧要的，我在这里只是为了演示“取地址”运算符。
+> 举个例子，我们来介绍一个新的 `printf()` 格式说明符，这样你就可以打印指针了。你已经知道 `％d` 打印十进制整数，对吗？好的，`％p` 打印指针。现在，这个指针看起来像一个垃圾数字(它可能以十六进制[^47^](＃fn47){＃fnref47 .footnote-ref role =“doc-noteref”}而不是十进制打印)，但它只是存储数据的内存索引。 (或者，如果数据是多字节的，则是存储第一个字节数据的内存索引。)在几乎所有情况下，包括这种情况，打印出的数字的实际值对你来说都是无关紧要的，我在这里只是为了演示“取地址”运算符。
 
 ::: {#cb66 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -2598,7 +1617,7 @@ And its address is 0x7ffddf7072a4
 
 If you're curious, that hexadecimal number is 140,727,326,896,068 in decimal (base 10 just like Grandma used to use). That's the index into memory where the variable `i`'s data is stored. It's the address of `i`. It's the location of `i`. It's a pointer to `i`.
 
-> 如果你感到好奇，那么十六进制数字 140,727,326,896,068 在十进制(就像祖母以前使用的那样）中是多少？那就是存储变量 `i` 数据的内存索引。这是 `i` 的地址。这是 `i` 的位置。这是一个指向 `i` 的指针。
+> 如果你感到好奇，那么十六进制数字 140,727,326,896,068 在十进制(就像祖母以前使用的那样)中是多少？那就是存储变量 `i` 数据的内存索引。这是 `i` 的地址。这是 `i` 的位置。这是一个指向 `i` 的指针。
 
 It's a pointer because it lets you know where `i` is in memory. Like a home address written on a scrap of paper tells you where you can find a particular house, this number indicates to us where in memory we can find the value of `i`. It points to `i`.
 
@@ -2622,11 +1641,11 @@ Excellent question, and we'll get to that right after these messages from our sp
 
 Welcome back to another installment of Beej's Guide. When we met last we were talking about how to make use of pointers. Well, what we're going to do is store a pointer off in a variable so that we can use it later. You can identify the _pointer type_ because there's an asterisk (`*`) before the variable name and after its type:
 
-> 欢迎回到 Beej 的指南的另一个分节。当我们上次见面时，我们正在讨论如何利用指针。好吧，我们要做的是将指针存储在变量中，以便以后使用它。您可以识别_指针类型_，因为变量名称前面和类型后面都有一个星号(`*`）：
+> 欢迎回到 Beej 的指南的另一个分节。当我们上次见面时，我们正在讨论如何利用指针。好吧，我们要做的是将指针存储在变量中，以便以后使用它。您可以识别_指针类型_，因为变量名称前面和类型后面都有一个星号(`*`)：
 
 ::: {#cb68 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int main(void)
 {
     int i;  // i's type is "int"
@@ -2638,7 +1657,7 @@ int main(void)
 
 Hey, so we have here a variable that is a pointer type, and it can point to other `int` s. That is, it can hold the address of other `int` s. We know it points to `int` s, since it's of type `int*` (read "int-pointer").
 
-> 嘿，我们有一个指针类型的变量，它可以指向其他的 int。也就是说，它可以保存其他 int 的地址。我们知道它指向 int，因为它的类型是 int*(读作“int-pointer”）。
+> 嘿，我们有一个指针类型的变量，它可以指向其他的 int。也就是说，它可以保存其他 int 的地址。我们知道它指向 int，因为它的类型是 int*(读作“int-pointer”)。
 
 When you do an assignment into a pointer variable, the type of the right hand side of the assignment has to be the same type as the pointer variable. Fortunately for us, when you take the `address-of` a variable, the resultant type is a pointer to that variable type, so assignments like the following are perfect:
 
@@ -2657,7 +1676,7 @@ p = &i;  // p is assigned the address of i--p now "points to" i
 
 On the left of the assignment, we have a variable of type pointer-to-`int` (`int*`), and on the right side, we have expression of type pointer-to-`int` since `i` is an `int` (because address-of `int` gives you a pointer to `int`). The address of a thing can be stored in a pointer to that thing.
 
-> 在赋值的左边，我们有一个指向 `int` 类型的变量(`int*`），在右边，我们有一个指向 `int` 类型的表达式，因为 `i` 是一个 `int`(因为 `int` 的地址给你一个指向 `int` 的指针）。一个东西的地址可以存储在指向该东西的指针中。
+> 在赋值的左边，我们有一个指向 `int` 类型的变量(`int*`)，在右边，我们有一个指向 `int` 类型的表达式，因为 `i` 是一个 `int`(因为 `int` 的地址给你一个指向 `int` 的指针)。一个东西的地址可以存储在指向该东西的指针中。
 
 Get it? I know it still doesn't quite make much sense since you haven't seen an actual use for the pointer variable, but we're taking small steps here so that no one gets lost. So now, let's introduce you to the anti-address-of operator. It's kind of like what `address-of` would be like in Bizarro World.
 
@@ -2671,7 +1690,7 @@ A pointer variable can be thought of as _referring_ to another variable by point
 
 When you have a pointer to a variable (roughly "a reference to a variable"), you can use the original variable through the pointer by _dereferencing_ the pointer. (You can think of this as "de-pointering" the pointer, but no one ever says "de-pointering".)
 
-> 当你有一个指向变量的指针(大致上是“对变量的引用”）时，你可以通过解引用指针来使用原始变量。(你可以把这想象成“取消指针”，但没有人会说“取消指针”。）
+> 当你有一个指向变量的指针(大致上是“对变量的引用”)时，你可以通过解引用指针来使用原始变量。(你可以把这想象成“取消指针”，但没有人会说“取消指针”。)
 
 Back to our analogy, this is vaguely like looking at a home address and then going to that house.
 
@@ -2681,15 +1700,15 @@ Now, what do I mean by "get access to the original variable"? Well, if you have 
 
 > 现在，我所说的“获取对原变量的访问”是什么意思？好吧，如果你有一个叫做 `i` 的变量，并且你有一个指向 `i` 的指针叫做 `p`，你可以像使用原始变量 `i` 一样使用解引用的指针 `p`！
 
-You almost have enough knowledge to handle an example. The last tidbit you need to know is actually this: what is the dereference operator? It's actually called the _indirection operator_, because you're accessing values indirectly via the pointer. And it is the asterisk, again: `*`. Now, don't get this confused with the asterisk you used in the pointer declaration, earlier. They are the same character, but they have different meanings in different contexts[^48^](#fn48){#fnref48 .footnote-ref role="doc-noteref"}.
+You almost have enough knowledge to handle an example. The last tidbit you need to know is actually this: what is the dereference operator? It's actually called the _indirection operator_, because you're accessing values indirectly via the pointer. And it is the asterisk, again: `*`. Now, don't get this confused with the asterisk you used in the pointer declaration, earlier. They are the same character, but they have different meanings in different contexts[^48^].
 
-> 你几乎已经拥有足够的知识来处理一个例子。你最后需要知道的小细节实际上是：什么是取消引用运算符？它实际上被称为_间接操作符_，因为你是通过指针间接访问值。它是星号，再次：`*`。现在，不要把这个星号与你之前在指针声明中使用的星号混淆了。它们是相同的字符，但是在不同的上下文中具有不同的含义[^48^](#fn48）{#fnref48 .footnote-ref role="doc-noteref"}。
+> 你几乎已经拥有足够的知识来处理一个例子。你最后需要知道的小细节实际上是：什么是取消引用运算符？它实际上被称为_间接操作符_，因为你是通过指针间接访问值。它是星号，再次：`*`。现在，不要把这个星号与你之前在指针声明中使用的星号混淆了。它们是相同的字符，但是在不同的上下文中具有不同的含义[^48^]。
 
 Here's a full-blown example:
 
 ::: {#cb70 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -2749,11 +1768,11 @@ In the case of a function call. one of the copies is stored in a pointer variabl
 
 Example! Let's revisit our old `increment()` function, but this time let's make it so that it actually increments the value out in the caller.
 
-> 例子！让我们重新查看我们的旧 `increment(）` 函数，但这次让它实际增加调用者中的值。
+> 例子！让我们重新查看我们的旧 `increment()` 函数，但这次让它实际增加调用者中的值。
 
 ::: {#cb71 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void increment(int *p)  // note that it accepts a pointer to an int
@@ -2779,11 +1798,11 @@ int main(void)
 
 Ok! There are a couple things to see here... not the least of which is that the `increment()` function takes an `int*` as an argument. We pass it an `int*` in the call by changing the `int` variable `i` to an `int*` using the `address-of` operator. (Remember, a pointer holds an address, so we make pointers to variables by running them through the `address-of` operator.)
 
-> 好的！这里有几件事可以看到...其中最不可忽视的是 `increment()` 函数接受一个 `int*` 作为参数。我们在调用时通过使用 `地址运算符` 将 `int` 变量 `i` 改为 `int*` 来传递它。(记住，指针保存一个地址，所以我们可以通过 `地址运算符` 将变量转换为指针）。
+> 好的！这里有几件事可以看到...其中最不可忽视的是 `increment()` 函数接受一个 `int*` 作为参数。我们在调用时通过使用 `地址运算符` 将 `int` 变量 `i` 改为 `int*` 来传递它。(记住，指针保存一个地址，所以我们可以通过 `地址运算符` 将变量转换为指针)。
 
 The `increment()` function gets a copy of the pointer. Both the original pointer `j` (in `main()`) and the copy of that pointer `p` (the parameter in `increment()`) point to the same address, namely the one holding the value `i`. (Again, by analogy, like two pieces of paper with the same home address written on them.) Dereferencing either will allow you to modify the original variable `i`! The function can modify a variable in another scope! Rock on!
 
-> `increment()` 函数获得指针的副本。原始指针 `j`(在 `main()` 中）和该指针 `p`(`increment()` 中的参数）的副本指向同一个地址，即存储值 `i` 的地址。(再次比喻，就像两张纸上写着相同家庭地址的纸。）解引用任何一个都可以修改原始变量 `i`！该函数可以修改另一个作用域中的变量！太棒了！
+> `increment()` 函数获得指针的副本。原始指针 `j`(在 `main()` 中)和该指针 `p`(`increment()` 中的参数)的副本指向同一个地址，即存储值 `i` 的地址。(再次比喻，就像两张纸上写着相同家庭地址的纸。)解引用任何一个都可以修改原始变量 `i`！该函数可以修改另一个作用域中的变量！太棒了！
 
 The above example is often more concisely written in the call just by using address-of right in the argument list:
 
@@ -2801,7 +1820,7 @@ printf("i is %d\n", i);  // prints "11"!
 
 Pointer enthusiasts will recall from early on in the guide, we used a function to read from the keyboard, `scanf()`... and, although you might not have recognized it at the time, we used the `address-of` to pass a pointer to a value to `scanf()`. We had to pass a pointer, see, because `scanf()` reads from the keyboard (typically) and stores the result in a variable. The only way it can see that variable out in the calling function's scope is if we pass a pointer to that variable:
 
-> 指针爱好者们会从本指南的早期记忆，我们使用一个函数来从键盘读取，`scanf(）`...而且，尽管你可能当时没有认识到，我们使用 `地址` 来传递一个指针给 `scanf(）`。我们必须传递一个指针，看到，因为 `scanf(）` 从键盘(通常）读取并将结果存储在变量中。它只能看到调用函数作用域中的变量，如果我们传递一个指向该变量的指针：
+> 指针爱好者们会从本指南的早期记忆，我们使用一个函数来从键盘读取，`scanf()`...而且，尽管你可能当时没有认识到，我们使用 `地址` 来传递一个指针给 `scanf()`。我们必须传递一个指针，看到，因为 `scanf()` 从键盘(通常)读取并将结果存储在变量中。它只能看到调用函数作用域中的变量，如果我们传递一个指向该变量的指针：
 
 ::: {#cb73 .sourceCode}
 
@@ -2816,7 +1835,7 @@ printf("i is %d\n", i);  // prints "i is 12"
 
 See, `scanf()` dereferences the pointer we pass it in order to modify the variable it points to. And now you know why you have to put that pesky ampersand in there!
 
-> 看，`scanf(）` 解引用我们传递给它的指针，以便修改它指向的变量。现在你知道为什么你必须在那里放置那个讨厌的操作符号了！
+> 看，`scanf()` 解引用我们传递给它的指针，以便修改它指向的变量。现在你知道为什么你必须在那里放置那个讨厌的操作符号了！
 
 ## [5.5] The `NULL` Pointer {#the-null-pointer number="5.5"}
 
@@ -2848,7 +1867,7 @@ int *p = NULL;
 
 :::
 
-Despite being called [the billion dollar mistake by its creator](https://en.wikipedia.org/wiki/Null_pointer#History)[^49^](#fn49){#fnref49 .footnote-ref role="doc-noteref"}, the `NULL` pointer is a good [sentinel value](https://en.wikipedia.org/wiki/Sentinel_value)[^50^](#fn50){#fnref50 .footnote-ref role="doc-noteref"} and general indicator that a pointer hasn't yet been initialized.
+Despite being called [the billion dollar mistake by its creator](https://en.wikipedia.org/wiki/Null_pointer#History)[^49^], the `NULL` pointer is a good [sentinel value](https://en.wikipedia.org/wiki/Sentinel_value)[^50^] and general indicator that a pointer hasn't yet been initialized.
 
 > 尽管它的创造者称之为“十亿美元的错误”，但 NULL 指针是一个很好的哨兵值和指示指针尚未初始化的一般指标。
 
@@ -2924,7 +1943,7 @@ int *p, q;  // p is a pointer to an int; q is just an int.
 
 This can be particularly insidious-looking if the programmer writes this following (valid) line of code which is functionally identical to the one above.
 
-> 这可能特别隐蔽，如果程序员编写了下面这行(有效的）代码，它在功能上与上面的代码完全相同。
+> 这可能特别隐蔽，如果程序员编写了下面这行(有效的)代码，它在功能上与上面的代码完全相同。
 
 ::: {#cb81 .sourceCode}
 
@@ -2946,9 +1965,9 @@ int *a, b, c, *d, e, *f, g, h, *i;
 
 :::
 
-I'll drop the answer in a footnote[^51^](#fn51){#fnref51 .footnote-ref role="doc-noteref"}.
+I'll drop the answer in a footnote[^51^].
 
-> 我会在脚注 [^51^](#fn51){#fnref51 .footnote-ref role="doc-noteref"}中放置答案。
+> 我会在脚注 [^51^]中放置答案。
 
 ## [5.7] `sizeof` and Pointers {#sizeof-and-pointers number="5.7"}
 
@@ -2985,9 +2004,9 @@ You might see code in the wild with that last `sizeof` in there. Just remember t
 >
 > ---Stan Kelly-Bootle, computer scientist
 
-Luckily, C has arrays. I mean, I know it's considered a low-level language[^52^](#fn52){#fnref52 .footnote-ref role="doc-noteref"} but it does at least have the concept of arrays built-in. And since a great many languages drew inspiration from C's syntax, you're probably already familiar with using `[` and `]` for declaring and using arrays.
+Luckily, C has arrays. I mean, I know it's considered a low-level language[^52^] but it does at least have the concept of arrays built-in. And since a great many languages drew inspiration from C's syntax, you're probably already familiar with using `[` and `]` for declaring and using arrays.
 
-> 幸运的是，C 有数组。我的意思是，我知道它被认为是一种低级语言[^52^](#fn52）{#fnref52 .footnote-ref role="doc-noteref"}，但它至少具有数组的概念。由于许多语言都从 C 的语法中获得灵感，您可能已经熟悉使用 `[` 和 `]` 来声明和使用数组了。
+> 幸运的是，C 有数组。我的意思是，我知道它被认为是一种低级语言[^52^]，但它至少具有数组的概念。由于许多语言都从 C 的语法中获得灵感，您可能已经熟悉使用 `[` 和 `]` 来声明和使用数组了。
 
 But C only _barely_ has arrays! As we'll find out later, arrays are just syntactic sugar in C---they're actually all pointers and stuff deep down. _Freak out!_ But for now, let's just use them as arrays. _Phew_.
 
@@ -2999,7 +2018,7 @@ Let's just crank out an example:
 
 ::: {#cb84 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3022,7 +2041,7 @@ int main(void)
 
 :::
 
-When you declare an array, you have to give it a size. And the size has to be fixed[^53^](#fn53){#fnref53 .footnote-ref role="doc-noteref"}.
+When you declare an array, you have to give it a size. And the size has to be fixed[^53^].
 
 > 当你声明一个数组时，你必须给它一个固定的大小。
 
@@ -3038,13 +2057,13 @@ Hopefully this looks familiar from languages you already know!
 
 ## [6.2] Getting the Length of an Array {#getting-the-length-of-an-array number="6.2"}
 
-You can't...ish. C doesn't record this information[^54^](#fn54){#fnref54 .footnote-ref role="doc-noteref"}. You have to manage it separately in another variable.
+You can't...ish. C doesn't record this information[^54^]. You have to manage it separately in another variable.
 
-> 你不能...。C 语言不会记录这些信息 [^54^](#fn54){#fnref54 .footnote-ref role="doc-noteref"}。你必须在另一个变量中单独管理它。
+> 你不能...。C 语言不会记录这些信息 [^54^]。你必须在另一个变量中单独管理它。
 
-When I say "can't", I actually mean there are some circumstances when you _can_. There is a trick to get the number of elements in an array in the scope in which an array is declared. But, generally speaking, this won't work the way you want if you pass the array to a function[^55^](#fn55){#fnref55 .footnote-ref role="doc-noteref"}.
+When I say "can't", I actually mean there are some circumstances when you _can_. There is a trick to get the number of elements in an array in the scope in which an array is declared. But, generally speaking, this won't work the way you want if you pass the array to a function[^55^].
 
-> 当我说“不能”时，我实际上是指有些情况下你可以做到。在声明数组的范围内有一种技巧可以获取数组中的元素数量。但是，一般来说，如果你将数组传递给函数，这种方法不会按照你的期望工作 [^55^](#fn55){#fnref55 .footnote-ref role="doc-noteref"}。
+> 当我说“不能”时，我实际上是指有些情况下你可以做到。在声明数组的范围内有一种技巧可以获取数组中的元素数量。但是，一般来说，如果你将数组传递给函数，这种方法不会按照你的期望工作 [^55^]。
 
 Let's take a look at this trick. The basic idea is that you take the `sizeof` the array, and then divide that by the size of each element to get the length. For example, if an `int` is 4 bytes, and the array is 32 bytes long, there must be room for [\\(\\frac{32}{4}\\)]{.math .inline} or [\\(8\\)]{.math .inline} `int` s in there.
 
@@ -3087,7 +2106,7 @@ void foo(int x[12])
 
 This is because when you "pass" arrays to functions, you're only passing a pointer to the first element, and that's what `sizeof` measures. More on this in the [Passing Single Dimensional Arrays to Functions](#passing1darrays) section, below.
 
-> 因为当你把数组传递给函数时，你只传递了一个指向第一个元素的指针，而 `sizeof` 就是测量这个指针。更多内容请参考下面的[将单维数组传递给函数](#passing1darrays）部分。
+> 因为当你把数组传递给函数时，你只传递了一个指向第一个元素的指针，而 `sizeof` 就是测量这个指针。更多内容请参考下面的[将单维数组传递给函数](#passing1darrays)部分。
 
 One more thing you can do with `sizeof` and arrays is get the size of an array of a fixed number of elements without declaring the array. This is like how you can get the size of an `int` with `sizeof(int)`.
 
@@ -3111,7 +2130,7 @@ You can initialize an array with constants ahead of time:
 
 ::: {#cb88 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3149,7 +2168,7 @@ foo.c:6:39: note: (near initialization for ‘a’)
 
 But (fun fact!) you can have _fewer_ items in your initializer than there is room for in the array. The remaining elements in the array will be automatically initialized with zero. This is true in general for all types of array initializers: if you have an initializer, anything not explicitly set to a value will be set to zero.
 
-> 但是(有趣的事实！）您可以在初始化器中拥有比数组中有更少的项目。数组中剩余的元素将自动初始化为零。对于所有类型的数组初始化器来说，这都是正确的：如果您有一个初始化器，任何未显式设置为值的内容都将被设置为零。
+> 但是(有趣的事实！)您可以在初始化器中拥有比数组中有更少的项目。数组中剩余的元素将自动初始化为零。对于所有类型的数组初始化器来说，这都是正确的：如果您有一个初始化器，任何未显式设置为值的内容都将被设置为零。
 
 ::: {#cb90 .sourceCode}
 
@@ -3259,7 +2278,7 @@ Let's steal the example from above and keep printing off the end of the array. I
 
 ::: {#cb97 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3298,11 +2317,11 @@ Yikes! What's that? Well, turns out printing off the end of an array results in 
 
 > 哎呀！那是什么？原来，打印数组末尾的结果会导致 C 开发人员所说的_未定义行为_。我们稍后会讨论更多关于这个怪物的事情，但是现在它的意思是：“你做了一些不好的事情，在程序运行期间任何事情都可能发生。”
 
-And by anything, I mean typically things like finding zeroes, finding garbage numbers, or crashing. But really the C spec says in this circumstance the compiler is allowed to emit code that does _anything_[^56^](#fn56){#fnref56 .footnote-ref role="doc-noteref"}.
+And by anything, I mean typically things like finding zeroes, finding garbage numbers, or crashing. But really the C spec says in this circumstance the compiler is allowed to emit code that does _anything_[^56^].
 
-> 而所谓的任何东西，通常指的是像寻找零点、寻找垃圾数字或崩溃等事情。但实际上，C 规范说，在这种情况下，编译器可以释放任何代码[^56^](#fn56）{#fnref56 .footnote-ref role="doc-noteref"}。
+> 而所谓的任何东西，通常指的是像寻找零点、寻找垃圾数字或崩溃等事情。但实际上，C 规范说，在这种情况下，编译器可以释放任何代码[^56^]。
 
-Short version: don't do anything that causes undefined behavior. Ever[^57^](#fn57){#fnref57 .footnote-ref role="doc-noteref"}.
+Short version: don't do anything that causes undefined behavior. Ever[^57^].
 
 > 不要做任何会导致未定义行为的事情。永远不要。
 
@@ -3320,15 +2339,15 @@ int c[4][5][6];
 
 :::
 
-These are stored in memory in [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order)[^58^](#fn58){#fnref58 .footnote-ref role="doc-noteref"}. This means with a 2D array, the first index listed indicates the row, and the second the column.
+These are stored in memory in [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order)[^58^]. This means with a 2D array, the first index listed indicates the row, and the second the column.
 
-> 这些存储在内存中是按[行优先顺序](https://en.wikipedia.org/wiki/Row-_and_column-major_order)[^58^](#fn58){#fnref58 .footnote-ref role="doc-noteref"}排列的。这意味着对于二维数组，第一个索引表示行，第二个索引表示列。
+> 这些存储在内存中是按[行优先顺序](https://en.wikipedia.org/wiki/Row-_and_column-major_order)[^58^]排列的。这意味着对于二维数组，第一个索引表示行，第二个索引表示列。
 
 You can also use initializers on multidimensional arrays by nesting them:
 
 ::: {#cb100 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3401,7 +2420,7 @@ which builds a 2D array like this:
 
 ### [6.6.1] Getting a Pointer to an Array {#getting-a-pointer-to-an-array number="6.6.1"}
 
-I want to tell you a secret. Generally speaking, when a C programmer talks about a pointer to an array, they're talking about a pointer _to the first element_ of the array[^59^](#fn59){#fnref59 .footnote-ref role="doc-noteref"}.
+I want to tell you a secret. Generally speaking, when a C programmer talks about a pointer to an array, they're talking about a pointer _to the first element_ of the array[^59^].
 
 > 我想告诉你一个秘密。一般来说，当 C 程序员谈论指向数组的指针时，他们指的是指向数组第一个元素的指针。
 
@@ -3409,7 +2428,7 @@ So let's get a pointer to the first element of an array.
 
 ::: {#cb104 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3430,7 +2449,7 @@ This is so common to do in C that the language allows us a shorthand:
 
 ::: {#cb105 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 p = &a[0];  // p points to the array
 
 // is the same as:
@@ -3458,7 +2477,7 @@ Prepare for some mind-blowing function signatures!
 
 ::: {#cb106 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 // Passing as a pointer to the first element
@@ -3510,9 +2529,9 @@ void times4(int a[5], int len)
 
 In usage by C regulars, the first is the most common, by far.
 
-And, in fact, in the latter situation, the compiler doesn't even care what number you pass in (other than it has to be greater than zero[^60^](#fn60){#fnref60 .footnote-ref role="doc-noteref"}). It doesn't enforce anything at all.
+And, in fact, in the latter situation, the compiler doesn't even care what number you pass in (other than it has to be greater than zero[^60^]). It doesn't enforce anything at all.
 
-> 在后一种情况下，编译器甚至不关心你传入了什么数字(只要它大于零 [^60^](#fn60){#fnref60 .footnote-ref role="doc-noteref"}），它根本不会强制执行任何东西。
+> 在后一种情况下，编译器甚至不关心你传入了什么数字(只要它大于零 [^60^])，它根本不会强制执行任何东西。
 
 Now that I've said that, the size of the array in the function declaration actually _does_ matter when you're passing multidimensional arrays into functions, but let's come back to that.
 
@@ -3534,7 +2553,7 @@ Here's an example where we pass a pointer to an array to a function, the functio
 
 ::: {#cb108 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void double_array(int *a, int len)
@@ -3573,13 +2592,13 @@ Later when we talk about the equivalence between arrays and pointers, we'll see 
 
 The story changes a little when we're talking about multidimensional arrays. C needs to know all the dimensions (except the first one) so it has enough information to know where in memory to look to find a value.
 
-> 故事在谈论多维数组时有些变化。C 需要知道所有的维度(除了第一个），这样它就有足够的信息来知道在内存中去寻找一个值的位置。
+> 故事在谈论多维数组时有些变化。C 需要知道所有的维度(除了第一个)，这样它就有足够的信息来知道在内存中去寻找一个值的位置。
 
 Here's an example where we're explicit with all the dimensions:
 
 ::: {#cb109 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void print_2D_array(int a[2][3])
@@ -3604,7 +2623,7 @@ int main(void)
 
 :::
 
-But in this case, these two[^61^](#fn61){#fnref61 .footnote-ref role="doc-noteref"} are equivalent:
+But in this case, these two[^61^] are equivalent:
 
 > 在这种情况下，这两个是等价的：
 
@@ -3623,7 +2642,7 @@ The compiler really only needs the second dimension so it can figure out how far
 
 Also, remember that the compiler does minimal compile-time bounds checking (if you're lucky), and C does zero runtime checking of bounds. No seat belts! Don't crash by accessing array elements out of bounds!
 
-> 也记住，编译器只做最少的编译时边界检查(如果你幸运的话），而 C 语言不会在运行时对边界进行检查。没有安全带！不要通过访问越界的数组元素而崩溃！
+> 也记住，编译器只做最少的编译时边界检查(如果你幸运的话)，而 C 语言不会在运行时对边界进行检查。没有安全带！不要通过访问越界的数组元素而崩溃！
 
 # [7] Strings {#strings number="7"}
 
@@ -3641,7 +2660,7 @@ But let's check it out---it's not really such a big deal.
 
 Before we start, let's talk about string literals in C. These are sequences of characters in _double_ quotes (`"`). (Single quotes enclose characters, and are a different animal entirely.)
 
-> 在我们开始之前，让我们谈谈 C 语言中的字符串文字。这些是用双引号(`"`）括起来的字符序列。(单引号括起来的是字符，它们是完全不同的东西。）
+> 在我们开始之前，让我们谈谈 C 语言中的字符串文字。这些是用双引号(`"`)括起来的字符序列。(单引号括起来的是字符，它们是完全不同的东西。)
 
 Examples:
 
@@ -3659,7 +2678,7 @@ The first one has a newline at the end---quite a common thing to see.
 
 The last one has quotes embedded within it, but you see each is preceded by (we say "escaped by") a backslash (`\`) indicating that a literal quote belongs in the string at this point. This is how the C compiler can tell the difference between printing a double quote and the double quote at the end of the string.
 
-> 最后一个有嵌入引号，但你会看到每个都被反斜杠(\）所前置(我们称之为“转义”），表明在这一点上字符串中应该有一个字面上的引号。这就是 C 编译器如何区分打印双引号和字符串结尾的双引号的区别。
+> 最后一个有嵌入引号，但你会看到每个都被反斜杠(\)所前置(我们称之为“转义”)，表明在这一点上字符串中应该有一个字面上的引号。这就是 C 编译器如何区分打印双引号和字符串结尾的双引号的区别。
 
 ## [7.2] String Variables {#string-variables number="7.2"}
 
@@ -3714,7 +2733,7 @@ This means you can use array notation to access characters in a string. Let's do
 
 ::: {#cb115 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3738,7 +2757,7 @@ Also, check this out. The program will still work fine if we change the definiti
 
 ::: {#cb116 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3775,7 +2794,7 @@ But these two are subtly different.
 
 This one is a pointer to a string literal (i.e. a pointer to the first character in a string):
 
-> 这是一个指向字符串文字(即指向字符串中第一个字符的指针）：
+> 这是一个指向字符串文字(即指向字符串中第一个字符的指针)：
 
 ::: {#cb118 .sourceCode}
 
@@ -3822,13 +2841,13 @@ So remember: if you have a pointer to a string literal, don't try to change it! 
 
 ## [7.5] Getting String Length {#getting-string-length number="7.5"}
 
-You can't, since C doesn't track it for you. And when I say "can't", I actually mean "can"[^62^](#fn62){#fnref62 .footnote-ref role="doc-noteref"}. There's a function in `<string.h>` called `strlen()` that can be used to compute the length of any string in bytes[^63^](#fn63){#fnref63 .footnote-ref role="doc-noteref"}.
+You can't, since C doesn't track it for you. And when I say "can't", I actually mean "can"[^62^]. There's a function in `<string.h>` called `strlen()` that can be used to compute the length of any string in bytes[^63^].
 
-> 你不能，因为 C 不会为你跟踪它。当我说“不能”时，我实际上是说“可以”[^62^] (#fn62) {#fnref62 .footnote-ref role="doc-noteref"}。在 <string.h> 中有一个名为 strlen(）的函数，可以用来计算任何字符串的字节数[^63^] (#fn63) {#fnref63 .footnote-ref role="doc-noteref"}。
+> 你不能，因为 C 不会为你跟踪它。当我说“不能”时，我实际上是说“可以”[^62^] (#fn62) {#fnref62 .footnote-ref role="doc-noteref"}。在 <string.h> 中有一个名为 strlen()的函数，可以用来计算任何字符串的字节数[^63^] (#fn63) {#fnref63 .footnote-ref role="doc-noteref"}。
 
 ::: {#cb121 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <string.h>
 
@@ -3886,16 +2905,16 @@ If you want strings longer than 255 characters, option 1 requires at least two b
 
 Of course, these days it seems ridiculous to worry about saving a byte (or 3---lots of languages will happily let you have strings that are 4 gigabytes in length). But back in the day, it was a bigger deal.
 
-> 当然，现在担心节省一个字节(或 3 个字节——很多语言都可以让你使用 4GB 长度的字符串）似乎很可笑。但在过去，这是一个更大的问题。
+> 当然，现在担心节省一个字节(或 3 个字节——很多语言都可以让你使用 4GB 长度的字符串)似乎很可笑。但在过去，这是一个更大的问题。
 
 So C took approach #2. In C, a "string" is defined by two basic characteristics:
 
 > 所以 C 采取了第二种方法。在 C 中，一个“字符串”由两个基本特征定义：
 
 - A pointer to the first character in the string.
-- A zero-valued byte (or `NUL` character[^64^](#fn64){#fnref64 .footnote-ref role="doc-noteref"}) somewhere in memory after the pointer that indicates the end of the string.
+- A zero-valued byte (or `NUL` character[^64^]) somewhere in memory after the pointer that indicates the end of the string.
 
-> 一个值为零的字节(或称为“NUL”字符[^64^]<#fnref64>）存在于指示字符串结束的指针之后的内存中。
+> 一个值为零的字节(或称为“NUL”字符[^64^]<#fnref64>)存在于指示字符串结束的指针之后的内存中。
 
 A `NUL` character can be written in C code as `\0`, though you don't often have to do this.
 
@@ -3917,7 +2936,7 @@ So with this in mind, let's write our own `strlen()` function that counts `char`
 
 > 鉴于此，让我们编写自己的 `strlen()` 函数，计算字符串中直到找到 `NUL` 为止的 `char` 数量。
 
-The procedure is to look down the string for a single `NUL` character, counting as we go[^65^](#fn65){#fnref65 .footnote-ref role="doc-noteref"}:
+The procedure is to look down the string for a single `NUL` character, counting as we go[^65^]:
 
 > 过程是从字符串中查找单个 `NUL` 字符，并计数：
 
@@ -3943,11 +2962,11 @@ And that's basically how the built-in `strlen()` gets the job done.
 
 You can't copy a string through the assignment operator (`=`). All that does is make a copy of the pointer to the first character... so you end up with two pointers to the same string:
 
-> 你不能通过赋值运算符(“=”）复制一个字符串。这只会复制指向第一个字符的指针... 所以你最终得到两个指向同一个字符串的指针：
+> 你不能通过赋值运算符(“=”)复制一个字符串。这只会复制指向第一个字符的指针... 所以你最终得到两个指向同一个字符串的指针：
 
 ::: {#cb125 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -3970,9 +2989,9 @@ int main(void)
 
 :::
 
-If you want to make a copy of a string, you have to copy it a byte at a time---but this is made easier with the `strcpy()` function[^66^](#fn66){#fnref66 .footnote-ref role="doc-noteref"}.
+If you want to make a copy of a string, you have to copy it a byte at a time---but this is made easier with the `strcpy()` function[^66^].
 
-> 如果你想复制一个字符串，你必须一次复制一个字节---但是使用 `strcpy()` 函数可以让这个过程变得更容易 [^66^](#fn66){#fnref66 .footnote-ref role="doc-noteref"}。
+> 如果你想复制一个字符串，你必须一次复制一个字节---但是使用 `strcpy()` 函数可以让这个过程变得更容易 [^66^]。
 
 Before you copy the string, make sure you have room to copy it into, i.e. the destination array that's going to hold the characters needs to be at least as long as the string you're copying.
 
@@ -3980,7 +2999,7 @@ Before you copy the string, make sure you have room to copy it into, i.e. the d
 
 ::: {#cb126 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <string.h>
 
@@ -4017,11 +3036,11 @@ In C, we have something called a `struct`, which is a user-definable type that h
 
 It's a convenient way to bundle multiple variables into a single one. This can be beneficial for passing variables to functions (so you just have to pass one instead of many), and useful for organizing data and making code more readable.
 
-> 这是一种将多个变量捆绑到一个变量的方便方法。这对于将变量传递给函数(只需要传递一个而不是多个）是有益的，对于组织数据和使代码更具可读性也很有用。
+> 这是一种将多个变量捆绑到一个变量的方便方法。这对于将变量传递给函数(只需要传递一个而不是多个)是有益的，对于组织数据和使代码更具可读性也很有用。
 
-If you've come from another language, you might be familiar with the idea of _classes_ and _objects_. These don't exist in C, natively[^67^](#fn67){#fnref67 .footnote-ref role="doc-noteref"}. You can think of a `struct` as a class with only data members, and no methods.
+If you've come from another language, you might be familiar with the idea of _classes_ and _objects_. These don't exist in C, natively[^67^]. You can think of a `struct` as a class with only data members, and no methods.
 
-> 如果你来自另一种语言，你可能熟悉_类_和_对象_的概念。这些在 C 语言中本身不存在[^67^](#fn67）{#fnref67 .footnote-ref role="doc-noteref"}。你可以把 `struct` 看作是一个只有数据成员，没有方法的类。
+> 如果你来自另一种语言，你可能熟悉_类_和_对象_的概念。这些在 C 语言中本身不存在[^67^]。你可以把 `struct` 看作是一个只有数据成员，没有方法的类。
 
 ## [8.1] Declaring a Struct {#declaring-a-struct number="8.1"}
 
@@ -4045,7 +3064,7 @@ This is often done at the global scope outside any functions so that the `struct
 
 When you do this, you're making a new _type_. The full type name is `struct car`. (Not just `car`---that won't work.)
 
-> 当你这样做时，你正在创建一种新的类型。完整的类型名称是 `struct car`(不只是 `car`---这样不行）。
+> 当你这样做时，你正在创建一种新的类型。完整的类型名称是 `struct car`(不只是 `car`---这样不行)。
 
 There aren't any variables of that type yet, but we can declare some:
 
@@ -4057,9 +3076,9 @@ struct car saturn;  // Variable "saturn" of type "struct car"
 
 :::
 
-And now we have an uninitialized variable `saturn`[^68^](#fn68){#fnref68 .footnote-ref role="doc-noteref"} of type `struct car`.
+And now we have an uninitialized variable `saturn`[^68^] of type `struct car`.
 
-> 现在我们有一个未初始化的变量 `saturn`(参见注释 68），类型为 `struct car`。
+> 现在我们有一个未初始化的变量 `saturn`(参见注释 68)，类型为 `struct car`。
 
 We should initialize it! But how do we set the values of those individual fields?
 
@@ -4067,7 +3086,7 @@ We should initialize it! But how do we set the values of those individual fields
 
 Like in many other languages that stole it from C, we're going to use the dot operator (`.`) to access the individual fields.
 
-> 就像在许多从 C 偷来的其他语言中一样，我们将使用点运算子(`.`）来访问个别字段。
+> 就像在许多从 C 偷来的其他语言中一样，我们将使用点运算子(`.`)来访问个别字段。
 
 ::: {#cb129 .sourceCode}
 
@@ -4095,7 +3114,7 @@ That example in the previous section was a little unwieldy. There must be a bett
 
 You can do it with an initializer by putting values in for the fields _in the order they appear in the `struct`_ when you define the variable. (This won't work after the variable has been defined---it has to happen in the definition).
 
-> 你可以通过在定义变量时为字段提供值(按照它们在结构中出现的顺序）来使用初始化程序(这在变量定义后不起作用---必须在定义时发生）。
+> 你可以通过在定义变量时为字段提供值(按照它们在结构中出现的顺序)来使用初始化程序(这在变量定义后不起作用---必须在定义时发生)。
 
 ::: {#cb130 .sourceCode}
 
@@ -4136,7 +3155,7 @@ Now it's independent of the order in the `struct` declaration. Which is safer co
 
 Similar to array initializers, any missing field designators are initialized to zero (in this case, that would be `.price`, which I've omitted).
 
-> 类似于数组初始化，任何缺失的字段指示符都会被初始化为零(在这种情况下，就是我省略的 `.price`）。
+> 类似于数组初始化，任何缺失的字段指示符都会被初始化为零(在这种情况下，就是我省略的 `.price`)。
 
 ## [8.3] Passing Structs to Functions {#passing-structs-to-functions number="8.3"}
 
@@ -4157,7 +3176,7 @@ There are basically two cases when you'd want to pass a pointer to the `struct`:
 
 > 你需要这个函数能够对传入的 `struct` 进行修改，并且在调用者中看到这些修改。
 
-2. The `struct` is somewhat large and it's more expensive to copy that onto the stack than it is to just copy a pointer[^69^](#fn69){#fnref69 .footnote-ref role="doc-noteref"}.
+2. The `struct` is somewhat large and it's more expensive to copy that onto the stack than it is to just copy a pointer[^69^].
 
 > 结构体有点大，把它复制到堆栈比只复制一个指针要贵得多。
 
@@ -4171,7 +3190,7 @@ Let's try passing in a pointer, making a function that will allow you to set the
 
 ::: {#cb132 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct car {
@@ -4287,29 +3306,29 @@ b = a;  // Copy the struct
 
 And returning a `struct` (as opposed to a pointer to one) from a function also makes a similar copy to the receiving variable.
 
-> 返回一个 `struct`(而不是指向它的指针）从一个函数也会给接收变量做一个类似的复制。
+> 返回一个 `struct`(而不是指向它的指针)从一个函数也会给接收变量做一个类似的复制。
 
-This is not a "deep copy"[^70^](#fn70){#fnref70 .footnote-ref role="doc-noteref"}. All fields are copied as-is, including pointers to things.
+This is not a "deep copy"[^70^]. All fields are copied as-is, including pointers to things.
 
-> 这不是一个“深拷贝”[^70^](#fn70）{#fnref70 .footnote-ref role="doc-noteref"}。所有字段都是原样复制，包括指向物体的指针。
+> 这不是一个“深拷贝”[^70^]。所有字段都是原样复制，包括指向物体的指针。
 
 ## [8.6] Comparing `struct` s {#comparing-structs number="8.6"}
 
 There's only one safe way to do it: compare each field one at a time.
 
-You might think you could use [`memcmp()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-strcmp)[^71^](#fn71){#fnref71 .footnote-ref role="doc-noteref"}, but that doesn't handle the case of the possible [padding bytes](#struct-padding-bytes) that might be in there.
+You might think you could use [`memcmp()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-strcmp)[^71^], but that doesn't handle the case of the possible [padding bytes](#struct-padding-bytes) that might be in there.
 
-> 你可能会认为可以使用 memcmp(），但这不能处理可能存在的填充字节的情况。
+> 你可能会认为可以使用 memcmp()，但这不能处理可能存在的填充字节的情况。
 
-If you clear the `struct` to zero first with [`memset()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-memset)[^72^](#fn72){#fnref72 .footnote-ref role="doc-noteref"}, then it _might_ work, though there could be weird elements that [might not compare as you expect](https://stackoverflow.com/questions/141720/how-do-you-compare-structs-for-equality-in-c)[^73^](#fn73){#fnref73 .footnote-ref role="doc-noteref"}.
+If you clear the `struct` to zero first with [`memset()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-memset)[^72^], then it _might_ work, though there could be weird elements that [might not compare as you expect](https://stackoverflow.com/questions/141720/how-do-you-compare-structs-for-equality-in-c)[^73^].
 
-> 如果你先用[`memset()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-memset)[^72^](#fn72){#fnref72 .footnote-ref role="doc-noteref"}把 `struct` 清零，那么它_可能_会起作用，但也可能会有一些奇怪的元素[不能按你期望的方式比较](https://stackoverflow.com/questions/141720/how-do-you-compare-structs-for-equality-in-c)[^73^](#fn73){#fnref73 .footnote-ref role="doc-noteref"}。
+> 如果你先用[`memset()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-memset)[^72^]把 `struct` 清零，那么它_可能_会起作用，但也可能会有一些奇怪的元素[不能按你期望的方式比较](https://stackoverflow.com/questions/141720/how-do-you-compare-structs-for-equality-in-c)[^73^]。
 
 # [9] File Input/Output {#file-inputoutput number="9"}
 
 We've already seen a couple examples of I/O with `scanf()` and `printf()` for doing I/O at the console (screen/keyboard).
 
-> 我们已经看到了使用 `scanf()` 和 `printf()` 在控制台(屏幕/键盘）进行 I/O 的几个例子。
+> 我们已经看到了使用 `scanf()` 和 `printf()` 在控制台(屏幕/键盘)进行 I/O 的几个例子。
 
 But we'll push those concepts a little farther this chapter.
 
@@ -4356,7 +3375,7 @@ Also you'll notice that both `stdout` and `stderr` go to the screen. While this 
 
 For example, in a POSIX shell (like sh, ksh, bash, zsh, etc.) on a Unix-like system, we could run a program and send just the non-error (`stdout`) output to one file, and all the error (`stderr`) output to another file.
 
-> 例如，在类 Unix 系统上的 POSIX shell(如 sh、ksh、bash、zsh 等）中，我们可以运行一个程序，将非错误(`stdout`）输出发送到一个文件，将所有错误(`stderr`）输出发送到另一个文件。
+> 例如，在类 Unix 系统上的 POSIX shell(如 sh、ksh、bash、zsh 等)中，我们可以运行一个程序，将非错误(`stdout`)输出发送到一个文件，将所有错误(`stderr`)输出发送到另一个文件。
 
 ::: {#cb139 .sourceCode}
 
@@ -4376,9 +3395,9 @@ More on how to do that later.
 
 Streams are largely categorized two different ways: _text_ and _binary_.
 
-Text streams are allowed to do significant translation of the data, most notably translations of newlines to their different representations[^74^](#fn74){#fnref74 .footnote-ref role="doc-noteref"}. Text files are logically a sequence of _lines_ separated by newlines. To be portable, your input data should always end with a newline.
+Text streams are allowed to do significant translation of the data, most notably translations of newlines to their different representations[^74^]. Text files are logically a sequence of _lines_ separated by newlines. To be portable, your input data should always end with a newline.
 
-> 文本流允许对数据进行重要的翻译，尤其是对换行符的不同表示的翻译 [^74^](#fn74){#fnref74 .footnote-ref role="doc-noteref"}。文本文件逻辑上是由换行符分隔的_行_序列。为了可移植性，您的输入数据应始终以换行符结尾。
+> 文本流允许对数据进行重要的翻译，尤其是对换行符的不同表示的翻译 [^74^]。文本文件逻辑上是由换行符分隔的_行_序列。为了可移植性，您的输入数据应始终以换行符结尾。
 
 But the general rule is that if you're able to edit the file in a regular text editor, it's a text file. Otherwise, it's binary. More on binary later.
 
@@ -4404,7 +3423,7 @@ And let's write a program to open the file, read a character out of it, and then
 
 ::: {#cb141 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4428,11 +3447,11 @@ See how when we opened the file with `fopen()`, it returned the `FILE*` to us so
 
 (I'm leaving it out for brevity, but `fopen()` will return `NULL` if something goes wrong, like file-not-found, so you should really error check it!)
 
-> (为了简洁起见，我把它省略了，但是如果出现文件未找到等错误，`fopen()` 将会返回 `NULL`，所以你应该做错误检查！）
+> (为了简洁起见，我把它省略了，但是如果出现文件未找到等错误，`fopen()` 将会返回 `NULL`，所以你应该做错误检查！)
 
 Also notice the `"r"` that we passed in---this means "open a text stream for reading". (There are various strings we can pass to `fopen()` with additional meaning, like writing, or appending, and so on.)
 
-> 此外，注意我们传递的 `"r"`——这意味着“打开一个文本流以进行读取”。(我们可以传递给 `fopen()` 具有其他含义的各种字符串，例如写入或追加等。）
+> 此外，注意我们传递的 `"r"`——这意味着“打开一个文本流以进行读取”。(我们可以传递给 `fopen()` 具有其他含义的各种字符串，例如写入或追加等。)
 
 After that, we used the `fgetc()` function to get a character from the stream. You might be wondering why I've made `c` an `int` instead of a `char`---hold that thought!
 
@@ -4464,7 +3483,7 @@ All right! Back to reality! We can use this to read the whole file in a loop.
 
 ::: {#cb142 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4503,9 +3522,9 @@ But still, we're operating a character at a time, and lots of text files make mo
 
 ### [9.3.1] Reading a Line at a Time {#reading-a-line-at-a-time number="9.3.1"}
 
-So how can we get an entire line at once? `fgets()` to the rescue! For arguments, it takes a pointer to a `char` buffer to hold bytes, a maximum number of bytes to read, and a `FILE*` to read from. It returns `NULL` on end-of-file or error. `fgets()` is even nice enough to NUL-terminate the string when its done[^75^](#fn75){#fnref75 .footnote-ref role="doc-noteref"}.
+So how can we get an entire line at once? `fgets()` to the rescue! For arguments, it takes a pointer to a `char` buffer to hold bytes, a maximum number of bytes to read, and a `FILE*` to read from. It returns `NULL` on end-of-file or error. `fgets()` is even nice enough to NUL-terminate the string when its done[^75^].
 
-> fgets() 可以拯救我们！它的参数是一个指向字符缓冲区的指针，用来存储字节，一个最大读取字节数，以及一个从中读取的 FILE*。当到达文件末尾或发生错误时，它会返回 NULL。fgets()甚至还会在完成时 NUL 终止字符串(NUL-terminate the string）。
+> fgets() 可以拯救我们！它的参数是一个指向字符缓冲区的指针，用来存储字节，一个最大读取字节数，以及一个从中读取的 FILE*。当到达文件末尾或发生错误时，它会返回 NULL。fgets()甚至还会在完成时 NUL 终止字符串(NUL-terminate the string)。
 
 Let's do a similar loop as before, except let's have a multiline file and read it in a line at a time.
 
@@ -4530,7 +3549,7 @@ And here's some code that reads that file a line at a time and prints out a line
 
 ::: {#cb145 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4567,7 +3586,7 @@ Which gives the output:
 
 You know how you can get formatted output with `printf()` (and, thus, `fprintf()` like we'll see, below)?
 
-> 你知道你可以使用 `printf()`(以及我们将在下面看到的 `fprintf()`）获得格式化的输出吗？
+> 你知道你可以使用 `printf()`(以及我们将在下面看到的 `fprintf()`)获得格式化的输出吗？
 
 You can do the same thing with `fscanf()`.
 
@@ -4588,7 +3607,7 @@ humpback 16.0 30
 
 Yes, we could read these with `fgets()` and then parse the string with `sscanf()` (and in some ways that's more resilient against corrupted files), but in this case, let's just use `fscanf()` and pull it in directly.
 
-> 是的，我们可以使用 `fgets()` 读取这些，然后用 `sscanf()` 解析字符串(在某些情况下，这更能抵抗损坏的文件），但是在这种情况下，让我们直接使用 `fscanf()` 把它拉进来。
+> 是的，我们可以使用 `fgets()` 读取这些，然后用 `sscanf()` 解析字符串(在某些情况下，这更能抵抗损坏的文件)，但是在这种情况下，让我们直接使用 `fscanf()` 把它拉进来。
 
 The `fscanf()` function skips leading whitespace when reading, and returns `EOF` on end-of-file or error.
 
@@ -4596,7 +3615,7 @@ The `fscanf()` function skips leading whitespace when reading, and returns `EOF`
 
 ::: {#cb148 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4646,7 +3665,7 @@ We'll put together a simple program that outputs a file `output.txt` using a var
 
 ::: {#cb150 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4715,13 +3734,13 @@ Instead the most common functions are `fread()` and `fwrite()`. The functions re
 
 > 最常用的函数是 `fread()` 和 `fwrite()`。这些函数从流中读取和写入指定数量的字节。
 
-To demo, we'll write a couple programs. One will write a sequence of byte values to disk all at once. And the second program will read a byte at a time and print them out[^76^](#fn76){#fnref76 .footnote-ref role="doc-noteref"}.
+To demo, we'll write a couple programs. One will write a sequence of byte values to disk all at once. And the second program will read a byte at a time and print them out[^76^].
 
 > 为了演示，我们将编写几个程序。一个将一次性将一系列字节值写入磁盘，另一个程序将一次读取一个字节，并将其打印出来。
 
 ::: {#cb153 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4748,7 +3767,7 @@ int main(void)
 
 Those two middle arguments to `fwrite()` are pretty odd. But basically what we want to tell the function is, "We have items that are _this_ big, and we want to write _that_ many of them." This makes it convenient if you have a record of a fixed length, and you have a bunch of them in an array. You can just tell it the size of one record and how many to write.
 
-> 这两个中间参数对 `fwrite(）` 来说真的有点奇怪。但基本上我们想告诉这个函数的是，“我们有_this_大小的项目，我们想写_that_多个。”如果你有一个固定长度的记录，并且你有一堆它们在数组中，这将很方便。你只需要告诉它一个记录的大小和要写多少个。
+> 这两个中间参数对 `fwrite()` 来说真的有点奇怪。但基本上我们想告诉这个函数的是，“我们有_this_大小的项目，我们想写_that_多个。”如果你有一个固定长度的记录，并且你有一堆它们在数组中，这将很方便。你只需要告诉它一个记录的大小和要写多少个。
 
 In the example above, we tell it each record is the size of a `char`, and we have 6 of them.
 
@@ -4758,7 +3777,7 @@ Running the program gives us a file `output.bin`, but opening it in a text edito
 
 > 运行程序会给我们一个文件 `output.bin`，但是在文本编辑器中打开它却没有任何友好的内容！这是二进制数据——而不是文本。而且是我刚刚编造出来的随机二进制数据！
 
-If I run it through a [hex dump](https://en.wikipedia.org/wiki/Hex_dump)[^77^](#fn77){#fnref77 .footnote-ref role="doc-noteref"} program, we can see the output as bytes:
+If I run it through a [hex dump](https://en.wikipedia.org/wiki/Hex_dump)[^77^] program, we can see the output as bytes:
 
 > 如果我将它通过十六进制转储程序运行，我们可以将输出作为字节查看：
 
@@ -4776,13 +3795,13 @@ And those values in hex do match up to the values (in decimal) that we wrote out
 
 But now let's try to read them back in with a different program. This one will open the file for binary reading (`"rb"` mode) and will read the bytes one at a time in a loop.
 
-> 现在让我们用另一个程序读取它们。这个程序将以二进制模式打开文件(“rb”模式），并以循环的方式一次读取一个字节。
+> 现在让我们用另一个程序读取它们。这个程序将以二进制模式打开文件(“rb”模式)，并以循环的方式一次读取一个字节。
 
 `fread()` has the neat feature where it returns the number of bytes read, or `0` on EOF. So we can loop until we see that, printing numbers as we go.
 
 ::: {#cb155 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -4838,7 +3857,7 @@ Turns out all architectures don't represent numbers in memory the same way.
 
 Let's look at a simple `fwrite()` of a 2-byte number. We'll write it in hex so each byte is clear. The most significant byte will have the value `0x12` and the least significant will have the value `0x34`.
 
-> 让我们来看一个简单的 2 字节数字的 fwrite(）。我们将以十六进制的形式写入，以便每个字节都清晰可见。最高有效字节的值为 0x12，最低有效字节的值为 0x34。
+> 让我们来看一个简单的 2 字节数字的 fwrite()。我们将以十六进制的形式写入，以便每个字节都清晰可见。最高有效字节的值为 0x12，最低有效字节的值为 0x34。
 
 ::: {#cb157 .sourceCode}
 
@@ -4866,13 +3885,13 @@ But if I run this on my machine and hex dump the result, I get:
 
 They're reversed! What gives?
 
-This has something to do with what's called the [_endianess_](https://en.wikipedia.org/wiki/Endianess)[^78^](#fn78){#fnref78 .footnote-ref role="doc-noteref"} of the architecture. Some write the most significant bytes first, and some the least significant bytes first.
+This has something to do with what's called the [_endianess_](https://en.wikipedia.org/wiki/Endianess)[^78^] of the architecture. Some write the most significant bytes first, and some the least significant bytes first.
 
-> 这与所谓的[_endianess_](https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E5%BA%8F)[^78^](#fn78){#fnref78 .footnote-ref role="doc-noteref"}有关。有些会先写最重要的字节，有些会先写最不重要的字节。
+> 这与所谓的[_endianess_](https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E5%BA%8F)[^78^]有关。有些会先写最重要的字节，有些会先写最不重要的字节。
 
-This means that if you write a multibyte number out straight from memory, you can't do it in a portable way[^79^](#fn79){#fnref79 .footnote-ref role="doc-noteref"}.
+This means that if you write a multibyte number out straight from memory, you can't do it in a portable way[^79^].
 
-> 这意味着，如果你直接从内存中写出多字节数字，你就无法以一种可移植的方式来做到这一点[^79^](#fn79）{#fnref79 .footnote-ref role="doc-noteref"}。
+> 这意味着，如果你直接从内存中写出多字节数字，你就无法以一种可移植的方式来做到这一点[^79^]。
 
 A similar problem exists with floating point. Most systems use the same format for their floating point numbers, but some do not. No guarantees!
 
@@ -4886,9 +3905,9 @@ The summary is to _serialize_ the data, which is a general term that means to ta
 
 > 概括而言，就是要对数据进行序列化，这是一个普遍的术语，意思是把所有的数据都写出来，以您控制的、众所周知的、可编程的格式，在所有平台上都能够以同样的方式工作。
 
-As you might imagine, this is a solved problem. There are a bunch of serialization libraries you can take advantage of, such as Google's [_protocol buffers_](https://en.wikipedia.org/wiki/Protocol_buffers)[^80^](#fn80){#fnref80 .footnote-ref role="doc-noteref"}, out there and ready to use. They will take care of all the gritty details for you, and even will allow data from your C programs to interoperate with other languages that support the same serialization methods.
+As you might imagine, this is a solved problem. There are a bunch of serialization libraries you can take advantage of, such as Google's [_protocol buffers_](https://en.wikipedia.org/wiki/Protocol_buffers)[^80^], out there and ready to use. They will take care of all the gritty details for you, and even will allow data from your C programs to interoperate with other languages that support the same serialization methods.
 
-> 可以想象，这是一个已经解决的问题。有很多序列化库可以供您使用，比如谷歌的[协议缓冲器](https://en.wikipedia.org/wiki/Protocol_buffers)[^80^](#fn80){#fnref80 .footnote-ref role="doc-noteref"}，它们可以帮助您处理所有细节，甚至可以让您的 C 程序与支持相同序列化方法的其他语言互操作。
+> 可以想象，这是一个已经解决的问题。有很多序列化库可以供您使用，比如谷歌的[协议缓冲器](https://en.wikipedia.org/wiki/Protocol_buffers)[^80^]，它们可以帮助您处理所有细节，甚至可以让您的 C 程序与支持相同序列化方法的其他语言互操作。
 
 Do yourself and everyone a favor! Serialize your binary data when you write it to a stream! This will keep things nice and portable, even if you transfer data files from one architecture to another.
 
@@ -4944,7 +3963,7 @@ OK, Professor Sarcasm---we'll get to some more common applications of this in a 
 
 For this reason, it's quite common to find `typedef` at file scope ("global") so that all functions can use the new types at will.
 
-> 因此，在文件范围(“全局”）中发现 `typedef` 是很常见的，这样所有函数都可以随意使用新类型。
+> 因此，在文件范围(“全局”)中发现 `typedef` 是很常见的，这样所有函数都可以随意使用新类型。
 
 ## [10.2] `typedef` in Practice {#typedef-in-practice number="10.2"}
 
@@ -5006,9 +4025,9 @@ animal z;         // This also works because "animal" is an alias
 
 That's exactly the same as the previous example, just more concise.
 
-But that's not all! There's another common shortcut that you might see in code using what are called _anonymous structures_[^81^](#fn81){#fnref81 .footnote-ref role="doc-noteref"}. It turns out you don't actually need to name the structure in a variety of places, and with `typedef` is one of them.
+But that's not all! There's another common shortcut that you might see in code using what are called _anonymous structures_[^81^]. It turns out you don't actually need to name the structure in a variety of places, and with `typedef` is one of them.
 
-> 但这还不是全部！还有另一个常见的快捷方式，你可能会在使用所谓的_匿名结构_[^81^](#fn81）{#fnref81 .footnote-ref role="doc-noteref"}中看到代码。事实证明，您实际上不需要在各种地方命名结构，而 `typedef` 就是其中之一。
+> 但这还不是全部！还有另一个常见的快捷方式，你可能会在使用所谓的_匿名结构_[^81^]中看到代码。事实证明，您实际上不需要在各种地方命名结构，而 `typedef` 就是其中之一。
 
 Let's do the same example with an anonymous structure:
 
@@ -5145,7 +4164,7 @@ The C11 specification doesn't dictate one way or another, and shows examples in 
 
 K&R2 uses leading uppercase predominantly, but show some examples in uppercase and snake case (with `_t`).
 
-> K&R2 主要使用大写字母，但也有一些以大写字母和蛇形(带有 `_t`）的示例。
+> K&R2 主要使用大写字母，但也有一些以大写字母和蛇形(带有 `_t`)的示例。
 
 If you have a style guide in use, stick with it. If you don't, grab one and stick with it.
 
@@ -5242,9 +4261,9 @@ printf("%d\n", *(p + 1));  // Prints 22!!
 
 :::
 
-What happened there? C knows that `p` is a pointer to an `int`. So it knows the `sizeof` an `int`[^82^](#fn82){#fnref82 .footnote-ref role="doc-noteref"} and it knows to skip that many bytes to get to the next `int` after the first one!
+What happened there? C knows that `p` is a pointer to an `int`. So it knows the `sizeof` an `int`[^82^] and it knows to skip that many bytes to get to the next `int` after the first one!
 
-> 那里发生了什么？C 知道 `p` 是一个指向 `int` 的指针。因此它知道 `int` 的 `sizeof`[^82^](#fn82){#fnref82 .footnote-ref role="doc-noteref"}，它知道跳过多少字节才能获得第一个 `int` 之后的下一个 `int`！
+> 那里发生了什么？C 知道 `p` 是一个指向 `int` 的指针。因此它知道 `int` 的 `sizeof`[^82^]，它知道跳过多少字节才能获得第一个 `int` 之后的下一个 `int`！
 
 In fact, the prior example could be written these two equivalent ways:
 
@@ -5298,15 +4317,15 @@ So a point is an index into memory, somewhere.
 
 For a random example, say that a number 3490 was stored at address ("index") 23,237,489,202. If we have an `int` pointer to that 3490, that value of that pointer is 23,237,489,202... because the pointer is the memory address. Different words for the same thing.
 
-> 例如，在地址(“索引”）23,237,489,202 存储了一个数字 3490。如果我们有一个指向 3490 的 `int` 指针，那么该指针的值就是 23,237,489,202...因为指针是内存地址。同一件事用不同的词语表达。
+> 例如，在地址(“索引”)23,237,489,202 存储了一个数字 3490。如果我们有一个指向 3490 的 `int` 指针，那么该指针的值就是 23,237,489,202...因为指针是内存地址。同一件事用不同的词语表达。
 
 And now let's say we have another number, 4096, stored right after the 3490 at address 23,237,489,210 (8 higher than the 3490 because each `int` in this example is 8 bytes long).
 
-> 现在让我们来说，我们在地址 23,237,489,210(比 3490 高 8 个字节，因为在这个例子中每个 `int` 是 8 个字节长）之后存储了另一个数字 4096。
+> 现在让我们来说，我们在地址 23,237,489,210(比 3490 高 8 个字节，因为在这个例子中每个 `int` 是 8 个字节长)之后存储了另一个数字 4096。
 
 If we add `1` to that pointer, it actually jumps ahead `sizeof(int)` bytes to the next `int`. It knows to jump that far ahead because it's an `int` pointer. If it were a `float` pointer, it'd jump `sizeof(float)` bytes ahead to get to the next float!
 
-> 如果我们给这个指针加上 1，它实际上会跳过 sizeof(int）字节到下一个 int。它知道跳得那么远是因为它是一个 int 指针。如果它是一个 float 指针，它会跳过 sizeof(float）字节到下一个 float！
+> 如果我们给这个指针加上 1，它实际上会跳过 sizeof(int)字节到下一个 int。它知道跳得那么远是因为它是一个 int 指针。如果它是一个 float 指针，它会跳过 sizeof(float)字节到下一个 float！
 
 So you can look at the next `int`, by adding `1` to the pointer, the one after that by adding `2` to the pointer, and so on.
 
@@ -5320,7 +4339,7 @@ We saw how we could add an integer to a pointer in the previous section. This ti
 
 You can just add (or subtract) integer values directly to (or from) any pointer!
 
-> 你可以直接向任何指针添加(或减去）整数值！
+> 你可以直接向任何指针添加(或减去)整数值！
 
 Let's do that example again, except with a couple changes. First, I'm going to add a `999` to the end of our numbers to act as a sentinel value. This will let us know where the end of the data is.
 
@@ -5367,9 +4386,9 @@ You can subtract a value from a pointer to get to earlier address, as well, just
 
 > 你也可以从指针中减去一个值来访问更早的地址，就像我们之前对它们进行加法操作一样。
 
-But we can also subtract two pointers to find the difference between them, e.g. we can calculate how many `int` s there are between two `int*` s. The catch is that this only works within a single array[^83^](#fn83){#fnref83 .footnote-ref role="doc-noteref"}---if the pointers point to anything else, you get undefined behavior.
+But we can also subtract two pointers to find the difference between them, e.g. we can calculate how many `int` s there are between two `int*` s. The catch is that this only works within a single array[^83^]---if the pointers point to anything else, you get undefined behavior.
 
-> 但我们也可以通过减去两个指针来找出它们之间的差异，例如，我们可以计算两个 `int*` 之间有多少个 `int`。关键是，这只适用于单个数组[^83^](#fn83）{#fnref83 .footnote-ref role="doc-noteref"}---如果指针指向其他任何内容，则会出现未定义的行为。
+> 但我们也可以通过减去两个指针来找出它们之间的差异，例如，我们可以计算两个 `int*` 之间有多少个 `int`。关键是，这只适用于单个数组[^83^]---如果指针指向其他任何内容，则会出现未定义的行为。
 
 Remember how strings are `char*` s in C? Let's see if we can use this to write another variant of `strlen()` to compute the length of a string that utilizes pointer subtraction.
 
@@ -5385,7 +4404,7 @@ And if we have a pointer to the beginning of the string, and we computed the poi
 
 ::: {#cb178 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int my_strlen(char *s)
@@ -5443,13 +4462,13 @@ but that's a little harder to grok. Just make sure you include parentheses if th
 
 This means we can _decide_ if we're going to use array or pointer notation for any array or pointer (assuming it points to an element of an array).
 
-> 这意味着我们可以决定是否使用数组或指针表示法来表示任何数组或指针(假设它指向数组的一个元素）。
+> 这意味着我们可以决定是否使用数组或指针表示法来表示任何数组或指针(假设它指向数组的一个元素)。
 
 Let's use an array and pointer with both array and pointer notation:
 
 ::: {#cb180 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -5547,9 +4566,9 @@ There are basically two use cases for this.
 
 > 1. 一个函数将以字节为单位对某事进行操作。例如，`memcpy()` 从一个指针复制内存的字节到另一个指针，但这些指针可以指向任何类型。`memcpy()` 利用了这样一个事实：如果你遍历 `char*`，你就在遍历一个对象的字节，无论这个对象是什么类型。有关此内容的更多信息，请参阅[多字节值](#multibyte-values)子节。
 
-2. Another function is calling a function you passed to it (a callback), and it's passing you data. You know the type of the data, but the function calling you doesn't. So it passes you `void*` s---'cause it doesn't know the type---and you convert those to the type you need. The built-in [`qsort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-qsort)[^84^](#fn84){#fnref84 .footnote-ref role="doc-noteref"} and [`bsearch()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-bsearch)[^85^](#fn85){#fnref85 .footnote-ref role="doc-noteref"} use this technique.
+2. Another function is calling a function you passed to it (a callback), and it's passing you data. You know the type of the data, but the function calling you doesn't. So it passes you `void*` s---'cause it doesn't know the type---and you convert those to the type you need. The built-in [`qsort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-qsort)[^84^] and [`bsearch()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-bsearch)[^85^] use this technique.
 
-> 另一个功能是调用传递给它的函数(回调函数），并传递给你数据。你知道数据的类型，但调用你的函数不知道。因此，它传递给你 `void*`，因为它不知道类型，你将这些转换为你需要的类型。内置的[`qsort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-qsort)[^84^](#fn84){#fnref84 .footnote-ref role="doc-noteref"}和[`bsearch()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-bsearch)[^85^](#fn85){#fnref85 .footnote-ref role="doc-noteref"}使用了这种技术。
+> 另一个功能是调用传递给它的函数(回调函数)，并传递给你数据。你知道数据的类型，但调用你的函数不知道。因此，它传递给你 `void*`，因为它不知道类型，你将这些转换为你需要的类型。内置的[`qsort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-qsort)[^84^]和[`bsearch()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-bsearch)[^85^]使用了这种技术。
 
 Let's look at an example, the built-in `memcpy()` function:
 
@@ -5571,11 +4590,11 @@ But look! `s1` and `s2` are `void*` s! Why? What does it mean? Let's run more ex
 
 For instance, we could copy a string with `memcpy()` (though `strcpy()` is more appropriate for strings):
 
-> 例如，我们可以使用 `memcpy()` 复制一个字符串(尽管 `strcpy()` 更适合字符串）：
+> 例如，我们可以使用 `memcpy()` 复制一个字符串(尽管 `strcpy()` 更适合字符串)：
 
 ::: {#cb185 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <string.h>
 
@@ -5596,7 +4615,7 @@ Or we can copy some `int` s:
 
 ::: {#cb186 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <string.h>
 
@@ -5635,7 +4654,7 @@ And if we have 3 of them in our array, like we did in that example, the entire s
 
 We could even copy a `float` or a `struct` with `memcpy()`! (Though this is abusive---we should just use `=` for that):
 
-> 我们甚至可以用 `memcpy()` 复制一个 `float` 或 `struct`！(虽然这是不当的---我们应该只使用 `=`）
+> 我们甚至可以用 `memcpy()` 复制一个 `float` 或 `struct`！(虽然这是不当的---我们应该只使用 `=`)
 
 ::: {#cb187 .sourceCode}
 
@@ -5682,7 +4701,7 @@ But with great power comes great responsibility. Maybe not _that_ great in this 
 
 > 随着强大的力量，也有着巨大的责任。也许在这种情况下不是那么巨大，但仍然有一些限制。
 
-1\. You cannot do pointer arithmetic on a `void*`. 2. You cannot dereference a `void*`. 3. You cannot use the arrow operator on a `void*`, since it's also a dereference. 4. You cannot use array notation on a `void*`, since it's also a dereference, as well[^86^](#fn86){#fnref86 .footnote-ref role="doc-noteref"}.
+1\. You cannot do pointer arithmetic on a `void*`. 2. You cannot dereference a `void*`. 3. You cannot use the arrow operator on a `void*`, since it's also a dereference. 4. You cannot use array notation on a `void*`, since it's also a dereference, as well[^86^].
 
 > 1. 你不能在 `void*` 上进行指针算术。2. 你不能对 `void*` 进行解引用。3. 你不能在 `void*` 上使用箭头操作符，因为它也是一个解引用。4. 你不能在 `void*` 上使用数组符号，因为它也是一个解引用。
 
@@ -5698,9 +4717,9 @@ Like with `memcpy()`, it helps you write generic functions that can handle multi
 
 > 就像使用 `memcpy()` 一样，它可以帮助您编写可以处理多种类型数据的通用函数。但秘诀是，在使用之前，您要将 `void` 转换为另一种类型！
 
-And conversion is easy: you can just assign into a variable of the desired type[^87^](#fn87){#fnref87 .footnote-ref role="doc-noteref"}.
+And conversion is easy: you can just assign into a variable of the desired type[^87^].
 
-> 转换很容易：您只需将其分配到所需类型的变量中[^87^](#fn87）{#fnref87 。脚注引用 role =“doc-noteref”}。
+> 转换很容易：您只需将其分配到所需类型的变量中[^87^]。
 
 ::: {#cb189 .sourceCode}
 
@@ -5718,7 +4737,7 @@ printf("%c\n", *q);  // Prints "X"
 
 Let's write our own `memcpy()` to try this out. We can copy bytes (`char` s), and we know the number of bytes because it's passed in.
 
-> 让我们编写自己的 `memcpy()` 来试试。我们可以复制字节(`char` s），并且我们知道字节的数量，因为它是传入的。
+> 让我们编写自己的 `memcpy()` 来试试。我们可以复制字节(`char` s)，并且我们知道字节的数量，因为它是传入的。
 
 ::: {#cb190 .sourceCode}
 
@@ -5747,7 +4766,7 @@ Right there at the beginning, we copy the `void*` s into `char*` s so that we ca
 
 Then some fun in a while loop, where we decrement `byte_count` until it becomes false (`0`). Remember that with post-decrement, the value of the expression is computed (for `while` to use) and _then_ the variable is decremented.
 
-> 然后在一个 while 循环中玩一些乐趣，我们会逐渐减少 byte_count 直到它变成假(0）。记住，使用后置减法，表达式的值会被计算(供 while 使用），然后变量才会被减少。
+> 然后在一个 while 循环中玩一些乐趣，我们会逐渐减少 byte_count 直到它变成假(0)。记住，使用后置减法，表达式的值会被计算(供 while 使用)，然后变量才会被减少。
 
 And some fun in the copy, where we assign `*d = *s` to copy the byte, but we do it with post-increment so that both `d` and `s` move to the next byte after the assignment is made.
 
@@ -5771,7 +4790,7 @@ Now that we've done that, I just want to quickly point out that we can use this 
 
 ::: {#cb191 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -5862,7 +4881,7 @@ But what if you want something to persist longer than a particular block? This i
 
 > 但是如果你想让某些东西比特定的块持久性更长，怎么办？这就是手动内存管理发挥作用的地方。
 
-You can tell C explicitly to allocate for you a certain number of bytes that you can use as you please. And these bytes will remain allocated until you explicitly free that memory[^88^](#fn88){#fnref88 .footnote-ref role="doc-noteref"}.
+You can tell C explicitly to allocate for you a certain number of bytes that you can use as you please. And these bytes will remain allocated until you explicitly free that memory[^88^].
 
 > 你可以明确地告诉 C 为你分配一定数量的字节，你可以随意使用这些字节。这些字节将一直保持分配状态，直到你明确释放该内存。
 
@@ -5898,11 +4917,11 @@ Since it's a `void*`, you can assign it into whatever pointer type you want... n
 
 So... how many bytes should I allocate? We can use `sizeof` to help with that. If we want to allocate enough room for a single `int`, we can use `sizeof(int)` and pass that to `malloc()`.
 
-> 那么...我应该分配多少字节？我们可以使用 `sizeof` 来帮助。如果我们想为单个 `int` 分配足够的空间，我们可以使用 `sizeof(int）` 并将其传递给 `malloc(）`。
+> 那么...我应该分配多少字节？我们可以使用 `sizeof` 来帮助。如果我们想为单个 `int` 分配足够的空间，我们可以使用 `sizeof(int)` 并将其传递给 `malloc()`。
 
 After we're done with some allocated memory, we can call `free()` to indicate we're done with that memory and it can be used for something else. As an argument, you pass the same pointer you got from `malloc()` (or a copy of it). It's undefined behavior to use a memory region after you `free()` it.
 
-> 当我们完成分配的内存后，我们可以调用 `free()` 来表明我们已经完成了该内存，它可以用于其他用途。作为参数，您传递与 `malloc()` 相同的指针(或其副本）。在 `free()` 之后使用内存区域是未定义的行为。
+> 当我们完成分配的内存后，我们可以调用 `free()` 来表明我们已经完成了该内存，它可以用于其他用途。作为参数，您传递与 `malloc()` 相同的指针(或其副本)。在 `free()` 之后使用内存区域是未定义的行为。
 
 Let's try. We'll allocate enough memory for an `int`, and then store something there, and the print it.
 
@@ -6008,7 +5027,7 @@ char *p = malloc(3490);  // Voila
 
 And---indeed!---that's an array of 3490 `char` s (AKA a string!) since each `char` is 1 byte. In other words, `sizeof(char)` is `1`.
 
-> 而且，没错！那是一个 3490 个字符(也就是字符串！）的数组，因为每个字符是 1 个字节。换句话说，sizeof(char）是 1。
+> 而且，没错！那是一个 3490 个字符(也就是字符串！)的数组，因为每个字符是 1 个字节。换句话说，sizeof(char)是 1。
 
 Note: there's no initialization done on the newly-allocated memory---it's full of garbage. Clear it with `memset()` if you want to, or see `calloc()`, below.
 
@@ -6020,7 +5039,7 @@ But we can just multiply the size of the thing we want by the number of elements
 
 ::: {#cb197 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6105,11 +5124,11 @@ One option is to allocate some new space, and then `memcpy()` the memory over...
 
 It takes a pointer to some previously-allocted memory (by `malloc()` or `calloc()`) and a new size for the memory region to be.
 
-> 它需要一个指向先前分配的内存(通过 `malloc()` 或 `calloc()`）的指针以及该内存区域的新大小。
+> 它需要一个指向先前分配的内存(通过 `malloc()` 或 `calloc()`)的指针以及该内存区域的新大小。
 
 It then grows or shrinks that memory, and returns a pointer to it. Sometimes it might return the same pointer (if the data didn't have to be copied elsewhere), or it might return a different one (if the data did have to be copied).
 
-> 它然后会增加或缩小这块内存，并返回一个指向它的指针。有时它可能会返回相同的指针(如果数据不必被复制到其他地方），或者它可能会返回一个不同的指针(如果数据确实需要被复制）。
+> 它然后会增加或缩小这块内存，并返回一个指向它的指针。有时它可能会返回相同的指针(如果数据不必被复制到其他地方)，或者它可能会返回一个不同的指针(如果数据确实需要被复制)。
 
 Be sure when you call `realloc()`, you specify the number of _bytes_ to allocate, and not just the number of array elements! That is:
 
@@ -6133,11 +5152,11 @@ Let's allocate an array of 20 `float` s, and then change our mind and make it an
 
 We're going to assign the return value of `realloc()` into another pointer just to make sure it's not `NULL`. If it's not, then we can reassign it into our original pointer. (If we just assigned the return value directly into the original pointer, we'd lose that pointer if the function returned `NULL` and we'd have no way to get it back.)
 
-> 我们将 `realloc()` 的返回值赋值给另一个指针，以确保它不是 `NULL`。如果不是，我们可以将其重新分配给我们的原始指针。(如果我们直接将返回值分配给原始指针，则如果函数返回 `NULL`，我们将失去该指针，而无法恢复。）
+> 我们将 `realloc()` 的返回值赋值给另一个指针，以确保它不是 `NULL`。如果不是，我们可以将其重新分配给我们的原始指针。(如果我们直接将返回值分配给原始指针，则如果函数返回 `NULL`，我们将失去该指针，而无法恢复。)
 
 ::: {#cb201 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6204,7 +5223,7 @@ Once it finds the newline, it shrinks the buffer to just the right size and retu
 
 ::: {#cb202 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -6295,7 +5314,7 @@ int main(void)
 
 When growing memory like this, it's common (though hardly a law) to double the space needed each step just to minimize the number of `realloc()` s that occur.
 
-> 当内存增长这样时，为了最小化 `realloc()` 次数，通常(虽然不是法律）会每次将所需空间加倍。
+> 当内存增长这样时，为了最小化 `realloc()` 次数，通常(虽然不是法律)会每次将所需空间加倍。
 
 Finally you might note that `readline()` returns a pointer to a `malloc()` d buffer. As such, it's up to the caller to explicitly `free()` that memory when it's done with it.
 
@@ -6346,7 +5365,7 @@ You probably aren't going to need to use this.
 
 And I don't want to get too far off in the weeds talking about it right now, but there's this thing called _memory alignment_, which has to do with the memory address (pointer value) being a multiple of a certain number.
 
-> 我现在不想太深入讨论这个，但有一个叫做内存对齐的东西，它与内存地址(指针值）是某个特定数字的倍数有关。
+> 我现在不想太深入讨论这个，但有一个叫做内存对齐的东西，它与内存地址(指针值)是某个特定数字的倍数有关。
 
 For example, a system might require that 16-bit values begin on memory addresses that are multiples of 2. Or that 64-bit values begin on memory addresses that are multiples of 2, 4, or 8, for example. It depends on the CPU.
 
@@ -6370,15 +5389,15 @@ The alignment is an integer power of two greater than zero, so `2`, `4`, `8`, `1
 
 > 对齐必须是大于 0 的 2 的整数次幂，比如 2、4、8、16 等，在指定字节数之前，你需要将这个数传递给 `aligned_alloc()` 函数。
 
-The other restriction is that the number of bytes you allocate needs to be a multiple of the alignment. But this might be changing. See [C Defect Report 460](http://www.open-std.org/jtc1/sc22/wg14/www/docs/summary.htm#dr_460)[^89^](#fn89){#fnref89 .footnote-ref role="doc-noteref"}
+The other restriction is that the number of bytes you allocate needs to be a multiple of the alignment. But this might be changing. See [C Defect Report 460](http://www.open-std.org/jtc1/sc22/wg14/www/docs/summary.htm#dr_460)[^89^]
 
-> 另一个限制是您分配的字节数必须是对齐的倍数。但这可能会改变。请参阅 [C 缺陷报告 460](http://www.open-std.org/jtc1/sc22/wg14/www/docs/summary.htm#dr_460)[^89^](#fn89){#fnref89 .footnote-ref role="doc-noteref"}
+> 另一个限制是您分配的字节数必须是对齐的倍数。但这可能会改变。请参阅 [C 缺陷报告 460](http://www.open-std.org/jtc1/sc22/wg14/www/docs/summary.htm#dr_460)[^89^]
 
 Let's do an example, allocating on a 64-byte boundary:
 
 ::: {#cb205 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6450,15 +5469,15 @@ If there's a block inside a block, then variables declared in the _inner_ block 
 
 > 如果一个块内部有另一个块，那么在内部块中声明的变量只在该块中有效，在外部作用域中不可见。
 
-Once a variable's scope ends, that variable can no longer be referenced, and you can consider its value to be gone into the great [bit bucket](https://en.wikipedia.org/wiki/Bit_bucket)[^90^](#fn90){#fnref90 .footnote-ref role="doc-noteref"} in the sky.
+Once a variable's scope ends, that variable can no longer be referenced, and you can consider its value to be gone into the great [bit bucket](https://en.wikipedia.org/wiki/Bit_bucket)[^90^] in the sky.
 
-> 一旦变量的作用域结束，该变量就不能再被引用，你可以认为它的值已经飞上了天空中的[位桶](https://en.wikipedia.org/wiki/Bit_bucket)[^90^](#fn90){#fnref90 .footnote-ref role="doc-noteref"}。
+> 一旦变量的作用域结束，该变量就不能再被引用，你可以认为它的值已经飞上了天空中的[位桶](https://en.wikipedia.org/wiki/Bit_bucket)[^90^]。
 
 An example with nested scope:
 
 ::: {#cb207 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -6487,7 +5506,7 @@ Another fun fact is that you can define variables anywhere in the block, within 
 
 ::: {#cb208 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -6518,7 +5537,7 @@ If you have a variable named the same thing at an inner scope as one at an outer
 
 ::: {#cb209 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -6545,7 +5564,7 @@ You might have noticed in that example that I just threw a block in there at lin
 
 If you define a variable outside of a block, that variable has _file scope_. It's visible in all functions in the file that come after it, and shared between them. (An exception is if a block defines a variable of the same name, it would hide the one at file scope.)
 
-> 如果你在一个块之外定义一个变量，那么该变量具有文件范围。 它在之后的所有文件函数中都可见，并在它们之间共享。 (例外是，如果一个块定义了同名变量，它将隐藏文件范围内的变量。）
+> 如果你在一个块之外定义一个变量，那么该变量具有文件范围。 它在之后的所有文件函数中都可见，并在它们之间共享。 (例外是，如果一个块定义了同名变量，它将隐藏文件范围内的变量。)
 
 This is closest to what you would consider to be "global" scope in another language.
 
@@ -6555,7 +5574,7 @@ For example:
 
 ::: {#cb210 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int shared = 10;    // File scope! Visible to the whole file after this!
@@ -6618,7 +5637,7 @@ Unless, of course, that inner scope hides them. This crazy example prints `999` 
 
 ::: {#cb212 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -6672,9 +5691,9 @@ Answer: you can get larger numbers in an unsigned variable than you can in a sig
 
 But why is that?
 
-You can think of integers being represented by a certain number of _bits_[^91^](#fn91){#fnref91 .footnote-ref role="doc-noteref"}. On my computer, an `int` is represented by 64 bits.
+You can think of integers being represented by a certain number of _bits_[^91^]. On my computer, an `int` is represented by 64 bits.
 
-> 可以把整数想象成由特定数量的位(bits）表示[^91^](#fn91）。在我的电脑上，一个 `int` 由 64 位表示。
+> 可以把整数想象成由特定数量的位(bits)表示[^91^](#fn91)。在我的电脑上，一个 `int` 由 64 位表示。
 
 And each permutation of bits that are either `1` or `0` represents a number. We can decide how to divvy up these numbers.
 
@@ -6688,9 +5707,9 @@ With unsigned, we use _all_ the permutations to represent positive numbers.
 
 > 我们使用所有排列来表示正数，而不需要签名。
 
-On my computer with 64-bit `int` s using [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)[^92^](#fn92){#fnref92 .footnote-ref role="doc-noteref"} to represent unsigned numbers, I have the following limits on integer range:
+On my computer with 64-bit `int` s using [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)[^92^] to represent unsigned numbers, I have the following limits on integer range:
 
-> 在我的计算机上，使用[二进制补码](https://en.wikipedia.org/wiki/Two%27s_complement)[^92^](#fn92){#fnref92 .footnote-ref role="doc-noteref"}来表示无符号数，我的整数范围有以下限制：
+> 在我的计算机上，使用[二进制补码](https://en.wikipedia.org/wiki/Two%27s_complement)[^92^]来表示无符号数，我的整数范围有以下限制：
 
 Type Minimum Maximum
 
@@ -6740,9 +5759,9 @@ Here the C spec gets just a little funky. It assures us that a `char` is a singl
 
 > A byte is composed of a contiguous sequence of bits, _the number of which is implementation-defined._
 
-Wait---what? Some of you might be used to the notion that a byte is 8 bits, right? I mean, that's what it is, right? And the answer is, "Almost certainly."[^93^](#fn93){#fnref93 .footnote-ref role="doc-noteref"} But C is an old language, and machines back in the day had, shall we say, a more _relaxed_ opinion over how many bits were in a byte. And through the years, C has retained this flexibility.
+Wait---what? Some of you might be used to the notion that a byte is 8 bits, right? I mean, that's what it is, right? And the answer is, "Almost certainly."[^93^] But C is an old language, and machines back in the day had, shall we say, a more _relaxed_ opinion over how many bits were in a byte. And through the years, C has retained this flexibility.
 
-> 等等---什么？你们中的一些人可能习惯于一个字节是 8 位的概念，对吗？我的意思是，这就是它的样子，对吗？答案是：“几乎肯定。”[^93^](#fn93){#fnref93 .footnote-ref role="doc-noteref"}但是 C 是一种古老的语言，当时的机器对一个字节有多少位有着比较放松的看法。多年来，C 保留了这种灵活性。
+> 等等---什么？你们中的一些人可能习惯于一个字节是 8 位的概念，对吗？我的意思是，这就是它的样子，对吗？答案是：“几乎肯定。”[^93^]但是 C 是一种古老的语言，当时的机器对一个字节有多少位有着比较放松的看法。多年来，C 保留了这种灵活性。
 
 But assuming your bytes in C are 8 bits, like they are for virtually all machines in the world that you'll ever see, the range of a `char` is...
 
@@ -6764,7 +5783,7 @@ unsigned char c;  // Definitely unsigned
 
 :::
 
-OK, now, finally, we can figure out the range of numbers if we assume that a `char` is 8 bits and your system uses the virtually universal two's complement representation for signed and unsigned[^94^](#fn94){#fnref94 .footnote-ref role="doc-noteref"}.
+OK, now, finally, we can figure out the range of numbers if we assume that a `char` is 8 bits and your system uses the virtually universal two's complement representation for signed and unsigned[^94^].
 
 > 好的，现在，最后，如果我们假设一个“char”是 8 位，而您的系统使用普遍通用的二进制补码表示有符号和无符号，我们就可以确定数字范围了。
 
@@ -6787,7 +5806,7 @@ Yup! Just remember to keep things in the range of a `char`!
 
 ::: {#cb217 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -6808,15 +5827,15 @@ The spec is also hand-wavey here, since C isn't designed to run on a single type
 
 > 这里的规范也是模糊的，因为 C 不是专门为某一种底层系统设计的。
 
-But let's just assume for the moment that your character set is based on [ASCII](https://en.wikipedia.org/wiki/ASCII)[^95^](#fn95){#fnref95 .footnote-ref role="doc-noteref"} for at least the first 128 characters. In that case, the character constant will be converted to a `char` whose value is the same as the ASCII value of the character.
+But let's just assume for the moment that your character set is based on [ASCII](https://en.wikipedia.org/wiki/ASCII)[^95^] for at least the first 128 characters. In that case, the character constant will be converted to a `char` whose value is the same as the ASCII value of the character.
 
-> 假设您的字符集基于 [ASCII](https://en.wikipedia.org/wiki/ASCII)[^95^](#fn95){#fnref95 .footnote-ref role="doc-noteref"}至少前 128 个字符，那么字符常量将被转换为 `char`，其值与 ASCII 字符的值相同。
+> 假设您的字符集基于 [ASCII](https://en.wikipedia.org/wiki/ASCII)[^95^]至少前 128 个字符，那么字符常量将被转换为 `char`，其值与 ASCII 字符的值相同。
 
 That was a mouthful. Let's just have an example:
 
 ::: {#cb218 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -6830,9 +5849,9 @@ int main(void)
 
 :::
 
-This depends on your execution environment and the [character set used](https://en.wikipedia.org/wiki/List_of_information_system_character_sets)[^96^](#fn96){#fnref96 .footnote-ref role="doc-noteref"}. One of the most popular character sets today is [Unicode](https://en.wikipedia.org/wiki/Unicode)[^97^](#fn97){#fnref97 .footnote-ref role="doc-noteref"} (which is a superset of ASCII), so for your basic 0-9, A-Z, a-z and punctuation, you'll almost certainly get the ASCII values out of them.
+This depends on your execution environment and the [character set used](https://en.wikipedia.org/wiki/List_of_information_system_character_sets)[^96^]. One of the most popular character sets today is [Unicode](https://en.wikipedia.org/wiki/Unicode)[^97^] (which is a superset of ASCII), so for your basic 0-9, A-Z, a-z and punctuation, you'll almost certainly get the ASCII values out of them.
 
-> 这取决于您的执行环境和使用的[字符集](https://en.wikipedia.org/wiki/List_of_information_system_character_sets)[^96^](#fn96){#fnref96 .footnote-ref role="doc-noteref"}。今天最流行的字符集之一是 [Unicode](https://en.wikipedia.org/wiki/Unicode)[^97^](#fn97){#fnref97 .footnote-ref role="doc-noteref"}(它是 ASCII 的超集），因此对于您的基本 0-9，A-Z，a-z 和标点符号，您几乎可以从中获得 ASCII 值。
+> 这取决于您的执行环境和使用的[字符集](https://en.wikipedia.org/wiki/List_of_information_system_character_sets)[^96^]。今天最流行的字符集之一是 [Unicode](https://en.wikipedia.org/wiki/Unicode)[^97^](它是 ASCII 的超集)，因此对于您的基本 0-9，A-Z，a-z 和标点符号，您几乎可以从中获得 ASCII 值。
 
 ## [14.3] More Integer Types: `short`, `long`, `long long` {#more-integer-types-short-long-long-long number="14.3"}
 
@@ -6855,7 +5874,7 @@ Yes, I said "minimum" twice. The spec says that these types will hold numbers of
 
 These additional types are `short int`, `long int`, and `long long int`. Commonly, when using these types, C developers leave the `int` part off (e.g. `long long`), and the compiler is perfectly happy.
 
-> 这些附加类型是 `short int`、`long int` 和 `long long int`。通常，使用这些类型时，C 开发人员会省略 `int` 部分(例如 `long long`），编译器也完全满意。
+> 这些附加类型是 `short int`、`long int` 和 `long long int`。通常，使用这些类型时，C 开发人员会省略 `int` 部分(例如 `long long`)，编译器也完全满意。
 
 ::: {#cb219 .sourceCode}
 
@@ -6881,7 +5900,7 @@ Type Minimum Bytes Minimum Value Maximum Value
 
 ---
 
-`char` 1 -127 or 0 127 or 255[^98^](#fn98){#fnref98 .footnote-ref role="doc-noteref"}
+`char` 1 -127 or 0 127 or 255[^98^]
 
 `signed char` 1 -127 127
 
@@ -6907,7 +5926,7 @@ There is no `long long long` type. You can't just keep adding `long` s like that
 
 > 没有 `长长长` 这种类型。你不能一直加 `长`。别傻了。
 
-> Two's complement fans might have noticed something funny about those numbers. Why does, for example, the `signed char` stop at -127 instead of -128? Remember: these are only the minimums required by the spec. Some number representations (like [sign and magnitude](https://en.wikipedia.org/wiki/Signed_number_representations#Signed_magnitude_representation)[^99^](#fn99){#fnref99 .footnote-ref role="doc-noteref"}) top off at ±127.
+> Two's complement fans might have noticed something funny about those numbers. Why does, for example, the `signed char` stop at -127 instead of -128? Remember: these are only the minimums required by the spec. Some number representations (like [sign and magnitude](https://en.wikipedia.org/wiki/Signed_number_representations#Signed_magnitude_representation)[^99^]) top off at ±127.
 
 Let's run the same table on my 64-bit, two's complement system and see what comes out:
 
@@ -6917,7 +5936,7 @@ Type My Bytes Minimum Value Maximum Value
 
 ---
 
-`char` 1 -128 127[^100^](#fn100){#fnref100 .footnote-ref role="doc-noteref"}
+`char` 1 -128 127[^100^]
 `signed char` 1 -128 127
 `short` 2 -32768 32767
 `int` 4 -2147483648 2147483647
@@ -6998,13 +6017,13 @@ Note: we refer to a bunch of macros in this section. They can be found in the he
 
 > 注意：在本节中，我们引用了一组宏。它们可以在头文件“<float.h>”中找到。
 
-Floating point number are encoded in a specific sequence of bits ([IEEE-754 format](https://en.wikipedia.org/wiki/IEEE_754)[^101^](#fn101){#fnref101 .footnote-ref role="doc-noteref"} is tremendously popular) in bytes.
+Floating point number are encoded in a specific sequence of bits ([IEEE-754 format](https://en.wikipedia.org/wiki/IEEE_754)[^101^] is tremendously popular) in bytes.
 
-> 浮点数以特定的位序列([IEEE-754 格式](https://en.wikipedia.org/wiki/IEEE_754)[^101^](#fn101){#fnref101 .footnote-ref role="doc-noteref"}非常流行）存储在字节中。
+> 浮点数以特定的位序列([IEEE-754 格式](https://en.wikipedia.org/wiki/IEEE_754)[^101^]非常流行)存储在字节中。
 
 Diving in a bit more, the number is basically represented as the _significand_ (which is the number part---the significant digits themselves, also sometimes referred to as the _mantissa_) and the _exponent_, which is what power to raise the digits to. Recall that a negative exponent can make a number smaller.
 
-> 深入一点，这个数基本上表示为_有效位_(也就是数字部分-有效数字本身，有时也称为_尾数_）和_指数_，这是将数字提升到的幂。记住，负指数可以使数字变小。
+> 深入一点，这个数基本上表示为_有效位_(也就是数字部分-有效数字本身，有时也称为_尾数_)和_指数_，这是将数字提升到的幂。记住，负指数可以使数字变小。
 
 Imagine we're using [\\(10\\)]{.math .inline} as a number to raise by an exponent. We could represent the following numbers by using a significand of [\\(12345\\)]{.math .inline}, and exponents of [\\(-3\\)]{.math .inline}, [\\(4\\)]{.math .inline}, and [\\(0\\)]{.math .inline} to encode the following floating point values:
 
@@ -7036,7 +6055,7 @@ How can you get more? You can use larger data types!
 
 And we have a couple of them. We know about `float` already, but for more precision we have `double`. And for even more precision, we have `long double` (unrelated to `long int` except by name).
 
-> 我们有几个。我们已经知道 `float`，但为了更精确，我们有 `double`。为了更精确，我们有 `long double`(与 `long int` 除名字外无关）。
+> 我们有几个。我们已经知道 `float`，但为了更精确，我们有 `double`。为了更精确，我们有 `long double`(与 `long int` 除名字外无关)。
 
 The spec doesn't go into how many bytes of storage each type should take, but on my system, we can see the relative size increases:
 
@@ -7052,7 +6071,7 @@ Type `sizeof`
 
 So each of the types (on my system) uses those additional bits for more precision.
 
-> 每种类型(在我的系统上）都使用这些额外的位来获得更高的精度。
+> 每种类型(在我的系统上)都使用这些额外的位来获得更高的精度。
 
 But _how much_ precision are we talking, here? How many decimal numbers can be represented by these values?
 
@@ -7064,7 +6083,7 @@ Well, C provides us with a bunch of macros in `<float.h>` to help us figure that
 
 It gets a little wonky if you are using a base-2 (binary) system for storing the numbers (which is virtually everyone on the planet, probably including you), but bear with me while we figure it out.
 
-> 如果你使用基于 2(二进制）的系统来存储数字(几乎全世界的人都在使用，可能包括你在内），情况会有点混乱，但请跟着我们一起来弄清楚它。
+> 如果你使用基于 2(二进制)的系统来存储数字(几乎全世界的人都在使用，可能包括你在内)，情况会有点混乱，但请跟着我们一起来弄清楚它。
 
 ### [14.4.1] How Many Decimal Digits? {#how-many-decimal-digits number="14.4.1"}
 
@@ -7086,7 +6105,7 @@ Type Decimal Digits You Can Store Minimum
 
 On my system, `FLT_DIG` is 6, so I can be sure that if I print out a 6 digit `float`, I'll get the same thing back. (It could be more digits---some numbers will come back correctly with more digits. But 6 is definitely coming back.)
 
-> 在我的系统上，`FLT_DIG` 是 6，因此我可以确定，如果我打印出 6 位浮点数，我会得到相同的结果。(可能会有更多位数——一些数字可以用更多位数正确返回。但是 6 一定会返回。）
+> 在我的系统上，`FLT_DIG` 是 6，因此我可以确定，如果我打印出 6 位浮点数，我会得到相同的结果。(可能会有更多位数——一些数字可以用更多位数正确返回。但是 6 一定会返回。)
 
 For example, printing out `float` s following this pattern of increasing digits, we apparently make it to 8 digits before something goes wrong, but after that we're back to 7 correct digits.
 
@@ -7105,13 +6124,13 @@ For example, printing out `float` s following this pattern of increasing digits,
 
 :::
 
-Let's do another demo. In this code we'll have two `float` s that both hold numbers that have `FLT_DIG` significant decimal digits[^102^](#fn102){#fnref102 .footnote-ref role="doc-noteref"}. Then we add those together, for what should be 12 significant decimal digits. But that's more than we can store in a `float` and correctly recover as a string---so we see when we print it out, things start going wrong after the 7th significant digit.
+Let's do another demo. In this code we'll have two `float` s that both hold numbers that have `FLT_DIG` significant decimal digits[^102^]. Then we add those together, for what should be 12 significant decimal digits. But that's more than we can store in a `float` and correctly recover as a string---so we see when we print it out, things start going wrong after the 7th significant digit.
 
-> 让我们做另一个演示。在这段代码中，我们有两个 `float`，它们都存储了具有 `FLT_DIG` 有效小数位的数字[^102^](#fn102）{#fnref102 .footnote-ref role="doc-noteref"}。然后我们将它们加在一起，应该有 12 个有效小数位。但是这超出了我们可以存储在 `float` 中并正确恢复为字符串的范围-因此，当我们打印出来时，第 7 个有效位之后的事情就开始出错了。
+> 让我们做另一个演示。在这段代码中，我们有两个 `float`，它们都存储了具有 `FLT_DIG` 有效小数位的数字[^102^]。然后我们将它们加在一起，应该有 12 个有效小数位。但是这超出了我们可以存储在 `float` 中并正确恢复为字符串的范围-因此，当我们打印出来时，第 7 个有效位之后的事情就开始出错了。
 
 ::: {#cb221 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <float.h>
 
@@ -7193,7 +6212,7 @@ Macro Description
 
 Let's see an example where `DBL_DIG` is 15 (so that's all we can have in a constant), but `DBL_DECIMAL_DIG` is 17 (so we have to convert to 17 decimal numbers to preserve all the bits of the original `double`).
 
-> 让我们看一个例子，其中 `DBL_DIG` 是 15(所以在常量中只能有 15 位），但 `DBL_DECIMAL_DIG` 是 17(因此我们必须将其转换为 17 位十进制数以保留原始 `double` 的所有位）。
+> 让我们看一个例子，其中 `DBL_DIG` 是 15(所以在常量中只能有 15 位)，但 `DBL_DECIMAL_DIG` 是 17(因此我们必须将其转换为 17 位十进制数以保留原始 `double` 的所有位)。
 
 Let's assign the 15 significant digit number `0.123456789012345` to `x`, and let's assign the 1 significant digit number `0.0000000000000006` to `y`.
 
@@ -7226,7 +6245,7 @@ That's what we get for printing more than `DBL_DIG`, right? But check this out..
 
 If we assign `0.12345678901234559` (17 digits) to `z` and print it, we get:
 
-> 如果我们将 0.12345678901234559(17 位）分配给 z 并打印它，我们得到：
+> 如果我们将 0.12345678901234559(17 位)分配给 z 并打印它，我们得到：
 
 ::: {#cb224 .sourceCode}
 
@@ -7301,7 +6320,7 @@ int z = 01111;  // Decimal 585 (Octal 1111)
 
 #### [14.5.1.1] A Note on Binary {#a-note-on-binary number="14.5.1.1"}
 
-An unofficial extension[^103^](#fn103){#fnref103 .footnote-ref role="doc-noteref"} in many C compilers allows you to represent a binary number with a `0b` prefix:
+An unofficial extension[^103^] in many C compilers allows you to represent a binary number with a `0b` prefix:
 
 > 许多 C 编译器中的一个非官方扩展允许您使用“0b”前缀表示二进制数：
 
@@ -7380,7 +6399,7 @@ What C will generally do is choose the smallest type from `int` up that can hold
 
 But specifically, that depends on the number's base (decimal, hex, or octal), as well.
 
-> 但具体来说，这取决于数字的基数(十进制、十六进制或八进制）。
+> 但具体来说，这取决于数字的基数(十进制、十六进制或八进制)。
 
 The spec has a great table indicating which type gets used for what unsuffixed value. In fact, I'm just going to copy it wholesale right here.
 
@@ -7442,7 +6461,7 @@ Surprise! Turns out unsuffiexed floating point numbers are type `double`! Happy 
 
 You can force it to be of type `float` by appending an `f` (or `F`---it's case-insensitive). You can force it to be of type `long double` by appending `l` (or `L`).
 
-> 你可以通过在末尾添加 `f`(或 `F`---大小写不敏感）来强制将其转换为 `float` 类型。你可以通过在末尾添加 `l`(或 `L`）来强制将其转换为 `long double` 类型。
+> 你可以通过在末尾添加 `f`(或 `F`---大小写不敏感)来强制将其转换为 `float` 类型。你可以通过在末尾添加 `l`(或 `L`)来强制将其转换为 `long double` 类型。
 
 Type Suffix
 
@@ -7490,9 +6509,9 @@ Well, there's a common way of writing such a number, shown here followed by it's
 
 [\\(1.2345\\times10\^3 = 1234.5\\)]{.math .inline}
 
-Writing numbers in the form [\\(s\\times b\^e\\)]{.math .inline} is called [_scientific notation_](https://en.wikipedia.org/wiki/Scientific_notation)[^104^](#fn104){#fnref104 .footnote-ref role="doc-noteref"}. In C, these are written using "E notation", so these are equivalent:
+Writing numbers in the form [\\(s\\times b\^e\\)]{.math .inline} is called [_scientific notation_](https://en.wikipedia.org/wiki/Scientific_notation)[^104^]. In C, these are written using "E notation", so these are equivalent:
 
-> 写数字的形式[\(s\times b\^e\)]{.math .inline}被称为[_科学记数法_](https://en.wikipedia.org/wiki/Scientific_notation)[^104^](#fn104){#fnref104 .footnote-ref role="doc-noteref"}。在 C 语言中，这些数字使用“E 记数法”来表示，因此这些是等价的：
+> 写数字的形式[\(s\times b\^e\)]{.math .inline}被称为[_科学记数法_](https://en.wikipedia.org/wiki/Scientific_notation)[^104^]。在 C 语言中，这些数字使用“E 记数法”来表示，因此这些是等价的：
 
 Scientific Notation E notation
 
@@ -7599,15 +6618,15 @@ Before we talk about how to make conversions happen, let's talk about how they w
 
 Unlike many languages, C doesn't do string-to-number (and vice-versa) conversions in quite as streamlined a manner as it does numeric conversions.
 
-> 与许多语言不同，C 在进行字符串到数字(反之亦然）转换时，不像数字转换那样流畅。
+> 与许多语言不同，C 在进行字符串到数字(反之亦然)转换时，不像数字转换那样流畅。
 
 For these, we'll have to call functions to do the dirty work.
 
 ### [15.1.1] Numeric Value to String {#numeric-value-to-string number="15.1.1"}
 
-When we want to convert a number to a string, we can use either `sprintf()` (pronounced _SPRINT-f_) or `snprintf()` (_s-n-print-f_)[^105^](#fn105){#fnref105 .footnote-ref role="doc-noteref"}
+When we want to convert a number to a string, we can use either `sprintf()` (pronounced _SPRINT-f_) or `snprintf()` (_s-n-print-f_)[^105^]
 
-> 当我们想要将一个数字转换为字符串时，我们可以使用 `sprintf()`(发音为_SPRINT-f_）或 `snprintf()`(发音为_s-n-print-f_）[^105^](#fn105）{#fnref105 .footnote-ref role="doc-noteref"}。
+> 当我们想要将一个数字转换为字符串时，我们可以使用 `sprintf()`(发音为_SPRINT-f_)或 `snprintf()`(发音为_s-n-print-f_)[^105^]。
 
 These basically work like `printf()`, except they output to a string instead, and you can print that string later, or whatever.
 
@@ -7617,7 +6636,7 @@ For example, turning part of the value π into a string:
 
 ::: {#cb238 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -7642,11 +6661,11 @@ So you can use `%d` or `%u` like you're used to for integers.
 
 There are a couple families of functions to do this in C. We'll call these the `atoi` (pronounced _a-to-i_) family and the `strtol` (_stir-to-long_) family.
 
-> 在 C 中有几个函数系列可以完成这项工作，我们称之为 `atoi`(发音为_a-to-i_）系列和 `strtol`(发音为_stir-to-long_）系列。
+> 在 C 中有几个函数系列可以完成这项工作，我们称之为 `atoi`(发音为_a-to-i_)系列和 `strtol`(发音为_stir-to-long_)系列。
 
 For basic conversion from a string to a number, try the `atoi` functions from `<stdlib.h>`. These have bad error-handling characteristics (including undefined behavior if you pass in a bad string), so use them carefully.
 
-> 对于从字符串到数字的基本转换，请尝试从 <stdlib.h> 中使用 atoi 函数。这些函数具有较差的错误处理特性(如果传入错误字符串会导致未定义的行为），因此请小心使用。
+> 对于从字符串到数字的基本转换，请尝试从 <stdlib.h> 中使用 atoi 函数。这些函数具有较差的错误处理特性(如果传入错误字符串会导致未定义的行为)，因此请小心使用。
 
 Function Description
 
@@ -7657,7 +6676,7 @@ Function Description
 `atol` String to `long int`
 `atoll` String to `long long int`
 
-Though the spec doesn't cop to it, the `a` at the beginning of the function stands for [ASCII](https://en.wikipedia.org/wiki/ASCII)[^106^](#fn106){#fnref106 .footnote-ref role="doc-noteref"}, so really `atoi()` is "ASCII-to-integer", but saying so today is a bit ASCII-centric.
+Though the spec doesn't cop to it, the `a` at the beginning of the function stands for [ASCII](https://en.wikipedia.org/wiki/ASCII)[^106^], so really `atoi()` is "ASCII-to-integer", but saying so today is a bit ASCII-centric.
 
 > 尽管规范没有提到，函数开头的 `a` 代表 [ASCII](https://en.wikipedia.org/wiki/ASCII)，因此 `atoi()` 实际上是“ASCII 到整数”，但是今天说这样有点偏向 ASCII。
 
@@ -7665,7 +6684,7 @@ Here's an example converting a string to a `float`:
 
 ::: {#cb239 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7718,11 +6737,11 @@ These functions all follow a similar pattern of use, and are a lot of people's f
 
 Let's do an example where we convert a string to an `unsigned long`, discarding error information (i.e. information about bad characters in the input string):
 
-> 让我们做一个例子，将字符串转换为无符号长整型，忽略错误信息(即输入字符串中的错误字符的信息）：
+> 让我们做一个例子，将字符串转换为无符号长整型，忽略错误信息(即输入字符串中的错误字符的信息)：
 
 ::: {#cb241 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7753,7 +6772,7 @@ Does this mean we can convert numbers of different bases? Sure! Let's do binary!
 
 ::: {#cb242 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7785,7 +6804,7 @@ Let's do an example where we feed in a deliberately bad number, and we'll see ho
 
 ::: {#cb243 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7811,9 +6830,9 @@ int main(void)
 
 :::
 
-So there we have `strtoul()` modifying what `badchar` points to in order to show us where things went wrong[^107^](#fn107){#fnref107 .footnote-ref role="doc-noteref"}.
+So there we have `strtoul()` modifying what `badchar` points to in order to show us where things went wrong[^107^].
 
-> 所以我们有 `strtoul()` 修改 `badchar` 指向的内容，以显示出哪里出了问题 [^107^](#fn107){#fnref107 .footnote-ref role="doc-noteref"}。
+> 所以我们有 `strtoul()` 修改 `badchar` 指向的内容，以显示出哪里出了问题 [^107^]。
 
 But what if nothing goes wrong? In that case, `badchar` will point to the `NUL` terminator at the end of the string. So we can test for it:
 
@@ -7821,7 +6840,7 @@ But what if nothing goes wrong? In that case, `badchar` will point to the `NUL` 
 
 ::: {#cb244 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7877,13 +6896,13 @@ On my UTF-8 system, this prints:
 
 :::
 
-So... no. And 53? What is that? That's the UTF-8 (and ASCII) code point for the character symbol `'5'`[^108^](#fn108){#fnref108 .footnote-ref role="doc-noteref"}
+So... no. And 53? What is that? That's the UTF-8 (and ASCII) code point for the character symbol `'5'`[^108^]
 
-> 不，53 是什么？那是 UTF-8(和 ASCII）编码中的字符符号“5”的编码点。
+> 不，53 是什么？那是 UTF-8(和 ASCII)编码中的字符符号“5”的编码点。
 
 So how do we convert the character `'5'` (which apparently has value 53) into the value `5`?
 
-> 那么我们如何将字符 `'5'`(其值为 53）转换为值 `5`？
+> 那么我们如何将字符 `'5'`(其值为 53)转换为值 `5`？
 
 With one clever trick, that's how!
 
@@ -7959,17 +6978,17 @@ If you convert a zero to `bool`, the result is `0`. Otherwise it's `1`.
 
 ### [15.3.2] Integer to Integer Conversions {#integer-to-integer-conversions number="15.3.2"}
 
-If an integer type is converted to unsigned and doesn't fit in it, the unsigned result wraps around odometer-style until it fits in the unsigned[^109^](#fn109){#fnref109 .footnote-ref role="doc-noteref"}.
+If an integer type is converted to unsigned and doesn't fit in it, the unsigned result wraps around odometer-style until it fits in the unsigned[^109^].
 
 > 如果一个整数类型被转换为无符号数，而且不能容纳它，那么无符号结果就会像里程表一样绕回，直到它适合无符号数。
 
-If an integer type is converted to a signed number and doesn't fit, the result is implementation-defined! Something documented will happen, but you'll have to look it up[^110^](#fn110){#fnref110 .footnote-ref role="doc-noteref"}
+If an integer type is converted to a signed number and doesn't fit, the result is implementation-defined! Something documented will happen, but you'll have to look it up[^110^]
 
-> 如果一个整数类型转换为有符号数，而又不符合要求，那么结果是实现定义的！会发生一些已经文档化的事情，但你需要查阅 [^110^](#fn110){#fnref110 .footnote-ref role="doc-noteref"}。
+> 如果一个整数类型转换为有符号数，而又不符合要求，那么结果是实现定义的！会发生一些已经文档化的事情，但你需要查阅 [^110^]。
 
 ### [15.3.3] Integer and Floating Point Conversions {#integer-and-floating-point-conversions number="15.3.3"}
 
-If a floating point type is converted to an integer type, the fractional part is discarded with prejudice[^111^](#fn111){#fnref111 .footnote-ref role="doc-noteref"}.
+If a floating point type is converted to an integer type, the fractional part is discarded with prejudice[^111^].
 
 > 如果一个浮点类型被转换为整数类型，则小数部分会被毫不留情地丢弃。
 
@@ -7995,7 +7014,7 @@ These are conversions the compiler does automatically for you when you mix and m
 
 In a number of places, if an `int` can be used to represent a value from `char` or `short` (signed or unsigned), that value is _promoted_ up to `int`. If it doesn't fit in an `int`, it's promoted to `unsigned int`.
 
-> 在许多地方，如果一个 `int` 可以用来表示来自 `char` 或 `short`(有符号或无符号）的值，那么该值将被提升到 `int`。如果它不适合 `int`，它将被提升到 `unsigned int`。
+> 在许多地方，如果一个 `int` 可以用来表示来自 `char` 或 `short`(有符号或无符号)的值，那么该值将被提升到 `int`。如果它不适合 `int`，它将被提升到 `unsigned int`。
 
 This is how we can do something like this:
 
@@ -8012,7 +7031,7 @@ In that case, `x` and `y` get promoted to `int` by C before the math takes place
 
 > 在这种情况下，C 在进行数学运算之前，会将 x 和 y 提升为 int 类型。
 
-The integer promotions take place during The Usual Arithmetic Conversions, with variadic functions[^112^](#fn112){#fnref112 .footnote-ref role="doc-noteref"}, unary `+` and `-` operators, or when passing values to functions without prototypes[^113^](#fn113){#fnref113 .footnote-ref role="doc-noteref"}.
+The integer promotions take place during The Usual Arithmetic Conversions, with variadic functions[^112^], unary `+` and `-` operators, or when passing values to functions without prototypes[^113^].
 
 > 整数提升在通常的算术转换、变参函数、一元加号和减号运算符，或者在传递值给没有原型的函数时发生。
 
@@ -8020,7 +7039,7 @@ The integer promotions take place during The Usual Arithmetic Conversions, with 
 
 These are automatic conversions that C does around numeric operations that you ask for. (That's actually what they're called, by the way, by C11 §6.3.1.8.) Note that for this section, we're just talking about numeric types---strings will come later.
 
-> 这些是 C 在您要求的数字操作周围自动执行的转换。(事实上，这就是 C11§6.3.1.8 称之为的。）请注意，在本节中，我们只讨论数字类型---字符串将在稍后讨论。
+> 这些是 C 在您要求的数字操作周围自动执行的转换。(事实上，这就是 C11§6.3.1.8 称之为的。)请注意，在本节中，我们只讨论数字类型---字符串将在稍后讨论。
 
 These conversions answer questions about what happens when you mix types, like this:
 
@@ -8208,9 +7227,9 @@ unsigned char *c = (unsigned char *)p;
 
 :::
 
-A third place it's often required is with the character conversion functions in [`<ctype.h>`](https://beej.us/guide/bgclr/html/split/ctype.html)[^114^](#fn114){#fnref114 .footnote-ref role="doc-noteref"} where you should cast questionably-signed values to `unsigned char` to avoid undefined behavior.
+A third place it's often required is with the character conversion functions in [`<ctype.h>`](https://beej.us/guide/bgclr/html/split/ctype.html)[^114^] where you should cast questionably-signed values to `unsigned char` to avoid undefined behavior.
 
-> 需要第三个位置的是在[`<ctype.h>`](https://beej.us/guide/bgclr/html/split/ctype.html)[^114^](#fn114){#fnref114 .footnote-ref role="doc-noteref"}中的字符转换函数，在这里，您应该将可疑签名值转换为 `unsigned char` 以避免未定义的行为。
+> 需要第三个位置的是在[`<ctype.h>`](https://beej.us/guide/bgclr/html/split/ctype.html)[^114^]中的字符转换函数，在这里，您应该将可疑签名值转换为 `unsigned char` 以避免未定义的行为。
 
 Again, casting is rarely _needed_ in practice. If you find yourself casting, there might be another way to do the same thing, or maybe you're casting unnecessarily.
 
@@ -8450,7 +7469,7 @@ Let's write a function to swap two variables, and we'll use the `restrict` keywo
 
 ::: {#cb273 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 void swap(int *restrict a, int *restrict b)
 {
     int t;
@@ -8607,7 +7626,7 @@ Let's do an example:
 
 ::: {#cb278 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void counter(void)
@@ -8677,7 +7696,7 @@ Let's say, for example, the file `bar.c` had the following as its entirety:
 
 ::: {#cb280 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // bar.c
 
 int a = 37;
@@ -8695,7 +7714,7 @@ It's easy with the `extern` keyword:
 
 ::: {#cb281 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // foo.c
 
 extern int a;
@@ -8718,7 +7737,7 @@ We could have also made the `extern int a` in block scope, and it still would ha
 
 ::: {#cb282 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // foo.c
 
 int main(void)
@@ -8757,7 +7776,7 @@ But if you must:
 
 ::: {#cb283 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -8829,13 +7848,13 @@ warning: ISO C forbids subscripting ‘register’ array
 
 :::
 
-The fact that you can't take the address of a register variable frees the compiler up to make optimizations around that assumption if it hasn't figured them out already. Also adding `register` to a `const` variable prevents one from accidentally passing its pointer to another function that willfully ignore its constness[^115^](#fn115){#fnref115 .footnote-ref role="doc-noteref"}.
+The fact that you can't take the address of a register variable frees the compiler up to make optimizations around that assumption if it hasn't figured them out already. Also adding `register` to a `const` variable prevents one from accidentally passing its pointer to another function that willfully ignore its constness[^115^].
 
 > 事实上，你不能拿取一个寄存器变量的地址，这使得编译器可以围绕这一假设做出优化，如果它还没有弄清楚的话。此外，将 `register` 添加到 `const` 变量中可以防止将其指针意外传递给另一个故意忽略其 constness 的函数。
 
-A bit of historic backstory, here: deep inside the CPU are little dedicated "variables" called [_registers_](https://en.wikipedia.org/wiki/Processor_register)[^116^](#fn116){#fnref116 .footnote-ref role="doc-noteref"}. They are super fast to access compared to RAM, so using them gets you a speed boost. But they're not in RAM, so they don't have an associated memory address (which is why you can't take the address-of or get a pointer to them).
+A bit of historic backstory, here: deep inside the CPU are little dedicated "variables" called [_registers_](https://en.wikipedia.org/wiki/Processor_register)[^116^]. They are super fast to access compared to RAM, so using them gets you a speed boost. But they're not in RAM, so they don't have an associated memory address (which is why you can't take the address-of or get a pointer to them).
 
-> 在 CPU 内部有一点历史背景：深处有一些专用的“变量”，称为[寄存器](https://en.wikipedia.org/wiki/Processor_register)[^116^](#fn116）{#fnref116 .footnote-ref role="doc-noteref"}。与 RAM 相比，它们访问起来非常快，因此使用它们可以提高速度。但是它们不在 RAM 中，因此它们没有相关的内存地址(这就是为什么你不能取得它们的地址或者得到一个指向它们的指针）。
+> 在 CPU 内部有一点历史背景：深处有一些专用的“变量”，称为[寄存器](https://en.wikipedia.org/wiki/Processor_register)[^116^]。与 RAM 相比，它们访问起来非常快，因此使用它们可以提高速度。但是它们不在 RAM 中，因此它们没有相关的内存地址(这就是为什么你不能取得它们的地址或者得到一个指向它们的指针)。
 
 But, like I said, modern compilers are really good at producing optimal code, using registers whenever possible regardless of whether or not you specified the `register` keyword. Not only that, but the spec allows them to just treat it as if you'd typed `auto`, if they want. So no guarantees.
 
@@ -8904,7 +7923,7 @@ So let's take a look at the source file `bar.c`:
 
 ::: {#cb290 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File bar.c
 
 int add(int x, int y)
@@ -8919,7 +7938,7 @@ And the file `foo.c` with main in it:
 
 ::: {#cb291 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File foo.c
 
 #include <stdio.h>
@@ -8974,7 +7993,7 @@ We saw how to fix that earlier with a _function prototype_. Indeed, if we add on
 
 ::: {#cb294 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File foo.c
 
 #include <stdio.h>
@@ -9007,11 +8026,11 @@ Sure!
 
 Header files in C have a `.h` extension by default. And they often, but not always, have the same name as their corresponding `.c` file. So let's make a `bar.h` file for our `bar.c` file, and we'll stick the prototype in it:
 
-> C 语言的头文件默认使用 `.h` 扩展名。它们通常(但不一定）和它们对应的 `.c` 文件有相同的名字。因此，让我们为我们的 `bar.c` 文件创建一个 `bar.h` 文件，并将原型放在其中：
+> C 语言的头文件默认使用 `.h` 扩展名。它们通常(但不一定)和它们对应的 `.c` 文件有相同的名字。因此，让我们为我们的 `bar.c` 文件创建一个 `bar.h` 文件，并将原型放在其中：
 
 ::: {#cb295 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File bar.h
 
 int add(int, int);
@@ -9021,11 +8040,11 @@ int add(int, int);
 
 And now let's modify `foo.c` to include that file. Assuming it's in the same directory, we include it inside double quotes (as opposed to angle brackets):
 
-> 现在让我们修改 `foo.c` 来包含该文件。假设它在同一个目录中，我们用双引号(而不是尖括号）将其包含在内：
+> 现在让我们修改 `foo.c` 来包含该文件。假设它在同一个目录中，我们用双引号(而不是尖括号)将其包含在内：
 
 ::: {#cb296 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File foo.c
 
 #include <stdio.h>
@@ -9111,11 +8130,11 @@ So put a check at the very, very top of the file where you see if it's already b
 
 (Don't put a leading underscore (because a leading underscore followed by a capital letter is reserved) or a double leading underscore (because that's also reserved.))
 
-> 不要加入前导下划线(因为前导下划线后面跟着大写字母是保留的）或双前导下划线(因为那也是保留的）。
+> 不要加入前导下划线(因为前导下划线后面跟着大写字母是保留的)或双前导下划线(因为那也是保留的)。
 
 ::: {#cb299 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #ifndef BAR_H   // If BAR_H isn't defined...
 #define BAR_H   // Define it (with no particular value)
 
@@ -9189,7 +8208,7 @@ gcc -o foo foo.c bar.c
 
 :::
 
-and kill two [boids](https://en.wikipedia.org/wiki/Boids)[^117^](#fn117){#fnref117 .footnote-ref role="doc-noteref"} with one stone?
+and kill two [boids](https://en.wikipedia.org/wiki/Boids)[^117^] with one stone?
 
 > 用一块石头杀死两只鸟？
 
@@ -9205,15 +8224,15 @@ This really shows with the `make` utility that only rebuilds sources that are ne
 
 Let's say you had a thousand C files. You could compile them all to object files to start (slowly) and then combine all those object files into an executable (fast).
 
-> 假设你有一千个 C 文件。你可以先把它们编译成对象文件(慢慢地），然后把所有这些对象文件合并成一个可执行文件(快速）。
+> 假设你有一千个 C 文件。你可以先把它们编译成对象文件(慢慢地)，然后把所有这些对象文件合并成一个可执行文件(快速)。
 
 Now say you modified just one of those C source files---here's the magic: _you only have to rebuild that one object file for that source file_! And then you rebuild the executable (fast). All the other C files don't have to be touched.
 
-> 现在说你只修改了其中一个 C 源文件---这就是魔法：_你只需要重新构建那个源文件的一个对象文件_！然后你重新构建可执行文件(快速）。其他所有的 C 文件都不需要触碰。
+> 现在说你只修改了其中一个 C 源文件---这就是魔法：_你只需要重新构建那个源文件的一个对象文件_！然后你重新构建可执行文件(快速)。其他所有的 C 文件都不需要触碰。
 
 In other words, by only rebuilding the object files we need to, we cut down on compilation times radically. (Unless of course you're doing a "clean" build, in which case all the object files have to be created.)
 
-> 另一种说法，只重新构建我们需要的对象文件，我们可以大大减少编译时间。(除非你在做一个“清理”构建，在这种情况下，所有的对象文件都必须被创建。）
+> 另一种说法，只重新构建我们需要的对象文件，我们可以大大减少编译时间。(除非你在做一个“清理”构建，在这种情况下，所有的对象文件都必须被创建。)
 
 # [18] The Outside Environment {#the-outside-environment number="18"}
 
@@ -9241,7 +8260,7 @@ ls *.txt
 
 (or `dir` instead of `ls` on a Windows system).
 
-In this case, the command is `ls`, but it arguments are all all files that end with `.txt`[^118^](#fn118){#fnref118 .footnote-ref role="doc-noteref"}.
+In this case, the command is `ls`, but it arguments are all all files that end with `.txt`[^118^].
 
 > 在这种情况下，命令是 `ls`，但它的参数都是以 `.txt` 结尾的所有文件[^118^] (#fn118) {#fnref118 .footnote-ref role="doc-noteref"}。
 
@@ -9303,7 +8322,7 @@ Source:
 
 ::: {#cb307 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -9316,9 +8335,9 @@ int main(int argc, char *argv[])
 
 :::
 
-Whoa! What's going on with the `main()` function signature? What's `argc` and `argv`[^119^](#fn119){#fnref119 .footnote-ref role="doc-noteref"} (pronounced _arg-cee_ and _arg-vee_)?
+Whoa! What's going on with the `main()` function signature? What's `argc` and `argv`[^119^] (pronounced _arg-cee_ and _arg-vee_)?
 
-> 哇！`main(）` 函数签名怎么了？`argc` 和 `argv`[^119^](#fn119){#fnref119 .footnote-ref role="doc-noteref"}(发音为_arg-cee_和_arg-vee_）是什么？
+> 哇！`main()` 函数签名怎么了？`argc` 和 `argv`[^119^](发音为_arg-cee_和_arg-vee_)是什么？
 
 Let's start with the easy one first: `argc`. This is the _argument count_, including the program name, itself. If you think of all the arguments as an array of strings, which is exactly what they are, then you can think of `argc` as the length of that array, which is exactly what it is.
 
@@ -9362,7 +8381,7 @@ Let's get to it!
 
 ::: {#cb310 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9491,7 +8510,7 @@ Let's modify our adder to do that:
 
 ::: {#cb317 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9533,11 +8552,11 @@ Just a few more things about `argc` and `argv`.
 
 - You can modify `argc`, `argv`, or any of the strings that `argv` points to. (Just don't make those strings longer than they already are!)
 
-> 你可以修改 argc、argv 或 argv 指向的任何字符串(只要不要让这些字符串比原来长！）
+> 你可以修改 argc、argv 或 argv 指向的任何字符串(只要不要让这些字符串比原来长！)
 
-- On some Unix-like systems, modifying the string `argv[0]` results in the output of `ps` changing[^120^](#fn120){#fnref120 .footnote-ref role="doc-noteref"}.
+- On some Unix-like systems, modifying the string `argv[0]` results in the output of `ps` changing[^120^].
 
-> 在某些类 Unix 系统上，修改字符串 `argv[0]` 会导致 `ps` 的输出发生变化[^120^](#fn120）{#fnref120 .footnote-ref role="doc-noteref"}。
+> 在某些类 Unix 系统上，修改字符串 `argv[0]` 会导致 `ps` 的输出发生变化[^120^]。
 
 Normally, if you have a program called `foo` that you've run with `./foo`, you might see this in the output of `ps`:
 
@@ -9603,13 +8622,13 @@ The spec is both clear and vague on the matter, as is common. Clear because it s
 
 Nothing for it but to _forge ahead_ and figure it out!
 
-Let's get [Inception](https://en.wikipedia.org/wiki/Inception)[^121^](#fn121){#fnref121 .footnote-ref role="doc-noteref"} for a second: turns out that when you run your program, _you're running it from another program_.
+Let's get [Inception](https://en.wikipedia.org/wiki/Inception)[^121^] for a second: turns out that when you run your program, _you're running it from another program_.
 
-> 让我们来看看 [Inception](https://en.wikipedia.org/wiki/Inception)[^121^](#fn121){#fnref121 .footnote-ref role="doc-noteref"}一下：原来当你运行你的程序时，你是从另一个程序中运行它的。
+> 让我们来看看 [Inception](https://en.wikipedia.org/wiki/Inception)[^121^]一下：原来当你运行你的程序时，你是从另一个程序中运行它的。
 
-Usually this other program is some kind of [shell](https://en.wikipedia.org/wiki/Shell_(computing))[^122^](#fn122){#fnref122 .footnote-ref role="doc-noteref"} that doesn't do much on its own except launch other programs.
+Usually this other program is some kind of [shell](https://en.wikipedia.org/wiki/Shell_(computing))[^122^] that doesn't do much on its own except launch other programs.
 
-> 通常，这个其他程序是一种 [shell](https://en.wikipedia.org/wiki/Shell_(computing))[^122^](#fn122){#fnref122 .footnote-ref role="doc-noteref"}，除了启动其他程序外，本身并不能做太多的事情。
+> 通常，这个其他程序是一种 [shell](https://en.wikipedia.org/wiki/Shell_(computing))[^122^]，除了启动其他程序外，本身并不能做太多的事情。
 
 But this is a multi-phase process, especially visible in command-line shells:
 
@@ -9646,7 +8665,7 @@ Let's write a short program that multiplies two numbers from the command line. W
 
 ::: {#cb321 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9684,9 +8703,9 @@ $ ./mult 3 4
 
 :::
 
-But that doesn't really show the exit status that we returned, does it? We can get the shell to print it out, though. Assuming you're running Bash or another POSIX shell, you can use `echo $?` to see it[^123^](#fn123){#fnref123 .footnote-ref role="doc-noteref"}.
+But that doesn't really show the exit status that we returned, does it? We can get the shell to print it out, though. Assuming you're running Bash or another POSIX shell, you can use `echo $?` to see it[^123^].
 
-> 但这并不能真正显示我们返回的退出状态，是吗？不过，我们可以让 shell 打印出来。假设您正在运行 Bash 或其他 POSIX shell，您可以使用 `echo $?` 来查看它[^123^](#fn123）{#fnref123 .footnote-ref role="doc-noteref"}。
+> 但这并不能真正显示我们返回的退出状态，是吗？不过，我们可以让 shell 打印出来。假设您正在运行 Bash 或其他 POSIX shell，您可以使用 `echo $?` 来查看它[^123^]。
 
 Let's try:
 
@@ -9765,9 +8784,9 @@ IFS=$' \t\n'
 
 :::
 
-Notice they are in the form of key/value pairs. For example, one key is `HOSTTYPE` and its value is `x86_64`. From a C perspective, all values are strings, even if they're numbers[^124^](#fn124){#fnref124 .footnote-ref role="doc-noteref"}.
+Notice they are in the form of key/value pairs. For example, one key is `HOSTTYPE` and its value is `x86_64`. From a C perspective, all values are strings, even if they're numbers[^124^].
 
-> 注意它们是以键/值对的形式出现的。例如，一个键是 `HOSTTYPE`，它的值是 `x86_64`。从 C 的角度来看，所有的值都是字符串，即使它们是数字[^124^](#fn124）{#fnref124 .footnote-ref role="doc-noteref"}。
+> 注意它们是以键/值对的形式出现的。例如，一个键是 `HOSTTYPE`，它的值是 `x86_64`。从 C 的角度来看，所有的值都是字符串，即使它们是数字[^124^]。
 
 So, _anyway_! Long story short, it's possible to get these values from inside your C program.
 
@@ -9781,7 +8800,7 @@ Let's write a program that uses the standard `getenv()` function to look up a va
 
 ::: {#cb325 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -9814,9 +8833,9 @@ Cannot find the FROTZ environment variable
 
 which makes sense, since I haven't set it yet.
 
-In bash, I can set it to something with[^125^](#fn125){#fnref125 .footnote-ref role="doc-noteref"}:
+In bash, I can set it to something with[^125^]:
 
-> 在 Bash 中，我可以用 [^125^](#fn125){#fnref125 .footnote-ref role="doc-noteref"}来设置它：
+> 在 Bash 中，我可以用 [^125^]来设置它：
 
 ::: {#cb327 .sourceCode}
 
@@ -9885,7 +8904,7 @@ Here's an example of looping through and printing out the environment variables 
 
 ::: {#cb330 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 extern char **environ;  // MUST be extern AND named "environ"
@@ -9924,13 +8943,13 @@ Use `getenv()` if at all possible because it's more portable. But if you have to
 
 > 尽量使用 `getenv()`，因为它更具可移植性。但如果你必须遍历环境变量，使用 `environ` 可能是最佳方式。
 
-Another non-standard way to get the environment variables is as a parameter to `main()`. It works much the same way, but you avoid needing to add your `extern` `environ` variable. [Not even the POSIX spec supports this](https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html)[^126^](#fn126){#fnref126 .footnote-ref role="doc-noteref"} as far as I can tell, but it's common in Unix land.
+Another non-standard way to get the environment variables is as a parameter to `main()`. It works much the same way, but you avoid needing to add your `extern` `environ` variable. [Not even the POSIX spec supports this](https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html)[^126^] as far as I can tell, but it's common in Unix land.
 
-> 另一种非标准的方法来获取环境变量是作为 `main(）` 的参数。它的工作原理大致相同，但是您可以避免添加 `extern` `environ` 变量。[据我所知，即使 POSIX 规范也不支持这一点](https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html)[^126^](#fn126）{#fnref126 .footnote-ref role="doc-noteref"}，但在 Unix 领域很常见。
+> 另一种非标准的方法来获取环境变量是作为 `main()` 的参数。它的工作原理大致相同，但是您可以避免添加 `extern` `environ` 变量。[据我所知，即使 POSIX 规范也不支持这一点](https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html)[^126^]，但在 Unix 领域很常见。
 
 ::: {#cb332 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(int argc, char **argv, char **env)  // <-- env!
@@ -10022,11 +9041,11 @@ Or you can very probably look in relative directories using forward slashes and 
 
 Don't use a backslash (`\`) for your path separators in your `#include`! It's undefined behavior! Use forward slash (`/`) only, even on Windows.
 
-> 不要在你的 `#include` 中使用反斜杠(`\`）作为路径分隔符！这是未定义的行为！无论是在 Windows 上，都只使用正斜杠(`/`）。
+> 不要在你的 `#include` 中使用反斜杠(`\`)作为路径分隔符！这是未定义的行为！无论是在 Windows 上，都只使用正斜杠(`/`)。
 
 In summary, used angle brackets (`<` and `>`) for the system includes, and use double quotes (`"`) for your personal includes.
 
-> 总之，使用尖括号(< 和 >）表示系统包含的内容，使用双引号("）表示你个人包含的内容。
+> 总之，使用尖括号(< 和 >)表示系统包含的内容，使用双引号(")表示你个人包含的内容。
 
 ## [19.2] Simple Macros {#simple-macros number="19.2"}
 
@@ -10038,7 +9057,7 @@ We do this with `#define` (often read "pound define"). Here's an example:
 
 ::: {#cb336 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define HELLO "Hello, world"
@@ -10054,7 +9073,7 @@ int main(void)
 
 On lines 3 and 4 we defined a couple macros. Wherever these appear elsewhere in the code (line 8), they'll be substituted with the defined values.
 
-> 在第 3 行和第 4 行，我们定义了一对宏。无论这些在代码的其他地方(第 8 行）出现，它们都会被定义的值替换。
+> 在第 3 行和第 4 行，我们定义了一对宏。无论这些在代码的其他地方(第 8 行)出现，它们都会被定义的值替换。
 
 From the C compiler's perspective, it's exactly as if we'd written this, instead:
 
@@ -10062,7 +9081,7 @@ From the C compiler's perspective, it's exactly as if we'd written this, instead
 
 ::: {#cb337 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -10129,7 +9148,7 @@ First of all, let's try to compile specific code depending on whether or not a m
 
 ::: {#cb339 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define EXTRA_HAPPY
@@ -10149,7 +9168,7 @@ int main(void)
 
 In that example, we define `EXTRA_HAPPY` (to be nothing, but it _is_ defined), then on line 8 we check to see if it is defined with an `#ifdef` directive. If it is defined, the subsequent code will be included up until the `#endif`.
 
-> 在这个例子中，我们定义了 `EXTRA_HAPPY`(没有任何东西，但它_是_定义的），然后在第 8 行我们使用 `#ifdef` 指令检查它是否定义。如果它被定义，随后的代码将被包括直到 `#endif`。
+> 在这个例子中，我们定义了 `EXTRA_HAPPY`(没有任何东西，但它_是_定义的)，然后在第 8 行我们使用 `#ifdef` 指令检查它是否定义。如果它被定义，随后的代码将被包括直到 `#endif`。
 
 So because it is defined, the code will be included for compilation and the output will be:
 
@@ -10198,7 +9217,7 @@ There's also the negative sense of "if defined": "if not defined", or `#ifndef`.
 
 ::: {#cb343 .sourceCode startfrom="8"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #ifdef EXTRA_HAPPY
     printf("I'm extra happy!\n");
 #endif
@@ -10247,7 +9266,7 @@ Let's mod the previous example:
 
 ::: {#cb345 .sourceCode startfrom="8"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #ifdef EXTRA_HAPPY
     printf("I'm extra happy!\n");
 #else
@@ -10277,11 +9296,11 @@ This works very much like the `#ifdef` and `#ifndef` directives in that you can 
 
 The only difference is that the constant expression after the `#if` must evaluate to true (non-zero) for the code in the `#if` to be compiled. So instead of whether or not something is defined, we want an expression that evaluates to true.
 
-> `#if` 后面的常量表达式必须求值为真(非零），才能编译 `#if` 中的代码。因此，我们需要一个求值为真的表达式，而不是某件东西是否被定义。
+> `#if` 后面的常量表达式必须求值为真(非零)，才能编译 `#if` 中的代码。因此，我们需要一个求值为真的表达式，而不是某件东西是否被定义。
 
 ::: {#cb347 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define HAPPY_FACTOR 1
@@ -10309,7 +9328,7 @@ Again, for the unmatched `#if` clauses, the compiler won't even see those lines.
 
 ::: {#cb348 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -10323,13 +9342,13 @@ int main(void)
 
 :::
 
-One hackish thing this is used for is to comment out large numbers of lines quickly[^127^](#fn127){#fnref127 .footnote-ref role="doc-noteref"}.
+One hackish thing this is used for is to comment out large numbers of lines quickly[^127^].
 
-> 一种 hackish 的用法是快速注释掉大量的行[^127^](#fn127）{#fnref127 .footnote-ref role="doc-noteref"}。
+> 一种 hackish 的用法是快速注释掉大量的行[^127^]。
 
 If you put an `#if 0` ("if false") at the front of the block to be commented out and an `#endif` at the end, you can get this effect:
 
-> 如果在要被注释掉的块的前面放置一个 `#if 0`("如果为假"），并在末尾放置一个 `#endif`，您就可以获得这种效果：
+> 如果在要被注释掉的块的前面放置一个 `#if 0`("如果为假")，并在末尾放置一个 `#endif`，您就可以获得这种效果：
 
 ::: {#cb349 .sourceCode}
 
@@ -10390,7 +9409,7 @@ As are these:
 
 Notice how we can use the standard logical NOT operator (`!`) for "not defined".
 
-> 注意我们可以使用标准的逻辑非运算符(`！`）来表示“未定义”。
+> 注意我们可以使用标准的逻辑非运算符(`！`)来表示“未定义”。
 
 So now we're back in `#if` land and we can use `#elif` with impunity!
 
@@ -10430,7 +9449,7 @@ If you've defined something but you don't need it any longer, you can undefine i
 
 ::: {#cb355 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -10475,11 +9494,11 @@ Macro Description
 
 `__LINE__` The line number of the file this macro appears on
 
-`__func__` The name of the function this appears in, as a string[^128^](#fn128){#fnref128 .footnote-ref role="doc-noteref"}
+`__func__` The name of the function this appears in, as a string[^128^]
 
 `__STDC__` Defined with `1` if this is a standard C compiler
 
-`__STDC_HOSTED__` This will be `1` if the compiler is a _hosted implementation_[^129^](#fn129){#fnref129 .footnote-ref role="doc-noteref"}, otherwise `0`
+`__STDC_HOSTED__` This will be `1` if the compiler is a _hosted implementation_[^129^], otherwise `0`
 
 ## `__STDC_VERSION__` This version of C, a constant `long int` in the form `yyyymmL`, e.g. `201710L`
 
@@ -10487,7 +9506,7 @@ Let's put these together.
 
 ::: {#cb356 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -10565,7 +9584,7 @@ Macro Description
 
 `__STDC_UTF_32__` A `1` indicates that the system uses UTF-32 encoding in type `char32_t`
 
-`__STDC_ANALYZABLE__` A `1` indicates the code is analyzable[^130^](#fn130){#fnref130 .footnote-ref role="doc-noteref"}
+`__STDC_ANALYZABLE__` A `1` indicates the code is analyzable[^130^]
 
 `__STDC_IEC_559__` `1` if IEEE-754 (aka IEC 60559) floating point is supported
 
@@ -10597,7 +9616,7 @@ Let's start with a simple one that squares a number:
 
 ::: {#cb359 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define SQR(x) x * x  // Not quite right, but bear with me
@@ -10618,7 +9637,7 @@ So line 7 will be changed to:
 
 ::: {#cb360 .sourceCode startfrom="7"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%d\n", 12 * 12);  // 144
 ```
 
@@ -10632,13 +9651,13 @@ But we've made an elementary error in that macro, one that we need to avoid.
 
 Let's check it out. What if we wanted to compute `SQR(3 + 4)`? Well, [\\(3+4=7\\)]{.math .inline}, so we must want to compute [\\(7\^2=49\\)]{.math .inline}. That's it; `49`---final answer.
 
-> 咱们来检查一下，如果我们想计算 SQR(3 + 4）呢？嗯，[\(3+4=7\）]{.math .inline}，所以我们必须想计算[\(7\ ^ 2=49\）]{.math .inline}。就是这样；`49`---最终答案。
+> 咱们来检查一下，如果我们想计算 SQR(3 + 4)呢？嗯，[\(3+4=7\)]{.math .inline}，所以我们必须想计算[\(7\ ^ 2=49\)]{.math .inline}。就是这样；`49`---最终答案。
 
 Let's drop it in our code and see that we get... 19?
 
 ::: {#cb361 .sourceCode startfrom="7"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%d\n", SQR(3 + 4));  // 19!!??
 ```
 
@@ -10650,7 +9669,7 @@ If we follow the macro expansion, we get
 
 ::: {#cb362 .sourceCode startfrom="7"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%d\n", 3 + 4 * 3 + 4);  // 19!
 ```
 
@@ -10670,7 +9689,7 @@ The fix is easy: just add some parentheses!
 
 ::: {#cb363 .sourceCode startfrom="3"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #define SQR(x) (x) * (x)   // Better... but still not quite good enough!
 ```
 
@@ -10680,7 +9699,7 @@ And now our macro expands to:
 
 ::: {#cb364 .sourceCode startfrom="7"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%d\n", (3 + 4) * (3 + 4));  // 49! Woo hoo!
 ```
 
@@ -10688,7 +9707,7 @@ And now our macro expands to:
 
 But we actually still have the same problem which might manifest if we have a higher-precedence operator than multiply (`*`) nearby.
 
-> 但是，如果我们附近有一个优先级比乘法(*）更高的运算符，我们实际上仍然存在相同的问题，可能会出现。
+> 但是，如果我们附近有一个优先级比乘法(*)更高的运算符，我们实际上仍然存在相同的问题，可能会出现。
 
 So the safe, proper way to put the macro together is to wrap the whole thing in additional parentheses, like so:
 
@@ -10696,7 +9715,7 @@ So the safe, proper way to put the macro together is to wrap the whole thing in 
 
 ::: {#cb365 .sourceCode startfrom="3"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #define SQR(x) ((x) * (x))   // Good!
 ```
 
@@ -10730,7 +9749,7 @@ you can solve for [\\(x\\)]{.math .inline} with the quadratic formula:
 
 Which is crazy. Also notice the plus-or-minus ([\\(\\pm\\)]{.math .inline}) in there, indicating that there are actually two solutions.
 
-> 这太疯狂了。另外注意那里的正负号(±），表明实际上有两个解决方案。
+> 这太疯狂了。另外注意那里的正负号(±)，表明实际上有两个解决方案。
 
 So let's make macros for both:
 
@@ -10773,7 +9792,7 @@ Let's put it together into some code:
 
 ::: {#cb370 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <math.h>  // For sqrt()
 
@@ -10803,7 +9822,7 @@ x = -0.563508 or x = -4.436492
 
 Plugging in either of those values gives us roughly zero (a bit off because the numbers aren't exact):
 
-> 插入这两个值中的任何一个都会给我们大致得到零(因为数字不是精确的，所以略有偏差）：
+> 插入这两个值中的任何一个都会给我们大致得到零(因为数字不是精确的，所以略有偏差)：
 
 [\\(2\\times-0.563508\^2+10\\times-0.563508+5\\approx0.000003\\)]{.math .inline}
 
@@ -10815,11 +9834,11 @@ Plugging in either of those values gives us roughly zero (a bit off because the 
 
 There's also a way to have a variable number of arguments passed to a macro, using ellipses (`...`) after the known, named arguments. When the macro is expanded, all of the extra arguments will be in a comma-separated list in the `__VA_ARGS__` macro, and can be replaced from there:
 
-> 也可以使用省略号(`...`）在已知的命名参数后传递可变数量的参数给宏。当宏展开时，所有额外的参数都会在 `__VA_ARGS__` 宏中以逗号分隔的列表形式出现，可以从那里替换：
+> 也可以使用省略号(`...`)在已知的命名参数后传递可变数量的参数给宏。当宏展开时，所有额外的参数都会在 `__VA_ARGS__` 宏中以逗号分隔的列表形式出现，可以从那里替换：
 
 ::: {#cb372 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 // Combine the first two arguments to a single number,
@@ -10839,7 +9858,7 @@ The substitution that takes place on line 10 would be:
 
 ::: {#cb373 .sourceCode startfrom="10"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%d %f %s %d\n", (10*(5) + 20*(4)), 3.14, "Hi!", 12);
 ```
 
@@ -10903,7 +9922,7 @@ Let's see if we can use this to greater effect so that we can pass any `int` var
 
 ::: {#cb378 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define PRINT_INT_VAL(x) printf("%s = %d\n", #x, x)
@@ -10922,7 +9941,7 @@ On line 9, we get the following macro replacement:
 
 ::: {#cb379 .sourceCode startfrom="9"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%s = %d\n", "a", 5);
 ```
 
@@ -10946,7 +9965,7 @@ printf("%f\n", CAT(3.14, 1592));   // 3.141592
 
 It's possible to continue a macro to multiple lines if you escape the newline with a backslash (`\`).
 
-> 可以通过使用反斜杠(\）转义换行符来将宏延续到多行。
+> 可以通过使用反斜杠(\)转义换行符来将宏延续到多行。
 
 Let's write a multiline macro that prints numbers from `0` to the product of the two arguments passed in.
 
@@ -10954,7 +9973,7 @@ Let's write a multiline macro that prints numbers from `0` to the product of the
 
 ::: {#cb381 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define PRINT_NUMS_TO_PRODUCT(a, b) do { \
@@ -10987,7 +10006,7 @@ At first I thought that just using squirrely braces would be enough, but there's
 
 ::: {#cb382 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 #define FOO(x) { (x)++; }
@@ -11034,9 +10053,9 @@ Let's look at the expansion:
 
 :::
 
-The `;` puts an end to the `if` statement, so the `else` is just floating out there illegally[^131^](#fn131){#fnref131 .footnote-ref role="doc-noteref"}.
+The `;` puts an end to the `if` statement, so the `else` is just floating out there illegally[^131^].
 
-> `分号` 结束了 `if` 语句，所以 `else` 就漂浮在那里，违法了 [^131^](#fn131){#fnref131 .footnote-ref role="doc-noteref"}。
+> `分号` 结束了 `if` 语句，所以 `else` 就漂浮在那里，违法了 [^131^]。
 
 So wrap that multiline macro with a `do`-`while(0)`.
 
@@ -11065,7 +10084,7 @@ ASSERT(x < 20, "x must be under 20");
 
 I want something like this to happen (assuming the `ASSERT()` is on line 220 of `foo.c`):
 
-> 我希望像这样的事情发生(假设 `ASSERT()` 在 `foo.c` 的第 220 行）：
+> 我希望像这样的事情发生(假设 `ASSERT()` 在 `foo.c` 的第 220 行)：
 
 ::: {#cb386 .sourceCode}
 
@@ -11130,7 +10149,7 @@ Here's the complete example:
 
 ::: {#cb390 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11203,9 +10222,9 @@ Basically the only time you're going to add this to your code is if some documen
 
 ### [19.9.1] Non-Standard Pragmas {#non-standard-pragmas number="19.9.1"}
 
-Here's one non-standard example of using `#pragma` to cause the compiler to execute a `for` loop in parallel with multiple threads (if the compiler supports the [OpenMP](https://www.openmp.org/)[^132^](#fn132){#fnref132 .footnote-ref role="doc-noteref"} extension):
+Here's one non-standard example of using `#pragma` to cause the compiler to execute a `for` loop in parallel with multiple threads (if the compiler supports the [OpenMP](https://www.openmp.org/)[^132^] extension):
 
-> 这里有一个使用 `#pragma` 的非标准示例，可以使编译器使用多个线程并行执行 `for` 循环(如果编译器支持 [OpenMP](https://www.openmp.org/)[^132^](#fn132){#fnref132 .footnote-ref role="doc-noteref"}扩展）：
+> 这里有一个使用 `#pragma` 的非标准示例，可以使编译器使用多个线程并行执行 `for` 循环(如果编译器支持 [OpenMP](https://www.openmp.org/)[^132^]扩展)：
 
 ::: {#cb393 .sourceCode}
 
@@ -11430,7 +10449,7 @@ Let's look at an example:
 
 ::: {#cb404 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct cabin_information {
@@ -11460,7 +10479,7 @@ int main(void)
 
 Check out lines 16-17! That's where we're initializing members of the `struct cabin_information` in the definition of `s`, our `struct spaceship`.
 
-> 查看 16-17 行！这就是我们在定义's'(我们的'struct spaceship'）时初始化'struct cabin_information'成员的地方。
+> 查看 16-17 行！这就是我们在定义's'(我们的'struct spaceship')时初始化'struct cabin_information'成员的地方。
 
 And here is another option for that same initializer---this time we'll do something more standard-looking, but either approach works:
 
@@ -11468,7 +10487,7 @@ And here is another option for that same initializer---this time we'll do someth
 
 ::: {#cb405 .sourceCode startfrom="15"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     struct spaceship s = {
         .manufacturer="General Products",
         .ci={
@@ -11490,7 +10509,7 @@ Let's change this up to get an array of passenger information in there, and we c
 
 ::: {#cb406 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct passenger {
@@ -11593,7 +10612,7 @@ But that's still not that useful.
 
 Far more common is use of anonymous `struct` s with a `typedef` so that we can use it later (e.g. to pass variables to functions).
 
-> 更常见的是使用匿名结构体和 `typedef`，以便我们稍后使用它(例如将变量传递给函数）。
+> 更常见的是使用匿名结构体和 `typedef`，以便我们稍后使用它(例如将变量传递给函数)。
 
 ::: {#cb410 .sourceCode}
 
@@ -11646,7 +10665,7 @@ Here's a cheesy linked list program to test it out:
 
 ::: {#cb412 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11781,9 +10800,9 @@ Luckily for us, we can still get the same effect with C99 and later, but now it'
 
 > 幸运的是，我们可以使用 C99 及更高版本来获得同样的效果，而且现在这是合法的。
 
-Let's just change our above definition to have no size for the array[^133^](#fn133){#fnref133 .footnote-ref role="doc-noteref"}:
+Let's just change our above definition to have no size for the array[^133^]:
 
-> 让我们把上面的定义改变一下，让数组没有大小(133 号脚注）：
+> 让我们把上面的定义改变一下，让数组没有大小(133 号脚注)：
 
 ::: {#cb419 .sourceCode}
 
@@ -11827,9 +10846,9 @@ struct len_string *len_string_from_c_string(char *s)
 
 ## [20.5] Padding Bytes {#struct-padding-bytes number="20.5"}
 
-Beware that C is allowed to add padding bytes within or after a `struct` as it sees fit. You can't trust that they will be directly adjacent in memory[^134^](#fn134){#fnref134 .footnote-ref role="doc-noteref"}.
+Beware that C is allowed to add padding bytes within or after a `struct` as it sees fit. You can't trust that they will be directly adjacent in memory[^134^].
 
-> 小心，C 可以根据自己的意愿在 `struct` 中或之后添加填充字节。你不能相信它们会直接排列在内存中[^134^](#fn134）{#fnref134 .footnote-ref role="doc-noteref"}。
+> 小心，C 可以根据自己的意愿在 `struct` 中或之后添加填充字节。你不能相信它们会直接排列在内存中[^134^]。
 
 Let's take a look at this program. We output two numbers. One is the sum of the `sizeof` s the individual field types. The other is the `sizeof` the entire `struct`.
 
@@ -11841,7 +10860,7 @@ One would expect them to be the same. The size of the total is the size of the s
 
 ::: {#cb421 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct foo {
@@ -11891,7 +10910,7 @@ Let's modify the code from above to print the offsets of the individual fields i
 
 ::: {#cb423 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stddef.h>
 
@@ -11961,7 +10980,7 @@ Then we are able to pass a pointer to a `struct child` to a function that expect
 
 > 那么我们就可以将一个指向 `struct child` 的指针传递给一个期望接收一个指向 `struct parent` 的指针的函数！
 
-Because `struct parent super` is the first item in the `struct child`, a pointer to any `struct child` is the same as a pointer to that `super` field[^135^](#fn135){#fnref135 .footnote-ref role="doc-noteref"}.
+Because `struct parent super` is the first item in the `struct child`, a pointer to any `struct child` is the same as a pointer to that `super` field[^135^].
 
 > 因为 `struct parent super` 是 `struct child` 中的第一个项目，所以指向任何 `struct child` 的指针都与指向该 `super` 字段的指针相同。
 
@@ -11971,7 +10990,7 @@ Let's set up an example here. We'll make `struct` s as above, but then we'll pas
 
 ::: {#cb426 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct parent {
@@ -12044,7 +11063,7 @@ Let's take a look at some code to demonstrate a use case:
 
 ::: {#cb427 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct foo {
@@ -12072,7 +11091,7 @@ But what if we knew that all the values that were going to be stored in `a` and 
 
 Well, we can tell C to pretty-please try to pack these values in. We can specify the maximum number of bits that values can take (from 1 up the size of the containing type).
 
-> 嗯，我们可以让 C 语言尽量把这些值打包起来。我们可以指定值所能占用的最大位数(从 1 开始到包含类型的大小）。
+> 嗯，我们可以让 C 语言尽量把这些值打包起来。我们可以指定值所能占用的最大位数(从 1 开始到包含类型的大小)。
 
 We do this by putting a colon after the field name, followed by the field width in bits.
 
@@ -12080,7 +11099,7 @@ We do this by putting a colon after the field name, followed by the field width 
 
 ::: {#cb428 .sourceCode startfrom="3"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 struct foo {
     unsigned int a:5;
     unsigned int b:5;
@@ -12128,7 +11147,7 @@ So we have one `int` each for `a`, `b`, `c`, and `d`. Since my `int` s are 4 byt
 
 A quick rearrangement yields some space savings from 16 bytes down to 12 bytes (on my system):
 
-> 快速重新排列可以将字节数从 16 字节减少到 12 字节(在我的系统上）。
+> 快速重新排列可以将字节数从 16 字节减少到 12 字节(在我的系统上)。
 
 ::: {#cb430 .sourceCode}
 
@@ -12167,9 +11186,9 @@ In some specific circumstances, you might need to reserve some bits for hardware
 
 > 在某些特定情况下，您可能需要出于硬件原因保留一些位，但不需要在代码中使用它们。
 
-For example, let's say you have a byte where the top 2 bits have a meaning, the bottom 1 bit has a meaning, but the middle 5 bits do not get used by you[^136^](#fn136){#fnref136 .footnote-ref role="doc-noteref"}.
+For example, let's say you have a byte where the top 2 bits have a meaning, the bottom 1 bit has a meaning, but the middle 5 bits do not get used by you[^136^].
 
-> 例如，假设你有一个字节，其中顶部 2 位有意义，底部 1 位有意义，但中间 5 位没有被你使用[^136^](＃fn136）{＃fnref136 。脚注引用 role =“doc-noteref”}。
+> 例如，假设你有一个字节，其中顶部 2 位有意义，底部 1 位有意义，但中间 5 位没有被你使用[^136^](＃fn136){＃fnref136 。脚注引用 role =“doc-noteref”}。
 
 We _could_ do something like this:
 
@@ -12187,11 +11206,11 @@ struct foo {
 
 And that works---in our code we use `a` and `b`, but never `dummy`. It's just there to eat up 5 bits to make sure `a` and `b` are in the "required" (by this contrived example) positions within the byte.
 
-> 我们的代码中使用了 `a` 和 `b`，但从不使用 `dummy`，它只是为了占据 5 位，以确保 `a` 和 `b` 在字节中处于所需(由这个约定的例子）的位置。
+> 我们的代码中使用了 `a` 和 `b`，但从不使用 `dummy`，它只是为了占据 5 位，以确保 `a` 和 `b` 在字节中处于所需(由这个约定的例子)的位置。
 
 C allows us a way to clean this up: _unnamed bit-fields_. You can just leave the name (`dummy`) out in this case, and C is perfectly happy for the same effect:
 
-> C 允许我们清理这个：_未命名的位域_。在这种情况下，可以省略名称(`dummy`），C 也完全可以接受，以达到同样的效果：
+> C 允许我们清理这个：_未命名的位域_。在这种情况下，可以省略名称(`dummy`)，C 也完全可以接受，以达到同样的效果：
 
 ::: {#cb432 .sourceCode}
 
@@ -12254,7 +11273,7 @@ It's analogous to an explicit page break in a word processor. You're telling the
 
 By adding the zero-width unnamed bit field in that spot, the compiler puts `a` and `b` in one `unsigned int`, and `c` and `d` in another `unsigned int`. Two total, for a size of 8 bytes on my system (`unsigned int` s are 4 bytes each).
 
-> 通过在那个位置添加零宽度未命名位域，编译器将 `a` 和 `b` 放入一个 `unsigned int` 中，将 `c` 和 `d` 放入另一个 `unsigned int` 中。在我的系统上，总共有两个，大小为 8 字节(`unsigned int` 每个 4 字节）。
+> 通过在那个位置添加零宽度未命名位域，编译器将 `a` 和 `b` 放入一个 `unsigned int` 中，将 `c` 和 `d` 放入另一个 `unsigned int` 中。在我的系统上，总共有两个，大小为 8 字节(`unsigned int` 每个 4 字节)。
 
 ## [20.9] Unions {#unions number="20.9"}
 
@@ -12286,7 +11305,7 @@ Now, that's a lot of fields. If this were a `struct`, my system would tell me it
 
 But it's a `union`, so all those fields overlap in the same stretch of memory. The biggest one is `int` (or `float`), taking up 4 bytes on my system. And, indeed, if I ask for the `sizeof` the `union foo`, it tells me 4!
 
-> 但它是一个联合，所以所有这些字段都在同一块内存中重迭。最大的是 int(或 float），在我的系统上占用 4 个字节。而且，如果我询问 union foo 的 sizeof，它告诉我 4！
+> 但它是一个联合，所以所有这些字段都在同一块内存中重迭。最大的是 int(或 float)，在我的系统上占用 4 个字节。而且，如果我询问 union foo 的 sizeof，它告诉我 4！
 
 The tradeoff is that you can only portably use one of those fields at a time. However...
 
@@ -12296,9 +11315,9 @@ The tradeoff is that you can only portably use one of those fields at a time. Ho
 
 You can non-portably write to one `union` field and read from another!
 
-Doing so is called [type punning](https://en.wikipedia.org/wiki/Type_punning)[^137^](#fn137){#fnref137 .footnote-ref role="doc-noteref"}, and you'd use it if you really knew what you were doing, typically with some kind of low-level programming.
+Doing so is called [type punning](https://en.wikipedia.org/wiki/Type_punning)[^137^], and you'd use it if you really knew what you were doing, typically with some kind of low-level programming.
 
-> 这样做被称为[类型双关](https://en.wikipedia.org/wiki/Type_punning)[^137^](#fn137){#fnref137 .footnote-ref role="doc-noteref"}, 如果你真的知道自己在做什么，通常是在做一些低级编程时会用到它。
+> 这样做被称为[类型双关](https://en.wikipedia.org/wiki/Type_punning)[^137^], 如果你真的知道自己在做什么，通常是在做一些低级编程时会用到它。
 
 Since the members of a union share the same memory, writing to one member necessarily affects the others. And if you read from one what was written to another, you get some weird effects.
 
@@ -12306,7 +11325,7 @@ Since the members of a union share the same memory, writing to one member necess
 
 ::: {#cb436 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 union foo {
@@ -12347,11 +11366,11 @@ If you have a pointer to a `union`, you can cast that pointer to any of the type
 
 In this example, we see that the `union` has `int` s and `float` s in it. And we get pointers to the `union`, but we cast them to `int*` and `float*` types (the cast silences compiler warnings). And then if we dereference those, we see that they have the values we stored directly in the `union`.
 
-> 在这个例子中，我们看到联合体中有整数和浮点数。我们得到指向联合体的指针，但我们将它们转换为 int *和 float *类型(转换可以消除编译器警告）。然后，如果我们解引用它们，我们会看到它们具有我们直接存储在联合体中的值。
+> 在这个例子中，我们看到联合体中有整数和浮点数。我们得到指向联合体的指针，但我们将它们转换为 int *和 float *类型(转换可以消除编译器警告)。然后，如果我们解引用它们，我们会看到它们具有我们直接存储在联合体中的值。
 
 ::: {#cb438 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 union foo {
@@ -12476,7 +11495,7 @@ Take a look at these `struct` s. Note the common initial sequence:
 
 ::: {#cb442 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct common {
@@ -12503,7 +11522,7 @@ Now let's throw them into a `union`:
 
 ::: {#cb443 .sourceCode startfrom="20"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 union animal {
     struct common common;
     struct antelope antelope;
@@ -12517,7 +11536,7 @@ Also, please indulge me these two `#define` s for the demo:
 
 ::: {#cb444 .sourceCode startfrom="26"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #define ANTELOPE 1
 #define OCTOPUS  2
 ```
@@ -12556,7 +11575,7 @@ Let's look at the code to print a `union animal`:
 
 ::: {#cb446 .sourceCode startfrom="29"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 void print_animal(union animal *x)
 {
     switch (x->common.type) {
@@ -12616,7 +11635,7 @@ struct {
 
 That defines a variable `s` that is of anonymous `struct` type (because the `struct` has no name tag), with members `x` and `y`.
 
-> 这定义了一个变量 `s`，它是一个匿名 `struct` 类型(因为 `struct` 没有名称标签），具有成员 `x` 和 `y`。
+> 这定义了一个变量 `s`，它是一个匿名 `struct` 类型(因为 `struct` 没有名称标签)，具有成员 `x` 和 `y`。
 
 So things like this are valid:
 
@@ -12672,7 +11691,7 @@ No problem!
 
 You can pass a `struct` or `union` to a function by value (as opposed to a pointer to it)---a copy of that object to the parameter will be made as if by assignment as per usual.
 
-> 你可以通过值(而不是指向它的指针）将 `struct` 或 `union` 传递给函数，就像通常一样，将该对象的副本分配给参数。
+> 你可以通过值(而不是指向它的指针)将 `struct` 或 `union` 传递给函数，就像通常一样，将该对象的副本分配给参数。
 
 You can also return a `struct` or `union` from a function and it is also passed by value back.
 
@@ -12680,7 +11699,7 @@ You can also return a `struct` or `union` from a function and it is also passed 
 
 ::: {#cb451 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct foo {
@@ -12708,7 +11727,7 @@ Fun fact: if you do this, you can use the `.` operator right off the function ca
 
 ::: {#cb452 .sourceCode startfrom="16"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     printf("%d %d\n", f().x, f().y);
 ```
 
@@ -12751,7 +11770,7 @@ char t = 'c';
 
 But what if we want some special characters in there that we can't type on the keyboard because they don't exist (e.g. "€"), or even if we want a character that's a single quote? We clearly can't do this:
 
-> 如果我们想在里面添加一些无法通过键盘输入的特殊字符(例如“€”），或者甚至想要一个单引号，我们显然无法这样做：
+> 如果我们想在里面添加一些无法通过键盘输入的特殊字符(例如“€”)，或者甚至想要一个单引号，我们显然无法这样做：
 
 ::: {#cb454 .sourceCode}
 
@@ -12763,11 +11782,11 @@ char t = ''';
 
 To do these things, we use something called _escape sequences_. These are the backslash character (`\`) followed by another character. The two (or more) characters together have special meaning.
 
-> 我们使用一种叫做逃离序列的东西来做这些事情。这些是由反斜杠字符(\）后跟另一个字符组成的。这两个(或更多）字符在一起有特殊的意义。
+> 我们使用一种叫做逃离序列的东西来做这些事情。这些是由反斜杠字符(\)后跟另一个字符组成的。这两个(或更多)字符在一起有特殊的意义。
 
 For our single quote character example, we can put an escape (that is, `\`) in front of the central single quote to solve it:
 
-> 对于我们的单引号字符示例，我们可以在中间单引号前面加上转义字符(即 `\`）来解决它：
+> 对于我们的单引号字符示例，我们可以在中间单引号前面加上转义字符(即 `\`)来解决它：
 
 ::: {#cb455 .sourceCode}
 
@@ -12783,13 +11802,13 @@ Now C knows that `\'` means just a regular quote we want to print, not the end o
 
 You can say either "backslash" or "escape" in this context ("escape that quote") and C devs will know what you're talking about. Also, "escape" in this context is different than your `Esc` key or the ASCII `ESC` code.
 
-> 在这种情况下(“转义引号”），你可以说“反斜杠”或“转义”，C 开发人员都会明白你的意思。此外，在这种情况下的“转义”与你的 `Esc` 键或 ASCII `ESC` 代码不同。
+> 在这种情况下(“转义引号”)，你可以说“反斜杠”或“转义”，C 开发人员都会明白你的意思。此外，在这种情况下的“转义”与你的 `Esc` 键或 ASCII `ESC` 代码不同。
 
 ### [21.1.1] Frequently-used Escapes {#frequently-used-escapes number="21.1.1"}
 
-In my humble opinion, these escape characters make up 99.2%[^138^](#fn138){#fnref138 .footnote-ref role="doc-noteref"} of all escapes.
+In my humble opinion, these escape characters make up 99.2%[^138^] of all escapes.
 
-> 在我看来，这些转义字符占据了 99.2％[^138^](＃fn138）{＃fnref138 .footnote-ref role =“doc-noteref”}的所有转义字符。
+> 在我看来，这些转义字符占据了 99.2％[^138^](＃fn138){＃fnref138 .footnote-ref role =“doc-noteref”}的所有转义字符。
 
 ---
 
@@ -12845,11 +11864,11 @@ Code Description
 
 A use case for `\b` or `\r` is to show status updates that appear on the same line on the screen and don't cause the display to scroll. Here's an example that does a countdown from 10. (Note this makes use of the non-standard POSIX function `sleep()` from `<unistd.h>`---if you're not on a Unix-like, search for your platform and `sleep` for the equivalent.)
 
-> `\b` 或 `\r` 的一个用例是在屏幕上显示同一行的状态更新，而不会导致显示滚动。这里有一个从 10 开始倒计时的示例(注意，它使用了非标准的 POSIX 函数 `sleep()`，来自 `<unistd.h>`——如果你不是在类 Unix 系统上，搜索你的平台和 `sleep` 以获得等效的函数）。
+> `\b` 或 `\r` 的一个用例是在屏幕上显示同一行的状态更新，而不会导致显示滚动。这里有一个从 10 开始倒计时的示例(注意，它使用了非标准的 POSIX 函数 `sleep()`，来自 `<unistd.h>`——如果你不是在类 Unix 系统上，搜索你的平台和 `sleep` 以获得等效的函数)。
 
 ::: {#cb457 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -12872,7 +11891,7 @@ int main(void)
 
 Quite a few things are happening on line 7. First of all, we lead with a `\r` to get us to the beginning of the current line, then we overwrite whatever's there with the current countdown. (There's ternary operator out there to make sure we print `1 second` instead of `1 seconds`.)
 
-> 在第 7 行发生了不少事情。首先，我们用 `\r` 开头，让我们回到当前行的开头，然后用当前倒计时覆盖原来的内容。(有一个三元运算符可以确保我们打印 `1秒` 而不是 `1秒钟`。）
+> 在第 7 行发生了不少事情。首先，我们用 `\r` 开头，让我们回到当前行的开头，然后用当前倒计时覆盖原来的内容。(有一个三元运算符可以确保我们打印 `1秒` 而不是 `1秒钟`。)
 
 Also, there's a space after the `...` That's so that we properly overwrite the last `.` when `i` drops from `10` to `9` and we get a column narrower. Try it without the space to see what I mean.
 
@@ -12888,7 +11907,7 @@ Note that line 14 also has a lot of spaces at the end to overwrite the character
 
 Finally, we have a weird `fflush(stdout)` in there, whatever that means. Short answer is that most terminals are _line buffered_ by default, meaning they don't actually display anything until a newline character is encountered. Since we don't have a newline (we just have `\r`), without this line, the program would just sit there until `Liftoff!` and then print everything all in one instant. `fflush()` overrides this behavior and forces output to happen _right now_.
 
-> 最后，我们在那里有一个奇怪的 `fflush(stdout）`，不管那是什么意思。简短的答案是，大多数终端默认情况下是行缓冲的，这意味着它们实际上不会显示任何东西，直到遇到换行符。由于我们没有换行符(我们只有 `\r`），没有这一行，程序只会坐在那里，直到 `Liftoff！` 然后一次性打印所有内容。 `fflush(）` 覆盖了这种行为，并强制立即发生输出。
+> 最后，我们在那里有一个奇怪的 `fflush(stdout)`，不管那是什么意思。简短的答案是，大多数终端默认情况下是行缓冲的，这意味着它们实际上不会显示任何东西，直到遇到换行符。由于我们没有换行符(我们只有 `\r`)，没有这一行，程序只会坐在那里，直到 `Liftoff！` 然后一次性打印所有内容。 `fflush()` 覆盖了这种行为，并强制立即发生输出。
 
 #### [21.1.2.2] The Question Mark Escape {#the-question-mark-escape number="21.1.2.2"}
 
@@ -12953,7 +11972,7 @@ So _trigraphs_? What the heck is this??!
 
 I'm sure we'll revisit this dusty corner of the language later, but the short of it is the compiler looks for certain triplets of characters starting with `??` and it substitutes other characters in their place. So if you're on some ancient terminal without a pipe symbol (`|`) on the keyboard, you can type `??!` instead.
 
-> 我相信我们以后会再次探讨这个语言的这个掘角角落，但简单来说，编译器会查找以 `??` 开头的三个字符，并用其他字符替换它们。因此，如果您使用的是一些没有管道符号(`|`）的古老终端，您可以改为输入 `??！`。
+> 我相信我们以后会再次探讨这个语言的这个掘角角落，但简单来说，编译器会查找以 `??` 开头的三个字符，并用其他字符替换它们。因此，如果您使用的是一些没有管道符号(`|`)的古老终端，您可以改为输入 `??！`。
 
 You can fix this by escaping the second question mark, like so:
 
@@ -13017,7 +12036,7 @@ Note there's no leading zero on the octal number when you include it this way. B
 
 But far more common is to use hex constants these days. Here's a demo that you shouldn't use, but it demos embedding the UTF-8 bytes 0xE2, 0x80, and 0xA2 in a string, which corresponds to the Unicode "bullet" character (•).
 
-> 但是现在更常用的是使用十六进制常量。这里有一个演示，你不应该使用，但它演示了在字符串中嵌入 UTF-8 字节 0xE2、0x80 和 0xA2，这对应于 Unicode 的“子弹”字符(•）。
+> 但是现在更常用的是使用十六进制常量。这里有一个演示，你不应该使用，但它演示了在字符串中嵌入 UTF-8 字节 0xE2、0x80 和 0xA2，这对应于 Unicode 的“子弹”字符(•)。
 
 ::: {#cb465 .sourceCode}
 
@@ -13031,7 +12050,7 @@ printf("\xE2\x80\xA2 Bullet 3\n");
 
 Produces the following output if you're on a UTF-8 console (or probably garbage if you're not):
 
-> 如果您使用 UTF-8 控制台，则会产生以下输出(如果您不是，可能会产生垃圾）：
+> 如果您使用 UTF-8 控制台，则会产生以下输出(如果您不是，可能会产生垃圾)：
 
 ::: {#cb466 .sourceCode}
 
@@ -13045,7 +12064,7 @@ Produces the following output if you're on a UTF-8 console (or probably garbage 
 
 But that's a crummy way to do Unicode. You can use the escapes `\u` (16-bit) or `\U` (32-bit) to just refer to Unicode by code point number. The bullet is `2022` (hex) in Unicode, so you can do this and get more portable results:
 
-> 但这是一种糟糕的 Unicode 方式。您可以使用转义符 `\u`(16 位）或 `\U`(32 位）来引用 Unicode 的代码点数。子弹是 Unicode 中的 `2022`(十六进制），因此您可以这样做以获得更多可移植的结果：
+> 但这是一种糟糕的 Unicode 方式。您可以使用转义符 `\u`(16 位)或 `\U`(32 位)来引用 Unicode 的代码点数。子弹是 Unicode 中的 `2022`(十六进制)，因此您可以这样做以获得更多可移植的结果：
 
 ::: {#cb467 .sourceCode}
 
@@ -13214,7 +12233,7 @@ It's really common for `enum` s to be defined in header files so they can be `#i
 
 As you've noticed, it's common to declare the `enum` symbols in uppercase (with underscores).
 
-> 你可能已经注意到，通常使用大写(带下划线）来声明枚举符号。
+> 你可能已经注意到，通常使用大写(带下划线)来声明枚举符号。
 
 This isn't a requirement, but is a very, very common idiom.
 
@@ -13232,7 +12251,7 @@ Now, since `enum` s are integer types, why not just use `int`?
 
 In C, the best reason for this is code clarity--it's a nice, typed way to describe your thinking in code. C (unlike C++) doesn't actually enforce any values being in range for a particular `enum`.
 
-> 在 C 中，最好的理由是代码清晰度-它是一种很好的、类型化的方式来用代码描述你的思考。C(不像 C++）实际上不强制任何特定的枚举值在范围内。
+> 在 C 中，最好的理由是代码清晰度-它是一种很好的、类型化的方式来用代码描述你的思考。C(不像 C++)实际上不强制任何特定的枚举值在范围内。
 
 Let's do an example where we declare a variable `r` of type `enum resource` that can hold those values:
 
@@ -13350,7 +12369,7 @@ Remember that a pointer is just a number. It's a number that represents an index
 
 > 记住指针只是一个数字。它是一个表示计算机内存中的索引的数字，通常是一个我们由于某种原因而感兴趣的值。
 
-That pointer, which is a number, has to be stored somewhere. And that place is memory, just like everything else[^139^](#fn139){#fnref139 .footnote-ref role="doc-noteref"}.
+That pointer, which is a number, has to be stored somewhere. And that place is memory, just like everything else[^139^].
 
 > 那个指针，它是一个数字，必须存储在某个地方。就像其他所有东西一样，那个地方就是内存。
 
@@ -13364,7 +12383,7 @@ Let's start with a regular pointer to an `int`, back from the earlier chapters:
 
 ::: {#cb479 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -13401,7 +12420,7 @@ int *p = &x;   // Type: pointer to an int
 
 If `x` is an `int`, then `&x` is a pointer to an `int` that we've stored in `p` which is type `int*`. Follow? (Repeat this paragraph until you do!)
 
-> 如果 x 是一个 int，那么&x 就是一个指向 int 的指针，我们将它存储在 p 中，p 的类型是 int*。明白了吗？(重复这段话，直到你明白为止！）
+> 如果 x 是一个 int，那么&x 就是一个指向 int 的指针，我们将它存储在 p 中，p 的类型是 int*。明白了吗？(重复这段话，直到你明白为止！)
 
 And therefore `&p` is a pointer to an `int*`, AKA a "pointer to a pointer to an `int`". AKA "`int`-pointer-pointer".
 
@@ -13413,7 +12432,7 @@ We write this type with two asterisks: `int **`. Let's see it in action.
 
 ::: {#cb481 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -13440,9 +12459,9 @@ Variable Stored at Address Value Stored There
 `p` `29122` `28350`---the address of `x`!
 `q` `30840` `29122`---the address of `p`!
 
-Indeed, let's try it for real on my computer[^140^](#fn140){#fnref140 .footnote-ref role="doc-noteref"} and print out the pointer values with `%p` and I'll do the same table again with actual references (printed in hex).
+Indeed, let's try it for real on my computer[^140^] and print out the pointer values with `%p` and I'll do the same table again with actual references (printed in hex).
 
-> 的确，让我们在我的电脑上实际尝试一下，并用 `%p` 打印出指针值，我会用实际的引用(以十六进制打印）再做一张表格。
+> 的确，让我们在我的电脑上实际尝试一下，并用 `%p` 打印出指针值，我会用实际的引用(以十六进制打印)再做一张表格。
 
 Variable Stored at Address Value Stored There
 
@@ -13456,7 +12475,7 @@ You can see those addresses are the same except the last byte, so just focus on 
 
 > 你可以看到这些地址除了最后一个字节以外都是相同的，所以只需要关注那些。
 
-On my system, `int` s are 4 bytes, which is why we're seeing the address go up by 4 from `x` to `p`[^141^](#fn141){#fnref141 .footnote-ref role="doc-noteref"} and then goes up by 8 from `p` to `q`. On my system, all pointers are 8 bytes.
+On my system, `int` s are 4 bytes, which is why we're seeing the address go up by 4 from `x` to `p`[^141^] and then goes up by 8 from `p` to `q`. On my system, all pointers are 8 bytes.
 
 > 在我的系统中，`int` 大小为 4 个字节，这就是为什么从 `x` 到 `p` 的地址增加 4 个字节，然后从 `p` 到 `q` 增加 8 个字节。在我的系统中，所有指针都是 8 个字节。
 
@@ -13513,9 +12532,9 @@ If you have Then you run The result type is
 `int ***x` `**x` `int *`
 `int **x` `**x` `int`
 
-In general, `&*E == E`[^142^](#fn142){#fnref142 .footnote-ref role="doc-noteref"}. The dereference "undoes" the address-of.
+In general, `&*E == E`[^142^]. The dereference "undoes" the address-of.
 
-> 一般来说，“&*E == E”[^142^](#fn142){#fnref142 .footnote-ref role="doc-noteref"}。取消引用操作取消了地址。
+> 一般来说，“&*E == E”[^142^]。取消引用操作取消了地址。
 
 But `&` doesn't work the same way---you can only do those one at a time, and have to store the result in an intermediate variable:
 
@@ -13574,7 +12593,7 @@ What if we had this situation:
 
 ::: {#cb485 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int main(void)
 {
     int x = 3490;
@@ -13645,7 +12664,7 @@ And that works, too. Now we can't modify `q`, or the pointer `q` points to.
 
 We kinda hinted at this in a variety of places earlier, but clearly not every value can be stored in a single byte of memory. Things take up multiple bytes of memory (assuming they're not `char` s). You can tell how many bytes by using `sizeof`. And you can tell which address in memory is the _first_ byte of the object by using the standard `&` operator, which always returns the address of the first byte.
 
-> 我们之前在各个地方都暗示过，但显然不是所有的值都可以存储在一个字节的内存中。一些东西需要多个字节的内存(假设它们不是 `char`）。您可以通过使用 `sizeof` 来告诉有多少字节。您可以通过使用标准的 `&` 运算符来告诉内存中的哪个地址是对象的第一个字节。
+> 我们之前在各个地方都暗示过，但显然不是所有的值都可以存储在一个字节的内存中。一些东西需要多个字节的内存(假设它们不是 `char`)。您可以通过使用 `sizeof` 来告诉有多少字节。您可以通过使用标准的 `&` 运算符来告诉内存中的哪个地址是对象的第一个字节。
 
 And here's another fun fact! If you iterate over the bytes of any object, you get its _object representation_. Two things with the same object representation in memory are equal.
 
@@ -13655,9 +12674,9 @@ If you want to iterate over the object representation, you should do it with poi
 
 > 如果你想遍历对象表示，你应该使用指向 `unsigned char` 的指针来做。
 
-Let's make our own version of [`memcpy()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-memcpy)[^143^](#fn143){#fnref143 .footnote-ref role="doc-noteref"} that does exactly this:
+Let's make our own version of [`memcpy()`](https://beej.us/guide/bgclr/html/split/stringref.html#man-memcpy)[^143^] that does exactly this:
 
-> 让我们制作自己版本的 memcpy(），它可以完全做到这一点：
+> 让我们制作自己版本的 memcpy()，它可以完全做到这一点：
 
 ::: {#cb489 .sourceCode}
 
@@ -13693,13 +12712,13 @@ But you can pass pointers to anything into it, and it'll copy those objects. Cou
 
 > 但是你可以把指针传递给它，它会复制这些对象。可以是 `int*`，`struct animal*`，或者任何东西。
 
-Let's do another example that prints out the object representation bytes of a `struct` so we can see if there's any padding in there and what values it has[^144^](#fn144){#fnref144 .footnote-ref role="doc-noteref"}.
+Let's do another example that prints out the object representation bytes of a `struct` so we can see if there's any padding in there and what values it has[^144^].
 
-> 让我们做另一个例子，打印出 `struct` 的对象表示字节，以便我们可以查看其中是否有填充，以及它有什么值[^144^](#fn144）{#fnref144 .footnote-ref role="doc-noteref"}。
+> 让我们做另一个例子，打印出 `struct` 的对象表示字节，以便我们可以查看其中是否有填充，以及它有什么值[^144^]。
 
 ::: {#cb490 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct foo {
@@ -13722,11 +12741,11 @@ int main(void)
 
 What we have there is a `struct foo` that's built in such a way that should encourage a compiler to inject padding bytes (though it doesn't have to). And then we get an `unsigned char *` to the first byte of the `struct foo` variable `x`.
 
-> 我们有一个 `struct foo`，它的构造方式应该鼓励编译器插入填充字节(尽管它不必这样做）。然后我们得到一个 `unsigned char *` 指向 `struct foo` 变量 `x` 的第一个字节。
+> 我们有一个 `struct foo`，它的构造方式应该鼓励编译器插入填充字节(尽管它不必这样做)。然后我们得到一个 `unsigned char *` 指向 `struct foo` 变量 `x` 的第一个字节。
 
 From there, all we need to know is the `sizeof x` and we can loop through that many bytes, printing out the values (in hex for ease).
 
-> 从那里，我们所需要知道的只是 `sizeof x`，我们可以通过循环遍历多少个字节，打印出这些值(以十六进制方便）。
+> 从那里，我们所需要知道的只是 `sizeof x`，我们可以通过循环遍历多少个字节，打印出这些值(以十六进制方便)。
 
 Running this gives a bunch of numbers as output. I've annotated it below to identify where the values were stored:
 
@@ -13755,9 +12774,9 @@ On all systems, `sizeof(char)` is 1, and we see that first byte at the top of th
 
 Then we have some padding bytes---for me, these varied from run to run.
 
-Finally, on my system, `sizeof(int)` is 4, and we can see those 4 bytes at the end. Notice how they're the same bytes as are in the hex value `0x12345678`, but strangely in reverse order[^145^](#fn145){#fnref145 .footnote-ref role="doc-noteref"}.
+Finally, on my system, `sizeof(int)` is 4, and we can see those 4 bytes at the end. Notice how they're the same bytes as are in the hex value `0x12345678`, but strangely in reverse order[^145^].
 
-> 最后，在我的系统上，`sizeof(int）` 为 4，我们可以在末尾看到这 4 个字节。注意它们与十六进制值 `0x12345678` 中的字节相同，但奇怪的是顺序是相反的[^145^](＃fn145）{＃fnref145 .footnote-ref role =“doc-noteref”}。
+> 最后，在我的系统上，`sizeof(int)` 为 4，我们可以在末尾看到这 4 个字节。注意它们与十六进制值 `0x12345678` 中的字节相同，但奇怪的是顺序是相反的[^145^](＃fn145){＃fnref145 .footnote-ref role =“doc-noteref”}。
 
 So that's a little peek under the hood at the bytes of a more complex entity in memory.
 
@@ -13774,7 +12793,7 @@ These things can be used interchangeably:
 
 Personally, I always use `NULL` when I mean `NULL`, but you might see some other variants from time to time. Though `'\0'` (a byte with all bits set to zero) will also compare equal, it's _weird_ to compare it to a pointer; you should compare `NULL` against the pointer. (Of course, lots of times in string processing, you're comparing _the thing the pointer points to_ to `'\0'`, and that's right.)
 
-> 就我个人而言，我总是用 `NULL` 来表示 `NULL`，但有时你可能会看到其他的变体。虽然 `'\0'`(一个全部位设置为零的字节）也可以相等，但是将其与指针进行比较是很奇怪的；你应该将 `NULL` 与指针进行比较。(当然，在字符串处理中，你经常会比较指针指向的东西与 `'\0'`，这是正确的。）
+> 就我个人而言，我总是用 `NULL` 来表示 `NULL`，但有时你可能会看到其他的变体。虽然 `'\0'`(一个全部位设置为零的字节)也可以相等，但是将其与指针进行比较是很奇怪的；你应该将 `NULL` 与指针进行比较。(当然，在字符串处理中，你经常会比较指针指向的东西与 `'\0'`，这是正确的。)
 
 `0` is called the _null pointer constant_, and, when compared to or assigned into another pointer, it is converted to a null pointer of the same type.
 
@@ -13782,13 +12801,13 @@ Personally, I always use `NULL` when I mean `NULL`, but you might see some other
 
 You can cast pointers to integers and vice-versa (since a pointer is just an index into memory), but you probably only ever need to do this if you're doing some low-level hardware stuff. The results of such machinations are implementation-defined, so they aren't portable. And _weird things_ could happen.
 
-> 你可以把指针转换成整数，反之亦然(因为指针只是一个指向内存的索引），但是你可能只在做一些底层硬件的事情时才需要这样做。这种操作的结果是实现定义的，因此它们是不可移植的。而且可能会发生奇怪的事情。
+> 你可以把指针转换成整数，反之亦然(因为指针只是一个指向内存的索引)，但是你可能只在做一些底层硬件的事情时才需要这样做。这种操作的结果是实现定义的，因此它们是不可移植的。而且可能会发生奇怪的事情。
 
 C does make one guarantee, though: you can convert a pointer to a `uintptr_t` type and you'll be able to convert it back to a pointer without losing any data.
 
 > C 确实有一个保证：你可以将指针转换为 `uintptr_t` 类型，并且可以将其转换回指针而不会丢失任何数据。
 
-`uintptr_t` is defined in `<stdint.h>`[^146^](#fn146){#fnref146 .footnote-ref role="doc-noteref"}.
+`uintptr_t` is defined in `<stdint.h>`[^146^].
 
 Additionally, if you feel like being signed, you can use `intptr_t` to the same effect.
 
@@ -13859,7 +12878,7 @@ Let's see if we can break something.
 
 ::: {#cb494 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdint.h>
 
@@ -13906,7 +12925,7 @@ And in the `fun()` loop, we increment the pointer to the `int32_t`. That's it. B
 
 > 在 `fun()` 循环中，我们增加指向 `int32_t` 的指针。就是这样。但是由于 `struct` 指向相同的内存，它也应该更新到相同的值。
 
-So let's run it and get this, with the 32-bit value on the left and the two 16-bit portions on the right. It should match[^147^](#fn147){#fnref147 .footnote-ref role="doc-noteref"}:
+So let's run it and get this, with the 32-bit value on the left and the two 16-bit portions on the right. It should match[^147^]:
 
 > 让我们运行它，得到这个，左边是 32 位值，右边是两个 16 位部分。它应该匹配[^147^]：
 
@@ -13967,11 +12986,11 @@ short b = *((short *)&a);   // Violates strict aliasing
 
 If you want to do type punning (relatively) safely, see the section on [Unions and Type Punning](#union-type-punning).
 
-> 如果你想要安全地进行类型捉弄(相对），请参阅[联合和类型捉弄](#union-type-punning)一节。
+> 如果你想要安全地进行类型捉弄(相对)，请参阅[联合和类型捉弄](#union-type-punning)一节。
 
 ## [23.6] Pointer Differences {#ptr_differences number="23.6"}
 
-As you know from the section on pointer arithmetic, you can subtract one pointer from another[^148^](#fn148){#fnref148 .footnote-ref role="doc-noteref"} to get the difference between them in count of array elements.
+As you know from the section on pointer arithmetic, you can subtract one pointer from another[^148^] to get the difference between them in count of array elements.
 
 > 根据指针算术部分的内容，你可以从一个指针减去另一个指针，以获得它们之间的元素数量差异。
 
@@ -14067,7 +13086,7 @@ So now that we know how to declare a variable, how do we know what to assign int
 
 Turns out there's a shortcut just like with getting a pointer to an array: you can just refer to the bare function name without parens. (You can put an `&` in front of this if you like, but it's unnecessary and not idiomatic.)
 
-> 原来也有一个快捷方式，就像获取指向数组的指针一样：只需引用纯函数名而不加括号。(如果你愿意，可以在前面加上一个'&'，但这是不必要的，也不是惯用的。）
+> 原来也有一个快捷方式，就像获取指向数组的指针一样：只需引用纯函数名而不加括号。(如果你愿意，可以在前面加上一个'&'，但这是不必要的，也不是惯用的。)
 
 Once you have a pointer to a function, you can call it just by adding parens and an argument list.
 
@@ -14081,7 +13100,7 @@ This code prints out `3490`:
 
 ::: {#cb502 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void print_int(int n)
@@ -14115,7 +13134,7 @@ We'll write a function that takes a couple integer arguments, plus a pointer to 
 
 ::: {#cb503 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int add(int a, int b)
@@ -14152,9 +13171,9 @@ This way we can change the behavior of `print_math()` by passing another functio
 
 > 我们可以通过传入另一个函数来改变 `print_math()` 的行为。你可以在 22-23 行看到我们分别传入了 `add` 和 `mult` 函数的指针。
 
-Now, on line 13, I think we can all agree the function signature of `print_math()` is a sight to behold. And, if you can believe it, this one is actually pretty straight-forward compared to some things you can construct[^149^](#fn149){#fnref149 .footnote-ref role="doc-noteref"}.
+Now, on line 13, I think we can all agree the function signature of `print_math()` is a sight to behold. And, if you can believe it, this one is actually pretty straight-forward compared to some things you can construct[^149^].
 
-> 现在，在第 13 行，我们可以一致认为 `print_math()` 的函数签名是一个可观的景象。而且，如果你能相信，这个比你可以构建的一些东西实际上相当直接[^149^](＃fn149）{＃fnref149.footnote-ref role =“doc-noteref”}。
+> 现在，在第 13 行，我们可以一致认为 `print_math()` 的函数签名是一个可观的景象。而且，如果你能相信，这个比你可以构建的一些东西实际上相当直接[^149^](＃fn149){＃fnref149.footnote-ref role =“doc-noteref”}。
 
 But let's digest it. Turns out there are only three parameters, but they're a little hard to see:
 
@@ -14186,19 +13205,19 @@ Finally, jump back to the _Pointers II_ chapter for a pointer-to-function [examp
 
 # [24] Bitwise Operations {#bitwise-operations number="24"}
 
-These numeric operations effectively allow you to manipulate individual bits in variables, fitting since C is such a low-level langauge[^150^](#fn150){#fnref150 .footnote-ref role="doc-noteref"}.
+These numeric operations effectively allow you to manipulate individual bits in variables, fitting since C is such a low-level langauge[^150^].
 
 > 这些数字操作有效地允许你操纵变量中的各个位，这很适合 C 这种低级语言。
 
-If you're not familiar with bitwise operations, [Wikipedia has a good bitwise article](https://en.wikipedia.org/wiki/Bitwise_operation)[^151^](#fn151){#fnref151 .footnote-ref role="doc-noteref"}.
+If you're not familiar with bitwise operations, [Wikipedia has a good bitwise article](https://en.wikipedia.org/wiki/Bitwise_operation)[^151^].
 
-> 如果你不熟悉位运算，[维基百科有一篇很好的位运算文章](https://en.wikipedia.org/wiki/Bitwise_operation)[^151^](#fn151){#fnref151 .footnote-ref role="doc-noteref"}。
+> 如果你不熟悉位运算，[维基百科有一篇很好的位运算文章](https://en.wikipedia.org/wiki/Bitwise_operation)[^151^]。
 
 ## [24.1] Bitwise AND, OR, XOR, and NOT {#bitwise-and-or-xor-and-not number="24.1"}
 
 For each of these, the [usual arithmetic conversions](#usual-arithmetic-conversions) take place on the operands (which in this case must be an integer type), and then the appropriate bitwise operation is performed.
 
-> 对于每一个，[通常的算术转换](#usual-arithmetic-conversions)会在操作数上进行(在这种情况下必须是整数类型），然后执行适当的位运算。
+> 对于每一个，[通常的算术转换](#usual-arithmetic-conversions)会在操作数上进行(在这种情况下必须是整数类型)，然后执行适当的位运算。
 
 ---
 
@@ -14234,7 +13253,7 @@ Operator Example Longhand equivalent
 
 For these, the [integer promotions](#integer-promotions) are performed on each operand (which must be an integer type) and then a bitwise shift is executed. The type of the result is the type of the promoted left operand.
 
-> 对于这些，会对每个操作数(必须是整数类型）执行[整数提升](#integer-promotions)，然后执行位移运算。结果的类型是提升后的左操作数的类型。
+> 对于这些，会对每个操作数(必须是整数类型)执行[整数提升](#integer-promotions)，然后执行位移运算。结果的类型是提升后的左操作数的类型。
 
 New bits are filled with zeros, with a possible exception noted in the implementation-defined behavior, below.
 
@@ -14268,7 +13287,7 @@ Watch for undefined behavior: no negative shifts, and no shifts that are larger 
 
 Also watch for implementation-defined behavior: if you right-shift a negative number, the results are implementation-defined. (It's perfectly fine to right-shift a signed `int`, just make sure it's positive.)
 
-> 也要注意实现定义的行为：如果你对一个负数进行右移，结果是实现定义的。(对有符号的 int 进行右移是完全可以的，只要确保它是正数）。
+> 也要注意实现定义的行为：如果你对一个负数进行右移，结果是实现定义的。(对有符号的 int 进行右移是完全可以的，只要确保它是正数)。
 
 # [25] Variadic Functions {#variadic-functions number="25"}
 
@@ -14357,7 +13376,7 @@ So how does it work, syntactically?
 
 What you do is put all the arguments that _must_ be passed first (and remember there has to be at least one) and after that, you put `...`. Just like this:
 
-> 你要做的是首先把所有必须传递的参数放在前面(记住至少有一个），然后放置“...”。就像这样：
+> 你要做的是首先把所有必须传递的参数放在前面(记住至少有一个)，然后放置“...”。就像这样：
 
 ::: {#cb510 .sourceCode}
 
@@ -14399,7 +13418,7 @@ You're going to want to include `<stdarg.h>` to make any of this work.
 
 First things first, we're going to use a special variable of type `va_list` (variable argument list) to keep track of which variable we're accessing at a time.
 
-> 首先，我们将使用一个特殊的类型 `va_list`(可变参数列表）的变量来跟踪我们每次访问的变量。
+> 首先，我们将使用一个特殊的类型 `va_list`(可变参数列表)的变量来跟踪我们每次访问的变量。
 
 The idea is that we first start processing arguments with a call to `va_start()`, process each argument in turn with `va_arg()`, and then, when done, wrap it up with `va_end()`.
 
@@ -14407,7 +13426,7 @@ The idea is that we first start processing arguments with a call to `va_start()`
 
 When you call `va_start()`, you need to pass in the _last named parameter_ (the one just before the `...`) so it knows where to start looking for the additional arguments.
 
-> 当你调用 `va_start()` 时，你需要传入_最后一个命名参数_(就在 `...` 之前的那个），这样它才知道从哪里开始寻找额外的参数。
+> 当你调用 `va_start()` 时，你需要传入_最后一个命名参数_(就在 `...` 之前的那个)，这样它才知道从哪里开始寻找额外的参数。
 
 And when you call `va_arg()` to get the next argument, you have to tell it the type of argument to get next.
 
@@ -14419,7 +13438,7 @@ Here's a demo that adds together an arbitrary number of integers. The first argu
 
 ::: {#cb512 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -14452,17 +13471,17 @@ int main(void)
 
 (Note that when `printf()` is called, it uses the number of `%d` s (or whatever) in the format string to know how many more arguments there are!)
 
-> 注意，当调用 `printf()` 时，它会根据格式字符串中的 `%d` 数量(或其他）来确定还有多少个参数！
+> 注意，当调用 `printf()` 时，它会根据格式字符串中的 `%d` 数量(或其他)来确定还有多少个参数！
 
 If the syntax of `va_arg()` is looking strange to you (because of that loose type name floating around in there), you're not alone. These are implemented with preprocessor macros in order to get all the proper magic in there.
 
-> 如果 `va_arg()` 的语法对你来说看起来很奇怪(因为那里有一个松散的类型名称），你并不是孤单一人。这些都是用预处理器宏实现的，以便获得所有正确的魔法。
+> 如果 `va_arg()` 的语法对你来说看起来很奇怪(因为那里有一个松散的类型名称)，你并不是孤单一人。这些都是用预处理器宏实现的，以便获得所有正确的魔法。
 
 ## [25.3] `va_list` Functionality {#va_list-functionality number="25.3"}
 
-What is that `va_list` variable we're using up there? It's an opaque variable[^152^](#fn152){#fnref152 .footnote-ref role="doc-noteref"} that holds information about which argument we're going to get next with `va_arg()`. You see how we just call `va_arg()` over and over? The `va_list` variable is a placeholder that's keeping track of progress so far.
+What is that `va_list` variable we're using up there? It's an opaque variable[^152^] that holds information about which argument we're going to get next with `va_arg()`. You see how we just call `va_arg()` over and over? The `va_list` variable is a placeholder that's keeping track of progress so far.
 
-> 那个 `va_list` 变量我们在上面使用的是什么？它是一个不透明的变量[^152^](#fn152）{#fnref152 .footnote-ref role="doc-noteref"}，它保存有关我们下次使用 `va_arg(）` 获取哪个参数的信息。你看到我们只是一次又一次地调用 `va_arg(）` 吗？`va_list` 变量是一个占位符，它跟踪进度到目前为止。
+> 那个 `va_list` 变量我们在上面使用的是什么？它是一个不透明的变量[^152^]，它保存有关我们下次使用 `va_arg()` 获取哪个参数的信息。你看到我们只是一次又一次地调用 `va_arg()` 吗？`va_list` 变量是一个占位符，它跟踪进度到目前为止。
 
 But we have to initialize that variable to some sensible value. That's where `va_start()` comes into play.
 
@@ -14472,13 +13491,13 @@ When we called `va_start(va, count)`, above, we were saying, "Initialize the `va
 
 > 当我们调用 `va_start(va, count)` 时，我们的意思是："将 `va` 变量初始化为指向 `count` 之后的可变参数。"
 
-And that's _why_ we need to have at least one named variable in our argument list[^153^](#fn153){#fnref153 .footnote-ref role="doc-noteref"}.
+And that's _why_ we need to have at least one named variable in our argument list[^153^].
 
-> 所以我们需要在参数列表中至少有一个命名变量 [^153^](#fn153){#fnref153 .footnote-ref role="doc-noteref"}。
+> 所以我们需要在参数列表中至少有一个命名变量 [^153^]。
 
 Once you have that pointer to the initial parameter, you can easily get subsequent argument values by calling `va_arg()` repeatedly. When you do, you have to pass in your `va_list` variable (so it can keep on keeping track of where you are), as well as the type of argument you're about to copy off.
 
-> 一旦你有了指向初始参数的指针，你可以通过多次调用 `va_arg()` 来轻松获取后续的参数值。当你这样做时，你必须传入你的 `va_list` 变量(以便它能够继续跟踪你的位置）以及你即将复制的参数的类型。
+> 一旦你有了指向初始参数的指针，你可以通过多次调用 `va_arg()` 来轻松获取后续的参数值。当你这样做时，你必须传入你的 `va_list` 变量(以便它能够继续跟踪你的位置)以及你即将复制的参数的类型。
 
 It's up to you as a programmer to figure out which type you're going to pass to `va_arg()`. In the above example, we just did `int` s. But in the case of `printf()`, it uses the format specifier to determine which type to pull off next.
 
@@ -14520,7 +13539,7 @@ Let's make a function `my_printf()` that works just like `printf()` except it ta
 
 ::: {#cb513 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -14562,7 +13581,7 @@ We still have to call `va_end()` when we're done, though, so don't forget that!
 
 _Localization_ is the process of making your app ready to work well in different locales (or countries).
 
-> 本地化是指使您的应用程序能够在不同的区域(或国家）中很好地运行的过程。
+> 本地化是指使您的应用程序能够在不同的区域(或国家)中很好地运行的过程。
 
 As you might know, not everyone uses the same character for decimal points or for thousands separators... or for currency.
 
@@ -14644,13 +13663,13 @@ And that'll work. But it's only portable to systems which have that exact same n
 
 By passing in an empty string (`""`) for the second argument, you're telling C, "Hey, figure out what the current locale on this system is so I don't have to tell you."
 
-> 通过将一个空字符串(""）作为第二个参数传入，您正在告诉 C：“嘿，找出这个系统上的当前区域设置，这样我就不必告诉您了。”
+> 通过将一个空字符串("")作为第二个参数传入，您正在告诉 C：“嘿，找出这个系统上的当前区域设置，这样我就不必告诉您了。”
 
 ## [26.2] Getting the Monetary Locale Settings {#getting-the-monetary-locale-settings number="26.2"}
 
-Because moving green pieces of paper around promises to be the key to happiness[^154^](#fn154){#fnref154 .footnote-ref role="doc-noteref"}, let's talk about monetary locale. When you're writing portable code, you have to know what to type for cash, right? Whether that's "\$", "€", "¥", or "£".
+Because moving green pieces of paper around promises to be the key to happiness[^154^], let's talk about monetary locale. When you're writing portable code, you have to know what to type for cash, right? Whether that's "\$", "€", "¥", or "£".
 
-> 因为移动绿色纸片承诺是幸福的关键 [^154^](#fn154){#fnref154 .footnote-ref role="doc-noteref"},让我们谈谈货币地区。当你写可移植代码时，你必须知道如何输入现金，对吗？无论是"\$"、"€"、"¥"还是"£"。
+> 因为移动绿色纸片承诺是幸福的关键 [^154^],让我们谈谈货币地区。当你写可移植代码时，你必须知道如何输入现金，对吗？无论是"\$"、"€"、"¥"还是"£"。
 
 How can you write that code without going insane? Luckily, once you call `setlocale(LC_ALL, "")`, you can just look these up with a call to `localeconv()`:
 
@@ -14670,13 +13689,13 @@ This function returns a pointer to a statically-allocated `struct lconv` that ha
 
 Here are the fields of `struct lconv` and their meanings.
 
-First, some conventions. An `_p_` means "positive", and `_n_` means "negative", and `int_` means "international". Though a lot of these are type `char` or `char*`, most (or the strings they point to) are actually treated as integers[^155^](#fn155){#fnref155 .footnote-ref role="doc-noteref"}.
+First, some conventions. An `_p_` means "positive", and `_n_` means "negative", and `int_` means "international". Though a lot of these are type `char` or `char*`, most (or the strings they point to) are actually treated as integers[^155^].
 
-> 首先，一些约定。 `_p_` 意味着“正面”，`_n_` 意味着“负面”，`int_` 意味着“国际”。尽管大多数这些都是 `char` 或 `char*` 类型，但实际上大多数(或它们指向的字符串）都被视为整数[^155^] (#fn155){#fnref155 .footnote-ref role="doc-noteref"}。
+> 首先，一些约定。 `_p_` 意味着“正面”，`_n_` 意味着“负面”，`int_` 意味着“国际”。尽管大多数这些都是 `char` 或 `char*` 类型，但实际上大多数(或它们指向的字符串)都被视为整数[^155^] (#fn155){#fnref155 .footnote-ref role="doc-noteref"}。
 
 Before we go further, know that `CHAR_MAX` (from `<limits.h>`) is the maximum value that can be held in a `char`. And that many of the following `char` values use that to indicate the value isn't available in the given locale.
 
-> 在我们继续之前，请注意 `CHAR_MAX`(来自 `<limits.h>`）是可以存储在 `char` 中的最大值。许多以下的 `char` 值使用它来表示在给定的语言环境中不可用的值。
+> 在我们继续之前，请注意 `CHAR_MAX`(来自 `<limits.h>`)是可以存储在 `char` 中的最大值。许多以下的 `char` 值使用它来表示在给定的语言环境中不可用的值。
 
 ---
 
@@ -14734,7 +13753,7 @@ OK, this is a trippy one. `mon_grouping` is a `char*`, so you might be thinking 
 
 These values describe how to group sets of numbers in currency to the _left_ of the decimal (the whole number part).
 
-> 这些值描述了如何将小数点左边(整数部分）的货币组合。
+> 这些值描述了如何将小数点左边(整数部分)的货币组合。
 
 For example, we might have:
 
@@ -14750,11 +13769,11 @@ $100,000,000.00
 
 These are groups of three. Group 0 (just left of the decimal) has 3 digits. Group 1 (next group to the left) has 3 digits, and the last one also has 3.
 
-> 这些是三个组。组 0(小数点左边）有 3 位数字。组 1(左边的下一组）有 3 位数字，最后一组也有 3 位数字。
+> 这些是三个组。组 0(小数点左边)有 3 位数字。组 1(左边的下一组)有 3 位数字，最后一组也有 3 位数字。
 
 So we could describe these groups, from the right (the decimal) to the left with a bunch of integer values representing the group sizes:
 
-> 我们可以从右(十进制）到左用一组整数值来描述这些组，这些整数值代表着组的大小。
+> 我们可以从右(十进制)到左用一组整数值来描述这些组，这些整数值代表着组的大小。
 
 ::: {#cb519 .sourceCode}
 
@@ -14886,7 +13905,7 @@ Value Description
 
 When I get the values on my system, this is what I see (grouping string displayed as individual byte values):
 
-> 当我在系统上获取值时，这就是我看到的(将字符串分组显示为单独的字节值）：
+> 当我在系统上获取值时，这就是我看到的(将字符串分组显示为单独的字节值)：
 
 ::: {#cb526 .sourceCode}
 
@@ -14934,7 +13953,7 @@ Macro Description
 
 `LC_COLLATE` Controls the behavior of the `strcoll()` and `strxfrm()` functions.
 
-`LC_CTYPE` Controls the behavior of the character-handling functions[^156^](#fn156){#fnref156 .footnote-ref role="doc-noteref"}.
+`LC_CTYPE` Controls the behavior of the character-handling functions[^156^].
 
 `LC_MONETARY` Controls the values returned by `localeconv()`.
 
@@ -14978,7 +13997,7 @@ Let's dive in!
 
 Back in the day, it was popular in the US and much of the world to use a 7-bit or 8-bit encoding for characters in memory. This meant we could have 128 or 256 characters (including non-printable characters) total. That was fine for a US-centric world, but it turns out there are actually other alphabets out there---who knew? Chinese has over 50,000 characters, and that's not fitting in a byte.
 
-> 以前，在美国和世界大部分地区，使用 7 位或 8 位编码存储字符是很流行的。这意味着我们最多可以有 128 个或 256 个字符(包括不可打印字符）。这对于以美国为中心的世界来说已经够用了，但事实证明，其实还有其他的字母表——谁知道呢？中文有超过 50000 个字符，一个字节是装不下的。
+> 以前，在美国和世界大部分地区，使用 7 位或 8 位编码存储字符是很流行的。这意味着我们最多可以有 128 个或 256 个字符(包括不可打印字符)。这对于以美国为中心的世界来说已经够用了，但事实证明，其实还有其他的字母表——谁知道呢？中文有超过 50000 个字符，一个字节是装不下的。
 
 So people came up with all kinds of alternate ways to represent their own custom character sets. And that was fine, but turned into a compatibility nightmare.
 
@@ -14996,7 +14015,7 @@ I want to talk about two concepts here. It's confusing because they're both numb
 
 Let's loosely define _code point_ to mean a numeric value representing a character. (Code points can also represent unprintable control characters, but just assume I mean something like the letter "B" or the character "π".)
 
-> 让我们简单定义“码点”为表示字符的数字值。(码点也可以表示不可打印的控制字符，但只假设我指的是像字母“B”或字符“π”这样的东西。）
+> 让我们简单定义“码点”为表示字符的数字值。(码点也可以表示不可打印的控制字符，但只假设我指的是像字母“B”或字符“π”这样的东西。)
 
 Each code point represents a unique character. And each character has a unique numeric code point associated with it.
 
@@ -15018,7 +14037,7 @@ Because we're about to flip the table a little.
 
 If you recall, an 8-bit byte can hold values from 0-255, inclusive. That's great for "B" which is 66---that fits in a byte. But "π" is 960, and that doesn't fit in a byte! We need another byte. How do we store all that in memory? Or what about bigger numbers, like 195,024? That's going to need a number of bytes to hold.
 
-> 如果你还记得，一个 8 位字节可以容纳 0-255 之间的值(包括 255）。这对于“B”来说很棒，因为它的值是 66，可以放在一个字节里。但是“π”的值是 960，它不能放在一个字节里！我们需要另一个字节。我们如何把它存储在内存中？或者更大的数字，比如 195024？它需要一些字节来容纳。
+> 如果你还记得，一个 8 位字节可以容纳 0-255 之间的值(包括 255)。这对于“B”来说很棒，因为它的值是 66，可以放在一个字节里。但是“π”的值是 960，它不能放在一个字节里！我们需要另一个字节。我们如何把它存储在内存中？或者更大的数字，比如 195024？它需要一些字节来容纳。
 
 The Big Question: how are these numbers represented in memory? This is what we call the _encoding_ of the characters.
 
@@ -15028,7 +14047,7 @@ So we have two things: one is the code point which tells us effectively the seri
 
 > 所以我们有两件事：一个是代码点，它可以有效地告诉我们特定字符的序列号。我们还有编码，它告诉我们如何在内存中表示这个数字。
 
-There are plenty of encodings. You can make up your own right now, if you want[^157^](#fn157){#fnref157 .footnote-ref role="doc-noteref"}. But we're going to look at some really common encodings that are in use with Unicode.
+There are plenty of encodings. You can make up your own right now, if you want[^157^]. But we're going to look at some really common encodings that are in use with Unicode.
 
 > 有很多编码。如果你想的话，你现在就可以自己创建一个。但是我们将要看一些非常常见的与 Unicode 一起使用的编码。
 
@@ -15043,16 +14062,16 @@ There are plenty of encodings. You can make up your own right now, if you want[^
 ```
    UTF-8       A byte-oriented encoding that uses a variable number of bytes per character. This is the one to use.
 
-   UTF-16      A 16-bit per character[^158^](#fn158){#fnref158 .footnote-ref role="doc-noteref"} encoding.
+   UTF-16      A 16-bit per character[^158^] encoding.
 
    UTF-32      A 32-bit per character encoding.
 ```
 
 ---
 
-With UTF-16 and UTF-32, the byte order matters, so you might see UTF-16BE for big-endian and UTF-16LE for little-endian. Same for UTF-32. Technically, if unspecified, you should assume big-endian. But since Windows uses UTF-16 extensively and is little-endian, sometimes that is assumed[^159^](#fn159){#fnref159 .footnote-ref role="doc-noteref"}.
+With UTF-16 and UTF-32, the byte order matters, so you might see UTF-16BE for big-endian and UTF-16LE for little-endian. Same for UTF-32. Technically, if unspecified, you should assume big-endian. But since Windows uses UTF-16 extensively and is little-endian, sometimes that is assumed[^159^].
 
-> 使用 UTF-16 和 UTF-32 时，字节顺序很重要，因此您可能会看到 UTF-16BE 用于大端，而 UTF-16LE 用于小端。 UTF-32 也是如此。 从技术上讲，如果未指定，您应该假定为大端。 但是由于 Windows 广泛使用 UTF-16 并且是小端，因此有时会假定[^159^](＃fn159）{＃fnref159 。脚注引用 role =“doc-noteref”}。
+> 使用 UTF-16 和 UTF-32 时，字节顺序很重要，因此您可能会看到 UTF-16BE 用于大端，而 UTF-16LE 用于小端。 UTF-32 也是如此。 从技术上讲，如果未指定，您应该假定为大端。 但是由于 Windows 广泛使用 UTF-16 并且是小端，因此有时会假定[^159^](＃fn159){＃fnref159 。脚注引用 role =“doc-noteref”}。
 
 简体中文：使用 UTF-16 和 UTF-32 时，字节顺序很重要，因此您可能会看到 UTF-16BE 用于大端，而 UTF-16LE 用于小端。 UTF-32 也是如此。 从技术上讲，如果未指定，应该假定为大端。 但是由于 Windows 广泛使用 UTF-16 并且是小端，因此有时会假定。
 
@@ -15072,9 +14091,9 @@ Character Code Point UTF-16BE UTF-32BE UTF-16LE UTF-32LE UTF-8
   `€`         20AC        20AC     000020AC     AC20     AC200000   E282AC
 ```
 
-Look in there for the patterns. Note that UTF-16BE and UTF-32BE are simply the code point represented directly as 16- and 32-bit values[^160^](#fn160){#fnref160 .footnote-ref role="doc-noteref"}.
+Look in there for the patterns. Note that UTF-16BE and UTF-32BE are simply the code point represented directly as 16- and 32-bit values[^160^].
 
-> 查看那里的模式。注意，UTF-16BE 和 UTF-32BE 只是将代码点直接表示为 16 位和 32 位值[^160^](＃fn160）{＃fnref160 。脚注引用 role =“doc-noteref”}。
+> 查看那里的模式。注意，UTF-16BE 和 UTF-32BE 只是将代码点直接表示为 16 位和 32 位值[^160^](＃fn160){＃fnref160 。脚注引用 role =“doc-noteref”}。
 
 Little-endian is the same, except the bytes are in little-endian order.
 
@@ -15086,13 +14105,13 @@ So as soon as we get above a certain value, UTF-8 starts using additional bytes 
 
 > 当我们达到一定值时，UTF-8 就会开始使用额外的字节来存储值。而且它们似乎也与代码点值没有关联。
 
-[The details of UTF-8 encoding](https://en.wikipedia.org/wiki/UTF-8)[^161^](#fn161){#fnref161 .footnote-ref role="doc-noteref"} are beyond the scope of this guide, but it's enough to know that it has a variable number of bytes per code point, and those byte values don't match up with the code point _except for the first 128 code points_. If you really want to learn more, [Computerphile has a great UTF-8 video with Tom Scott](https://www.youtube.com/watch?v=MijmeoH9LT4)[^162^](#fn162){#fnref162 .footnote-ref role="doc-noteref"}.
+[The details of UTF-8 encoding](https://en.wikipedia.org/wiki/UTF-8)[^161^] are beyond the scope of this guide, but it's enough to know that it has a variable number of bytes per code point, and those byte values don't match up with the code point _except for the first 128 code points_. If you really want to learn more, [Computerphile has a great UTF-8 video with Tom Scott](https://www.youtube.com/watch?v=MijmeoH9LT4)[^162^].
 
-> 细节的 UTF-8 编码([https://en.wikipedia.org/wiki/UTF-8](https://en.wikipedia.org/wiki/UTF-8)）超出了本指南的范围，但是只需要知道它每个码点的字节数是可变的，而且这些字节值与码点(除了前 128 个码点）不匹配。如果您真的想了解更多信息，Computerphile 有一个由 Tom Scott 演示的关于 UTF-8 的很棒的视频([https://www.youtube.com/watch?v=MijmeoH9LT4](https://www.youtube.com/watch?v=MijmeoH9LT4)）。
+> 细节的 UTF-8 编码([https://en.wikipedia.org/wiki/UTF-8](https://en.wikipedia.org/wiki/UTF-8))超出了本指南的范围，但是只需要知道它每个码点的字节数是可变的，而且这些字节值与码点(除了前 128 个码点)不匹配。如果您真的想了解更多信息，Computerphile 有一个由 Tom Scott 演示的关于 UTF-8 的很棒的视频([https://www.youtube.com/watch?v=MijmeoH9LT4](https://www.youtube.com/watch?v=MijmeoH9LT4))。
 
 That last bit is a neat thing about Unicode and UTF-8 from a North American perspective: it's backward compatible with 7-bit ASCII encoding! So if you're used to ASCII, UTF-8 is the same! Every ASCII-encoded document is also UTF-8 encoded! (But not the other way around, obviously.)
 
-> 最后一点对于北美人来说是关于 Unicode 和 UTF-8 的一个很棒的事情：它与 7 位 ASCII 编码兼容！所以如果你习惯于 ASCII，UTF-8 就是一样的！每个 ASCII 编码的文档也是 UTF-8 编码的！(但显然反过来不行。）
+> 最后一点对于北美人来说是关于 Unicode 和 UTF-8 的一个很棒的事情：它与 7 位 ASCII 编码兼容！所以如果你习惯于 ASCII，UTF-8 就是一样的！每个 ASCII 编码的文档也是 UTF-8 编码的！(但显然反过来不行。)
 
 It's probably that last point more than any other that is driving UTF-8 to take over the world.
 
@@ -15107,11 +14126,11 @@ When programming in C, there are (at least) three character sets that are in pla
 - The one that your code exists on disk as.
 - The one the compiler translates that into just as compilation begins (the _source character set_). This might be the same as the one on disk, or it might not.
 
-> 编译器开始编译时将其转换为的(源字符集）。这可能与磁盘上的相同，也可能不同。
+> 编译器开始编译时将其转换为的(源字符集)。这可能与磁盘上的相同，也可能不同。
 
 - The one the compiler translates the source character set into for execution (the _execution character set_). This might be the same as the source character set, or it might not.
 
-> 编译器将源字符集转换为执行字符集(执行字符集）。这可能与源字符集相同，也可能不同。
+> 编译器将源字符集转换为执行字符集(执行字符集)。这可能与源字符集相同，也可能不同。
 
 Your compiler probably has options to select these character sets at build-time.
 
@@ -15143,7 +14162,7 @@ Those are the characters you can use in your source and remain 100% portable.
 
 The execution character set will additionally have characters for alert (bell/flash), backspace, carriage return, and newline.
 
-> 执行字符集还将具有用于警报(铃声/闪光），退格，回车和换行的字符。
+> 执行字符集还将具有用于警报(铃声/闪光)，退格，回车和换行的字符。
 
 But most people don't go to that extreme and freely use their extended character sets in source and executable, especially now that Unicode and UTF-8 are getting more common. I mean, the basic character set doesn't even allow for `@`, `$`, or `` ` ``!
 
@@ -15151,11 +14170,11 @@ But most people don't go to that extreme and freely use their extended character
 
 Notably, it's a pain (though possible with escape sequences) to enter Unicode characters using only the basic character set.
 
-> 显而易见，只使用基本字符集输入 Unicode 字符是一件痛苦的事(尽管可以通过转义序列实现）。
+> 显而易见，只使用基本字符集输入 Unicode 字符是一件痛苦的事(尽管可以通过转义序列实现)。
 
 ## [27.5] Unicode in C {#unicode-in-c number="27.5"}
 
-Before I get into encoding in C, let's talk about Unicode from a code point standpoint. There is a way in C to specify Unicode characters and these will get translated by the compiler into the execution character set[^163^](#fn163){#fnref163 .footnote-ref role="doc-noteref"}.
+Before I get into encoding in C, let's talk about Unicode from a code point standpoint. There is a way in C to specify Unicode characters and these will get translated by the compiler into the execution character set[^163^].
 
 > 在我们讨论 C 中的编码之前，让我们从代码点的角度来谈谈 Unicode。C 中有一种方法可以指定 Unicode 字符，这些字符将由编译器转换为执行字符集。
 
@@ -15163,11 +14182,11 @@ So how do we do it?
 
 How about the euro symbol, code point 0x20AC. (I've written it in hex because both ways of representing it in C require hex.) How can we put that in our C code?
 
-> 关于欧元符号，代码点 0x20AC(我以十六进制的方式表示，因为在 C 语言中表示它的两种方式都需要十六进制）。我们怎样在 C 代码中放置它？
+> 关于欧元符号，代码点 0x20AC(我以十六进制的方式表示，因为在 C 语言中表示它的两种方式都需要十六进制)。我们怎样在 C 代码中放置它？
 
 Use the `\u` escape to put it in a string, e.g. `"\u20AC"` (case for the hex doesn't matter). You must put **exactly four** hex digits after the `\u`, padding with leading zeros if necessary.
 
-> 使用 `\u` 转义符将其放入字符串中，例如 `"\u20AC"`(十六进制的大小写不重要）。你必须在 `\u` 后面**恰好**输入四个十六进制数字，如果需要，可以在前面补零。
+> 使用 `\u` 转义符将其放入字符串中，例如 `"\u20AC"`(十六进制的大小写不重要)。你必须在 `\u` 后面**恰好**输入四个十六进制数字，如果需要，可以在前面补零。
 
 Here's an example:
 
@@ -15232,7 +14251,7 @@ And you probably can, given a modern compiler. The source character set will be 
 
 Caveat from the spec: you can't use `\u` or `\U` to encode any code points below 0xA0 except for 0x24 (`$`), 0x40 (`@`), and 0x60 (`` ` ``)---yes, those are precisely the trio of common punctuation marks missing from the basic character set. Apparently this restriction is relaxed in the upcoming version of the spec.
 
-> 规范中的警告：您不能使用\u 或\U 来编码基本字符集中缺少的常见标点符号 0x24($）、0x40(@）和 0x60(` `）以下的任何代码点，显然，这种限制在规范的新版本中已经放宽。
+> 规范中的警告：您不能使用\u 或\U 来编码基本字符集中缺少的常见标点符号 0x24($)、0x40(@)和 0x60(` `)以下的任何代码点，显然，这种限制在规范的新版本中已经放宽。
 
 Finally, you can also use these in identifiers in your code, with some restrictions. But I don't want to get into that here. We're all about string handling in this chapter.
 
@@ -15252,25 +14271,25 @@ If that's the case, and you don't mind being non-portable to systems that aren't
 
 A lot of things will just work (albeit non-portably) because UTF-8 strings can safely be NUL-terminated just like any other C string. But maybe losing portability in exchange for easier character handling is a tradeoff that's worth it to you.
 
-> 很多事情会正常工作(尽管不能移植），因为 UTF-8 字符串可以像其他 C 字符串一样安全地以 NUL 结尾。但也许为了更容易处理字符而牺牲移植性可能是值得的折衷。
+> 很多事情会正常工作(尽管不能移植)，因为 UTF-8 字符串可以像其他 C 字符串一样安全地以 NUL 结尾。但也许为了更容易处理字符而牺牲移植性可能是值得的折衷。
 
 There are some caveats, however:
 
 - Things like `strlen()` report the number of bytes in a string, not the number of characters, necessarily. (The `mbstowcs()` returns the number of characters in a string when you convert it to wide characters. POSIX extends this so you can pass `NULL` for the first argument if you just want the character count.)
 
-> 事情像 `strlen()` 报告字符串中的字节数，不一定是字符数。(`mbstowcs()` 在将字符串转换为宽字符时会返回字符数。POSIX 扩展了这一功能，因此如果只想获得字符数，可以将第一个参数传递为 `NULL`。）
+> 事情像 `strlen()` 报告字符串中的字节数，不一定是字符数。(`mbstowcs()` 在将字符串转换为宽字符时会返回字符数。POSIX 扩展了这一功能，因此如果只想获得字符数，可以将第一个参数传递为 `NULL`。)
 
 - The following won't work properly with characters of more than one byte: `strtok()`, `strchr()` (use `strstr()` instead), `strspn()`-type functions, `toupper()`, `tolower()`, `isalpha()`-type functions, and probably more. Beware anything that operates on bytes.
 
-> 以下函数不能正确处理多字节字符：strtok()、strchr()(改用 strstr()）、strspn()类函数、toupper()、tolower()、isalpha()类函数等，可能还有更多。请注意任何操作字节的函数。
+> 以下函数不能正确处理多字节字符：strtok()、strchr()(改用 strstr())、strspn()类函数、toupper()、tolower()、isalpha()类函数等，可能还有更多。请注意任何操作字节的函数。
 
-- `printf()` variants allow for a way to only print so many bytes of a string[^164^](#fn164){#fnref164 .footnote-ref role="doc-noteref"}. You want to make certain you print the correct number of bytes to end on a character boundary.
+- `printf()` variants allow for a way to only print so many bytes of a string[^164^]. You want to make certain you print the correct number of bytes to end on a character boundary.
 
 > `printf()` 的变体允许一种方式只打印字符串的一部分字节[^164^]。你想确保你打印正确数量的字节以结束在一个字符边界上。
 
 - If you want to `malloc()` space for a string, or declare an array of `char` s for one, be aware that the maximum size could be more than you were expecting. Each character could take up to `MB_LEN_MAX` bytes (from `<limits.h>`)---except characters in the basic character set which are guaranteed to be one byte.
 
-> 如果你想要为字符串 `malloc()` 空间，或者声明一个 `char` 数组，请注意最大尺寸可能比你预期的要大。每个字符可能占用多达 `MB_LEN_MAX` 字节(来自 `<limits.h>`）—— 除了基本字符集中被保证为一个字节的字符。
+> 如果你想要为字符串 `malloc()` 空间，或者声明一个 `char` 数组，请注意最大尺寸可能比你预期的要大。每个字符可能占用多达 `MB_LEN_MAX` 字节(来自 `<limits.h>`)—— 除了基本字符集中被保证为一个字节的字符。
 
 And probably others I haven't discovered. Let me know what pitfalls there are out there...
 
@@ -15286,7 +14305,7 @@ But that's too easy. Let's make things a lot more difficult! Yay!
 
 First of all, I want to potentially change your thinking about what a string (array of `char` s) is. These are _multibyte strings_ made up of _multibyte characters_.
 
-> 首先，我想改变你对字符串(字符数组）的想法。这些是由多字节字符组成的多字节字符串。
+> 首先，我想改变你对字符串(字符数组)的想法。这些是由多字节字符组成的多字节字符串。
 
 That's right---your run-of-the-mill string of characters is multibyte. When someone says "C string", they mean "C multibyte string".
 
@@ -15308,7 +14327,7 @@ char c[128] = "Hello, world!";  // Multibyte string
 
 What we're saying here is that a particular character that's not in the basic character set could be composed of multiple bytes. Up to `MB_LEN_MAX` of them (from `<limits.h>`). Sure, it only looks like one character on the screen, but it could be multiple bytes.
 
-> 我们这里说的是，一个不在基本字符集中的特定字符可以由多个字节组成。最多可以有 `MB_LEN_MAX` 个字节(来自 `<limits.h>`）。当然，它只在屏幕上看起来像一个字符，但它可能是多个字节。
+> 我们这里说的是，一个不在基本字符集中的特定字符可以由多个字节组成。最多可以有 `MB_LEN_MAX` 个字节(来自 `<limits.h>`)。当然，它只在屏幕上看起来像一个字符，但它可能是多个字节。
 
 You can throw Unicode values in there, as well, as we saw earlier:
 
@@ -15336,15 +14355,15 @@ printf("%zu\n", strlen(s));  // 7!
 
 The string length of `"€1.23"` is `7`?! Yes! Well, on my system, yes! Remember that `strlen()` returns the number of bytes in the string, not the number of characters. (When we get to "wide characters", coming up, we'll see a way to get the number of characters in the string.)
 
-> "€1.23"的字符串长度是 7？！是的！好吧，在我的系统上是的！记住，`strlen()` 返回字符串中的字节数，而不是字符数。(当我们到达“宽字符”时，我们将看到一种获取字符串中字符数的方法。）
+> "€1.23"的字符串长度是 7？！是的！好吧，在我的系统上是的！记住，`strlen()` 返回字符串中的字节数，而不是字符数。(当我们到达“宽字符”时，我们将看到一种获取字符串中字符数的方法。)
 
 Note that while C allows individual multibyte `char` constants (as opposed to `char*`), the behavior of these varies by implementation and your compiler might warn on it.
 
-> 注意，虽然 C 允许单独的多字节 `char` 常量(而不是 `char*`），但这些变量的行为因实现而异，您的编译器可能会发出警告。
+> 注意，虽然 C 允许单独的多字节 `char` 常量(而不是 `char*`)，但这些变量的行为因实现而异，您的编译器可能会发出警告。
 
 GCC, for example, warns of multi-character character constants for the following two lines (and, on my system, prints out the UTF-8 encoding):
 
-> GCC，例如，会警告以下两行的多字符字符常量(并且，在我的系统上，会输出 UTF-8 编码）：
+> GCC，例如，会警告以下两行的多字符字符常量(并且，在我的系统上，会输出 UTF-8 编码)：
 
 ::: {#cb535 .sourceCode}
 
@@ -15365,7 +14384,7 @@ A wide character is a single value that can uniquely represent any character in 
 
 Basically, where multibyte character strings are arrays of bytes, wide character strings are arrays of _characters_. So you can start thinking on a character-by-character basis rather than a byte-by-byte basis (the latter of which gets all messy when characters start taking up variable numbers of bytes).
 
-> 基本上，多字节字符串是字节数组，宽字符串是字符数组。因此，您可以以字符为基础而不是以字节为基础(当字符开始占用可变数量的字节时，后者变得非常混乱）开始思考。
+> 基本上，多字节字符串是字节数组，宽字符串是字符数组。因此，您可以以字符为基础而不是以字节为基础(当字符开始占用可变数量的字节时，后者变得非常混乱)开始思考。
 
 Wide characters can be represented by a number of types, but the big standout one is `wchar_t`. It's the main one. It's like `char`, except wide.
 
@@ -15373,7 +14392,7 @@ Wide characters can be represented by a number of types, but the big standout on
 
 You might be wondering if you can't tell if it's Unicode or not, how does that allow you much flexibility in terms of writing code? `wchar_t` opens some of those doors, as there are a rich set of functions you can use to deal with `wchar_t` strings (like getting the length, etc.) without caring about the encoding.
 
-> 如果你不能判断它是不是 Unicode，那么这种情况又如何让你在编写代码时有更多的灵活性呢？`wchar_t` 可以为你打开一些大门，因为它提供了一系列丰富的函数，可以用来处理 `wchar_t` 字符串(例如获取长度等），而无需关心编码。
+> 如果你不能判断它是不是 Unicode，那么这种情况又如何让你在编写代码时有更多的灵活性呢？`wchar_t` 可以为你打开一些大门，因为它提供了一系列丰富的函数，可以用来处理 `wchar_t` 字符串(例如获取长度等)，而无需关心编码。
 
 ## [27.8] Using Wide Characters and `wchar_t` {#using-wide-characters-and-wchar_t number="27.8"}
 
@@ -15393,11 +14412,11 @@ But wait, you're saying---if it's only 16 bits, it's not big enough to hold all 
 
 This can cause grief with Unicode on platforms with 16-bit `wchar_t` s (ahem---Windows). But that's out of scope for this guide.
 
-> 这可能会在使用 16 位 `wchar_t` 的平台上(咳---Windows）导致 Unicode 出现问题。但这已经超出了本指南的范围。
+> 这可能会在使用 16 位 `wchar_t` 的平台上(咳---Windows)导致 Unicode 出现问题。但这已经超出了本指南的范围。
 
 You can declare a string or character of this type with the `L` prefix, and you can print them with the `%ls` ("ell ess") format specifier. Or print an individual `wchar_t` with `%lc`.
 
-> 你可以使用 `L` 前缀声明这种类型的字符串或字符，并使用 `%ls`("ell ess"）格式说明符来打印它们。或者使用 `%lc` 来打印单个 `wchar_t`。
+> 你可以使用 `L` 前缀声明这种类型的字符串或字符，并使用 `%ls`("ell ess")格式说明符来打印它们。或者使用 `%lc` 来打印单个 `wchar_t`。
 
 ::: {#cb536 .sourceCode}
 
@@ -15459,7 +14478,7 @@ Let's do a quick demo where we convert a multibyte string to a wide character st
 
 ::: {#cb537 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <wchar.h>
@@ -15504,7 +14523,7 @@ wide char: "The cost is €1.23" (17 characters)
 
 One interesting thing to note is that `mbstowcs()`, in addition to converting the multibyte string to wide, returns the length (in characters) of the wide character string. On POSIX-compliant systems, you can take advantage of a special mode where it _only_ returns the length-in-characters of a given multibyte string: you just pass `NULL` to the destination, and `0` to the maximum number of characters to convert (this value is ignored).
 
-> 注意一件有趣的事情是，`mbstowcs()` 不仅可以将多字节字符串转换为宽字符，还可以返回字符串的长度(以字符为单位）。在符合 POSIX 标准的系统上，您可以利用一种特殊模式，只返回给定多字节字符串的字符长度：只需将 `NULL` 传递给目标，将 `0` 传递给要转换的最大字符数(此值将被忽略）。
+> 注意一件有趣的事情是，`mbstowcs()` 不仅可以将多字节字符串转换为宽字符，还可以返回字符串的长度(以字符为单位)。在符合 POSIX 标准的系统上，您可以利用一种特殊模式，只返回给定多字节字符串的字符长度：只需将 `NULL` 传递给目标，将 `0` 传递给要转换的最大字符数(此值将被忽略)。
 
 (In the code below, I'm using my extended source character set---you might have to replace those with `\u` escapes.)
 
@@ -15531,7 +14550,7 @@ And, of course, if you want to convert the other way, it's `wcstombs()`.
 
 Once we're in wide character land, we have all kinds of functionality at our disposal. I'm just going to summarize a bunch of the functions here, but basically what we have here are the wide character versions of the multibyte string functions that we're use to. (For example, we know `strlen()` for multibyte strings; there's a `wcslen()` for wide character strings.)
 
-> 一旦我们进入宽字符领域，我们就有各种功能可供使用。我只是简要概括一些函数，但基本上我们这里有我们熟悉的多字节字符串函数的宽字符版本。(例如，我们知道多字节字符串的 `strlen(）`; 宽字符串有 `wcslen(）`。）
+> 一旦我们进入宽字符领域，我们就有各种功能可供使用。我只是简要概括一些函数，但基本上我们这里有我们熟悉的多字节字符串函数的宽字符版本。(例如，我们知道多字节字符串的 `strlen()`; 宽字符串有 `wcslen()`。)
 
 ### [27.9.1] `wint_t` {#wint_t number="27.9.1"}
 
@@ -15551,7 +14570,7 @@ This is used by a number of single-character-oriented wide character functions.
 
 The tl;dr here is to not mix and match byte-oriented functions (like `fprintf()`) with wide-oriented functions (like `fwprintf()`). Decide if a stream will be byte-oriented or wide-oriented and stick with those types of I/O functions.
 
-> 这里的简要说明是：不要混合使用字节导向函数(比如 `fprintf()`）和宽字节导向函数(比如 `fwprintf()`）。决定一个流是字节导向还是宽字节导向，并且只使用这种类型的 I/O 函数。
+> 这里的简要说明是：不要混合使用字节导向函数(比如 `fprintf()`)和宽字节导向函数(比如 `fwprintf()`)。决定一个流是字节导向还是宽字节导向，并且只使用这种类型的 I/O 函数。
 
 In more detail: streams can be either byte-oriented or wide-oriented. When a stream is first created, it has no orientation, but the first read or write will set the orientation.
 
@@ -15559,11 +14578,11 @@ In more detail: streams can be either byte-oriented or wide-oriented. When a str
 
 If you first use a wide operation (like `fwprintf()`) it will orient the stream wide.
 
-> 如果你首先使用一个宽操作(比如 `fwprintf()`），它将会定向流宽。
+> 如果你首先使用一个宽操作(比如 `fwprintf()`)，它将会定向流宽。
 
 If you first use a byte operation (like `fprintf()`) it will orient the stream by bytes.
 
-> 如果你首先使用字节操作(如 `fprintf()`），它将按字节定向流。
+> 如果你首先使用字节操作(如 `fprintf()`)，它将按字节定向流。
 
 You can manually set an unoriented stream one way or the other with a call to `fwide()`. You can use that same function to get the orientation of a stream.
 
@@ -15687,7 +14706,7 @@ Comparing Function Description
 
 `wmemcmp()` Compare memory lexicographically.
 
-## `wcsxfrm()` Transform strings into versions such that `wcscmp()` behaves like `wcscoll()`[^165^](#fn165) {#fnref165 .footnote-ref role="doc-noteref"}.
+## `wcsxfrm()` Transform strings into versions such that `wcscmp()` behaves like `wcscoll()`[^165^].
 
 ### [27.9.7] String Searching Functions {#string-searching-functions number="27.9.7"}
 
@@ -15825,7 +14844,7 @@ Here is a list of the restartable conversion functions---note the naming convens
 
 These are really similar to their non-restartable counterparts, except they require you pass in a pointer to your own `mbstate_t` variable. And also they modify the source string pointer (to help you out if invalid bytes are found), so it might be useful to save a copy of the original.
 
-> 这些与它们的非重启式对应物非常相似，只是它们需要您传入一个指向自己的 `mbstate_t` 变量的指针。此外，它们还会修改源字符串指针(如果发现无效字节，可以帮助您），因此保存原始副本可能很有用。
+> 这些与它们的非重启式对应物非常相似，只是它们需要您传入一个指向自己的 `mbstate_t` 变量的指针。此外，它们还会修改源字符串指针(如果发现无效字节，可以帮助您)，因此保存原始副本可能很有用。
 
 Here's the example from earlier in the chapter reworked to pass in our own `mbstate_t`.
 
@@ -15833,7 +14852,7 @@ Here's the example from earlier in the chapter reworked to pass in our own `mbst
 
 ::: {#cb541 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -15913,7 +14932,7 @@ Finally, these restartable conversion functions do actually have their own inter
 
 In this section, we'll see what C can (and can't) do when it comes to three specific Unicode encodings: UTF-8, UTF-16, and UTF-32.
 
-> 在这一节中，我们将看到 C 在三种特定的 Unicode 编码(UTF-8、UTF-16 和 UTF-32）方面能(和不能）做什么。
+> 在这一节中，我们将看到 C 在三种特定的 Unicode 编码(UTF-8、UTF-16 和 UTF-32)方面能(和不能)做什么。
 
 ### [27.11.1] UTF-8 {#utf-8 number="27.11.1"}
 
@@ -15953,7 +14972,7 @@ Sure! If the extended source character set supports it. (gcc does.)
 
 What if it doesn't? You can specify a Unicode code point with your friendly neighborhood `\u` and `\U`, [as noted above](#unicode-in-c).
 
-> 如果不行怎么办？你可以使用你友好的 `\u` 和 `\U` 指定一个 Unicode 代码点，如上文所述(#unicode-in-c）。
+> 如果不行怎么办？你可以使用你友好的 `\u` 和 `\U` 指定一个 Unicode 代码点，如上文所述(#unicode-in-c)。
 
 But that's about it. There's no portable way in the standard library to take arbirary input and turn it into UTF-8 unless your locale is UTF-8. Or to parse UTF-8 unless your locale is UTF-8.
 
@@ -16030,7 +15049,7 @@ Now---are values in these stored in UTF-16 or UTF-32? Depends on the implementat
 
 But you can test to see if they are. If the macros `__STDC_UTF_16__` or `__STDC_UTF_32__` are defined (to `1`) it means the types hold UTF-16 or UTF-32, respectively.
 
-> 但是你可以测试看看它们是否如此。如果宏 `__STDC_UTF_16__` 或 `__STDC_UTF_32__` 被定义(为 `1`），这意味着这些类型分别持有 UTF-16 或 UTF-32。
+> 但是你可以测试看看它们是否如此。如果宏 `__STDC_UTF_16__` 或 `__STDC_UTF_32__` 被定义(为 `1`)，这意味着这些类型分别持有 UTF-16 或 UTF-32。
 
 If you're curious, and I know you are, the values, if UTF-16 or UTF-32, are stored in the native endianess. That is, you should be able to compare them straight up to Unicode code point values:
 
@@ -16060,9 +15079,9 @@ You can convert from your multibyte encoding to `char16_t` or `char32_t` with a 
 
 > (正如我所说，除非相应的宏被设置为“1”，否则结果可能不是 UTF-16 或 UTF-32。)
 
-All of these functions are restartable (i.e. you pass in your own `mbstate_t`), and all of them operate character by character[^166^](#fn166){#fnref166 .footnote-ref role="doc-noteref"}.
+All of these functions are restartable (i.e. you pass in your own `mbstate_t`), and all of them operate character by character[^166^].
 
-> 所有这些函数都可以重新启动(即您传入自己的 `mbstate_t`），它们都是逐字符操作的。
+> 所有这些函数都可以重新启动(即您传入自己的 `mbstate_t`)，它们都是逐字符操作的。
 
 ---
 
@@ -16084,8 +15103,8 @@ For heavy-duty conversion between different specific encodings, there are a coup
 
 > 对于不同特定编码之间的重型转换，有几个成熟的库值得查看。注意，我没有使用这些库中的任何一个。
 
-- [iconv](https://en.wikipedia.org/wiki/Iconv)[^167^](#fn167){#fnref167 .footnote-ref role="doc-noteref"}---Internationalization Conversion, a common POSIX-standard API available on the major platforms.
-- [ICU](http://site.icu-project.org/)[^168^](#fn168){#fnref168 .footnote-ref role="doc-noteref"}---International Components for Unicode. At least one blogger found this easy to use.
+- [iconv](https://en.wikipedia.org/wiki/Iconv)[^167^]---Internationalization Conversion, a common POSIX-standard API available on the major platforms.
+- [ICU](http://site.icu-project.org/)[^168^]---International Components for Unicode. At least one blogger found this easy to use.
 
 If you have more noteworthy libraries, let me know.
 
@@ -16121,7 +15140,7 @@ If you've noticed, `main()` has a return type of `int`... and yet I've rarely, i
 
 This is because for `main()` only (and I can't stress enough this special case _only_ applies to `main()` and no other functions anywhere) has an _implicit_ `return 0` if you fall off the end.
 
-> 因为只有 `main()`(我强调这种特殊情况只适用于 `main()`，不适用于任何其他函数）会隐式地返回 0，如果你从末尾跳出。
+> 因为只有 `main()`(我强调这种特殊情况只适用于 `main()`，不适用于任何其他函数)会隐式地返回 0，如果你从末尾跳出。
 
 You can explicitly `return` from `main()` any time you want, and some programmers feel it's more _Right_ to always have a `return` at the end of `main()`. But if you leave it off, C will put one there for you.
 
@@ -16135,7 +15154,7 @@ So... here are the `return` rules for `main()`:
 
 - If you don't explicitly `return` and just fall off the end of `main()`, it's just as if you'd returned `0` or `EXIT_SUCCESS`.
 
-> 如果您没有明确地 `返回`，而只是从 `main(）` 跌落，那就好像您已经返回了 `0` 或 `EXIT_SUCCESS` 一样。
+> 如果您没有明确地 `返回`，而只是从 `main()` 跌落，那就好像您已经返回了 `0` 或 `EXIT_SUCCESS` 一样。
 
 ### [28.1.2] `exit()` {#exit number="28.1.2"}
 
@@ -16149,7 +15168,7 @@ The argument you pass to `exit()` is the exit status.
 
 You can register functions to be called when a program exits whether by returning from `main()` or calling the `exit()` function.
 
-> 你可以注册函数，以便在程序从 `main(）` 返回或调用 `exit(）` 函数时调用。
+> 你可以注册函数，以便在程序从 `main()` 返回或调用 `exit()` 函数时调用。
 
 A call to `atexit()` with the handler function name will get it done. You can register multiple exit handlers, and they'll be called in the reverse order of registration.
 
@@ -16159,7 +15178,7 @@ Here's an example:
 
 ::: {#cb550 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16210,7 +15229,7 @@ But there is a way to register exit handlers: call `at_quick_exit()` analogously
 
 ::: {#cb552 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -16272,7 +15291,7 @@ Use this if you have to exit _right fargin' now_.
 
 The `assert()` statement is used to insist that something be true, or else the program will exit.
 
-> 断言(assert）语句用于坚持某事为真，否则程序将退出。
+> 断言(assert)语句用于坚持某事为真，否则程序将退出。
 
 Devs often use an assert to catch Should-Never-Happen type errors.
 
@@ -16329,15 +15348,15 @@ Some foreshadowing about _signals_: this actually works by raising a `SIGABRT` w
 
 > 一些关于信号的预示：它实际上是通过抛出 `SIGABRT` 来结束进程的。
 
-What happens after that is up to the system, but on Unix-likes, it was common to [dump core](https://en.wikipedia.org/wiki/Core_dump)[^169^](#fn169){#fnref169 .footnote-ref role="doc-noteref"} as the program terminated.
+What happens after that is up to the system, but on Unix-likes, it was common to [dump core](https://en.wikipedia.org/wiki/Core_dump)[^169^] as the program terminated.
 
-> 接下来发生什么取决于系统，但在类 Unix 系统中，在程序终止时通常会[转储内核](https://en.wikipedia.org/wiki/Core_dump)[^169^](#fn169){#fnref169 .footnote-ref role="doc-noteref"}。
+> 接下来发生什么取决于系统，但在类 Unix 系统中，在程序终止时通常会[转储内核](https://en.wikipedia.org/wiki/Core_dump)[^169^]。
 
 # [29] Signal Handling {#signal-handling number="29"}
 
-Before we start, I'm just going to advise you to generally ignore this entire chapter and use your OS's (very likely) superior signal handling functions. Unix-likes have the `sigaction()` family of functions, and Windows has... whatever it does[^170^](#fn170){#fnref170 .footnote-ref role="doc-noteref"}.
+Before we start, I'm just going to advise you to generally ignore this entire chapter and use your OS's (very likely) superior signal handling functions. Unix-likes have the `sigaction()` family of functions, and Windows has... whatever it does[^170^].
 
-> 在我们开始之前，我只是想建议你忽略整个章节，并使用你的操作系统(很可能）更优秀的信号处理函数。类 Unix 系统有 `sigaction()` 系列函数，而 Windows 有...它所做的任何事情[^170^](#fn170）{#fnref170 .footnote-ref role="doc-noteref"}。
+> 在我们开始之前，我只是想建议你忽略整个章节，并使用你的操作系统(很可能)更优秀的信号处理函数。类 Unix 系统有 `sigaction()` 系列函数，而 Windows 有...它所做的任何事情[^170^]。
 
 With that out of the way, what are signals?
 
@@ -16391,11 +15410,11 @@ The action can be one of three things:
 
 Let's write a program that you can't `CTRL-C` out of. (Don't fret---in the following program, you can also hit `RETURN` and it'll exit.)
 
-> 让我们编写一个你无法用 `CTRL-C` 退出的程序(别担心，在下面的程序中，你也可以按 `RETURN` 键退出）。
+> 让我们编写一个你无法用 `CTRL-C` 退出的程序(别担心，在下面的程序中，你也可以按 `RETURN` 键退出)。
 
 ::: {#cb557 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <signal.h>
 
@@ -16501,7 +15520,7 @@ I want to be clear that this program engages in undefined behavior in a couple w
 
 ::: {#cb562 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -16577,7 +15596,7 @@ And lastly you'll see that I've marked undefined behavior in a couple places. Mo
 
 Turns out we're pretty limited in what we can and can't do in our signal handlers. This is one of the reasons why I say you shouldn't even bother with this and instead use your OS's signal handling instead (e.g. `sigaction()` for Unix-like systems).
 
-> 结果我们在信号处理程序中能做什么和不能做什么受到很大的限制。这就是为什么我说你不应该费心去做这件事，而是应该使用操作系统的信号处理(例如 Unix 系统中的 `sigaction()`）。
+> 结果我们在信号处理程序中能做什么和不能做什么受到很大的限制。这就是为什么我说你不应该费心去做这件事，而是应该使用操作系统的信号处理(例如 Unix 系统中的 `sigaction()`)。
 
 Wikipedia goes so far as to say the only really portable thing you can do is call `signal()` with `SIG_IGN` or `SIG_DFL` and that's it.
 
@@ -16595,11 +15614,11 @@ Here's what we **can't** portably do:
   - Unless it's a lock-free atomic object or...
   - You're assigning into a variable of type `volatile sig_atomic_t`.
 
-That last bit--`sig_atomic_t`--is your ticket to getting data out of a signal handler. (Unless you want to use lock-free atomic objects, which is outside the scope of this section[^171^](#fn171){#fnref171 .footnote-ref role="doc-noteref"}.) It's an integer type that might or might not be signed. And it's bounded by what you can put in there.
+That last bit--`sig_atomic_t`--is your ticket to getting data out of a signal handler. (Unless you want to use lock-free atomic objects, which is outside the scope of this section[^171^].) It's an integer type that might or might not be signed. And it's bounded by what you can put in there.
 
-> 那最后一点——`sig_atomic_t`——是你从信号处理程序中获取数据的入口。(除非你想使用无锁原子对象，这超出了本节的范围[^171^](#fn171）{#fnref171 .footnote-ref role="doc-noteref"}。）它是一种可能有符号也可能无符号的整数类型。它的范围取决于你可以放进去的东西。
+> 那最后一点——`sig_atomic_t`——是你从信号处理程序中获取数据的入口。(除非你想使用无锁原子对象，这超出了本节的范围[^171^]。)它是一种可能有符号也可能无符号的整数类型。它的范围取决于你可以放进去的东西。
 
-You can look at the minimum and maximum allowable values in the macros `SIG_ATOMIC_MIN` and `SIG_ATOMIC_MAX`[^172^](#fn172){#fnref172 .footnote-ref role="doc-noteref"}.
+You can look at the minimum and maximum allowable values in the macros `SIG_ATOMIC_MIN` and `SIG_ATOMIC_MAX`[^172^].
 
 > 你可以查看宏 `SIG_ATOMIC_MIN` 和 `SIG_ATOMIC_MAX` 中允许的最小值和最大值。
 
@@ -16629,7 +15648,7 @@ Then in our main loop, we'll check to see if that counter is over `2`, then bail
 
 ::: {#cb564 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <signal.h>
 
@@ -16666,11 +15685,11 @@ If we only want to postpone the exit by one hitting of `CTRL-C`, we can do that 
 
 What we'll do is handle it once, and the handler will reset the signal to its default behavior (that is, to exit):
 
-> 我们将只处理一次，处理程序将信号重置为默认行为(即退出）：
+> 我们将只处理一次，处理程序将信号重置为默认行为(即退出)：
 
 ::: {#cb565 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <signal.h>
 
@@ -16694,7 +15713,7 @@ int main(void)
 
 Later when we look at lock-free atomic variables, we'll see a way to fix the `count` version (assuming lock-free atomic variables are available on your particular system).
 
-> 稍后当我们看到无锁原子变量时，我们将看到一种修复 `count` 版本的方法(假设无锁原子变量可在您的特定系统上使用）。
+> 稍后当我们看到无锁原子变量时，我们将看到一种修复 `count` 版本的方法(假设无锁原子变量可在您的特定系统上使用)。
 
 This is why at the beginning, I was suggesting checking out your OS's built-in signal system as a probably-superior alternative.
 
@@ -16718,7 +15737,7 @@ Now, a lot of people don't like VLAs. They've been banned from the Linux kernel,
 
 This is an optional feature of the language. The macro `__STDC_NO_VLA__` is set to `1` if VLAs are _not_ present. (They were mandatory in C99, and then became optional in C11.)
 
-> 这是语言的一个可选特性。如果不存在可变长数组(VLAs），宏 `__STDC_NO_VLA__` 将被设置为 `1`。(它们在 C99 中是必需的，然后在 C11 中变成可选的。）
+> 这是语言的一个可选特性。如果不存在可变长数组(VLAs)，宏 `__STDC_NO_VLA__` 将被设置为 `1`。(它们在 C99 中是必需的，然后在 C11 中变成可选的。)
 
 ::: {#cb566 .sourceCode}
 
@@ -16773,7 +15792,7 @@ Let's ask the user to input the size of the array, and then store the index-time
 
 ::: {#cb569 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -16815,7 +15834,7 @@ int v[x * 100];
 
 Some restrictions:
 
-- You can't declare a VLA at file scope, and you can't make a `static` one in block scope[^173^](#fn173){#fnref173 .footnote-ref role="doc-noteref"}.
+- You can't declare a VLA at file scope, and you can't make a `static` one in block scope[^173^].
 
 > 不能在文件作用域中声明 VLA，也不能在块作用域中声明静态的 VLA。
 
@@ -16829,7 +15848,7 @@ Also, entering a negative value for the size of the array invokes undefined beha
 
 We're used to `sizeof` giving us the size in bytes of any particular object, including arrays. And VLAs are no exception.
 
-> 我们习惯于 `sizeof` 给我们任何特定对象(包括数组）的字节大小。可变长数组也不例外。
+> 我们习惯于 `sizeof` 给我们任何特定对象(包括数组)的字节大小。可变长数组也不例外。
 
 The main difference is that `sizeof` on a VLA is executed at _runtime_, whereas on a non-variably-sized variable it is computed at _compile time_.
 
@@ -16855,7 +15874,7 @@ There's a subtle and correct implication from the above line: pointer arithmetic
 
 ::: {#cb572 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -16918,7 +15937,7 @@ Passing single-dimensional VLAs into a function can be no different than passing
 
 ::: {#cb575 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int sum(int count, int *v)
@@ -16996,7 +16015,7 @@ In the following example, we build a multiplication table matrix of a variable w
 
 ::: {#cb578 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void print_matrix(int h, int w, int m[h][w])
@@ -17033,7 +16052,7 @@ You can have some of the dimensions fixed and some variable. Let's say we have a
 
 ::: {#cb579 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 void print_records(int count, int record[count][5])
@@ -17122,7 +16141,7 @@ So it's not a `typedef` of a VLA so much as a new fixed size array type of the d
 
 ::: {#cb582 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -17176,12 +16195,12 @@ VLAs have been banned from the Linux kernel for a few reasons:
 - Lots of places they were used should have just been fixed-size.
 - The code behind VLAs is slower (to a degree that most people wouldn't notice, but makes a difference in an operating system).
 
-> 代码背后的 VLAs 速度较慢(大多数人不会注意到，但在操作系统中有所不同）。
+> 代码背后的 VLAs 速度较慢(大多数人不会注意到，但在操作系统中有所不同)。
 
 - VLAs are not supported to the same degree by all C compilers.
 - Stack size is limited, and VLAs go on the stack. If some code accidentally (or maliciously) passes a large value into a kernel function that allocates a VLA, *Bad Things*™ could happen.
 
-> 栈的大小是有限的，而可变长数组(VLAs）则存放在栈中。如果某些代码不小心(或恶意）将大量值传递给一个分配可变长数组的内核函数，就可能发生*坏事* ™。
+> 栈的大小是有限的，而可变长数组(VLAs)则存放在栈中。如果某些代码不小心(或恶意)将大量值传递给一个分配可变长数组的内核函数，就可能发生*坏事* ™。
 
 Other folks online point out that there's no way to detect a VLA's failure to allocate, and programs that suffered such problems would likely just crash. While fixed-size arrays also have the same issue, it's far more likely that someone accidentally make a _VLA Of Unusual Size_ than somehow accidentally declare a fixed-size, say, 30 megabyte array.
 
@@ -17193,17 +16212,17 @@ The `goto` statement is universally revered and can be here presented without co
 
 > 跳转语句普遍受到尊重，可以在这里毫无争议地提出。
 
-Just kidding! Over the years, there has been a lot of back-and-forth over whether or not (often not) `goto` is [considered harmful](https://en.wikipedia.org/wiki/Goto#Criticism)[^174^](#fn174){#fnref174 .footnote-ref role="doc-noteref"}.
+Just kidding! Over the years, there has been a lot of back-and-forth over whether or not (often not) `goto` is [considered harmful](https://en.wikipedia.org/wiki/Goto#Criticism)[^174^].
 
-> 只是开玩笑！多年来，关于是否(通常不是）“转到”被认为是有害的(参见 [Wikipedia 上的批评](https://en.wikipedia.org/wiki/Goto#Criticism)）一直存在着许多争论。
+> 只是开玩笑！多年来，关于是否(通常不是)“转到”被认为是有害的(参见 [Wikipedia 上的批评](https://en.wikipedia.org/wiki/Goto#Criticism))一直存在着许多争论。
 
 In this programmer's opinion, you should use whichever constructs leads to the _best_ code, factoring in maintainability and speed. And sometimes this might be `goto`!
 
 > 在这位程序员看来，你应该使用那些最能够达到最佳代码效果，考虑到可维护性和速度的构造。有时候，这可能是 `goto`！
 
-In this chapter, we'll see how `goto` works in C, and then check out some of the common cases where it is used[^175^](#fn175){#fnref175 .footnote-ref role="doc-noteref"}.
+In this chapter, we'll see how `goto` works in C, and then check out some of the common cases where it is used[^175^].
 
-> 在本章中，我们将看到 `goto` 在 C 中的工作原理，然后检查一些常见的使用情况[^175^](#fn175）{#fnref175 .footnote-ref role="doc-noteref"}。
+> 在本章中，我们将看到 `goto` 在 C 中的工作原理，然后检查一些常见的使用情况[^175^]。
 
 ## [31.1] A Simple Example {#a-simple-example number="31.1"}
 
@@ -17213,7 +16232,7 @@ In this example, we're going to use `goto` to skip a line of code and jump to a 
 
 ::: {#cb583 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -17374,7 +16393,7 @@ continue_i: ;
 
 We have a `;` at the end there---that's because you can't have a label pointing to the plain end of a compound statement (or before a variable declaration).
 
-> 我们在最后面有一个 `;`，这是因为你不能把一个标签指向复合语句的结尾(或者变量声明之前）。
+> 我们在最后面有一个 `;`，这是因为你不能把一个标签指向复合语句的结尾(或者变量声明之前)。
 
 ## [31.3] Bailing Out {#bailing-out number="31.3"}
 
@@ -17457,7 +16476,7 @@ If you're calling multiple functions to initialize multiple systems and one of t
 
 Let's do a fake example where we start initializing systems and checking to see if any returns an error (we'll use `-1` to indicate an error). If one of them does, we have to shutdown only the systems we've initialized so far.
 
-> 让我们做一个假的例子，我们开始初始化系统并检查是否有任何返回错误(我们将使用 `-1` 来表示错误）。如果其中一个出错了，我们只能关闭我们到目前为止已经初始化的系统。
+> 让我们做一个假的例子，我们开始初始化系统并检查是否有任何返回错误(我们将使用 `-1` 来表示错误)。如果其中一个出错了，我们只能关闭我们到目前为止已经初始化的系统。
 
 ::: {#cb594 .sourceCode}
 
@@ -17501,13 +16520,13 @@ Note that we're shutting down in the reverse order that we initialized the subsy
 
 Kinda. For recursive functions only.
 
-If you're unfamiliar, [Tail Call Optimization (TCO)](https://en.wikipedia.org/wiki/Tail_call)[^176^](#fn176){#fnref176 .footnote-ref role="doc-noteref"} is a way to not waste stack space when calling other functions under very specific circumstances. Unfortunately the details are beyond the scope of this guide.
+If you're unfamiliar, [Tail Call Optimization (TCO)](https://en.wikipedia.org/wiki/Tail_call)[^176^] is a way to not waste stack space when calling other functions under very specific circumstances. Unfortunately the details are beyond the scope of this guide.
 
-> 如果你不熟悉，尾调用优化(TCO）是一种在特定情况下调用其他函数时不浪费堆栈空间的方法。不幸的是，细节超出了本指南的范围。
+> 如果你不熟悉，尾调用优化(TCO)是一种在特定情况下调用其他函数时不浪费堆栈空间的方法。不幸的是，细节超出了本指南的范围。
 
 But if you have a recursive function you know can be optimized in this way, you can make use of this technique. (Note that you can't tail call other functions due to the function scope of labels.)
 
-> 如果你有一个可以以这种方式优化的递归函数，你可以利用这种技术。(注意，由于标签的函数作用域，你不能尾调用其他函数。）
+> 如果你有一个可以以这种方式优化的递归函数，你可以利用这种技术。(注意，由于标签的函数作用域，你不能尾调用其他函数。)
 
 Let's do a straightforward example, factorial.
 
@@ -17515,7 +16534,7 @@ Here's a recursive version that's not TCO, but it can be!
 
 ::: {#cb595 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <complex.h>
 
@@ -17545,7 +16564,7 @@ Let's try it:
 
 ::: {#cb596 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int factorial(int n, int a)
@@ -17689,7 +16708,7 @@ We've already seen that labels have function scope, but weird things can happen 
 
 Look at this example where we jump from a place where the variable `x` is out of scope into the middle of its scope (in the block).
 
-> 看看这个例子，我们从变量 `x` 超出作用域的地方跳到它的作用域中间(在块中）。
+> 看看这个例子，我们从变量 `x` 超出作用域的地方跳到它的作用域中间(在块中)。
 
 ::: {#cb601 .sourceCode}
 
@@ -17720,7 +16739,7 @@ And then it prints out `0` when I run it (your mileage may vary).
 
 Basically what has happened is that we jumped into `x`'s scope (so it was OK to reference it in the `printf()`) but we jumped over the line that actually initialized it to `12345`. So the value was indeterminate.
 
-> 基本上发生的是我们跳入 `x` 的范围(因此在 `printf()` 中引用它是可以的），但我们跳过了将其初始化为 `12345` 的行。因此，该值是不确定的。
+> 基本上发生的是我们跳入 `x` 的范围(因此在 `printf()` 中引用它是可以的)，但我们跳过了将其初始化为 `12345` 的行。因此，该值是不确定的。
 
 The fix is, of course, to get the initialization _after_ the label one way or another.
 
@@ -17768,11 +16787,11 @@ The first time through the block, we're good. `x` is `10` and that's what prints
 
 But after the `goto`, we're jumping into the scope of `x`, but past its initialization. Which means we can still print it, but the value is indeterminate (since it hasn't been reinitialized).
 
-> 但是在跳转之后，我们进入了 `x` 的作用域，但是超出了它的初始化范围。这意味着我们仍然可以打印它，但是值是不确定的(因为它还没有被重新初始化）。
+> 但是在跳转之后，我们进入了 `x` 的作用域，但是超出了它的初始化范围。这意味着我们仍然可以打印它，但是值是不确定的(因为它还没有被重新初始化)。
 
 On my machine, it prints `10` again (to infinity), but that's just luck. It could print any value after the `goto` since `x` is uninitialized.
 
-> 在我的机器上，它又会打印出“10”(无限次），但这只是运气。自从“x”未初始化之后，它可能会打印出任何值。
+> 在我的机器上，它又会打印出“10”(无限次)，但这只是运气。自从“x”未初始化之后，它可能会打印出任何值。
 
 ## [31.10] `goto` and Variable-Length Arrays {#goto-and-variable-length-arrays number="31.10"}
 
@@ -17884,9 +16903,9 @@ printf("%d\n", p[1]);  // 2
 
 :::
 
-But that seems a little like a long-winded way to have an array. I mean, we could have just done this[^177^](#fn177){#fnref177 .footnote-ref role="doc-noteref"}:
+But that seems a little like a long-winded way to have an array. I mean, we could have just done this[^177^]:
 
-> 但这似乎是一种繁琐的方式来拥有一个数组。我的意思是，我们本可以这样做 [^177^](#fn177){#fnref177 .footnote-ref role="doc-noteref"}：
+> 但这似乎是一种繁琐的方式来拥有一个数组。我的意思是，我们本可以这样做 [^177^]：
 
 ::: {#cb610 .sourceCode}
 
@@ -17936,7 +16955,7 @@ int s = sum(a, 4);
 
 But unnamed objects give us a way to skip the variable by passing it directly in (parameter names listed above). Check it out---we're going to replace the variable `a` with an unnamed array that we pass in as the first argument:
 
-> 但是未命名的对象给我们一种方式来跳过变量，直接传入(上面列出的参数名称）。看一下---我们将用一个未命名的数组替换变量 `a`，作为第一个参数传入：
+> 但是未命名的对象给我们一种方式来跳过变量，直接传入(上面列出的参数名称)。看一下---我们将用一个未命名的数组替换变量 `a`，作为第一个参数传入：
 
 ::: {#cb613 .sourceCode}
 
@@ -17960,7 +16979,7 @@ First, let's do things without unnamed objects. We'll define a `struct` to hold 
 
 ::: {#cb614 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct coord {
@@ -17992,7 +17011,7 @@ We'll just take `t` out of there and replace it with an unnamed `struct`:
 
 ::: {#cb615 .sourceCode startfrom="7"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
     //struct coord t = {.x=10, .y=20};
 
     print_coord((struct coord){.x=10, .y=20});   // prints "10, 20"
@@ -18022,7 +17041,7 @@ Let's modify the above code so that we pass a pointer to an unnamed object
 
 ::: {#cb616 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 struct coord {
@@ -18087,7 +17106,7 @@ Likewise, you can't return a pointer to an unnamed object from a function. The o
 
 ::: {#cb619 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int *get3490(void)
@@ -18146,9 +17165,9 @@ The expression begins with `_Generic`, works kinda like a `switch`, and it takes
 
 > 表达式以 `_Generic` 开头，类似于 `switch`，至少需要两个参数。
 
-The first argument is an expression (or variable[^178^](#fn178){#fnref178 .footnote-ref role="doc-noteref"}) that has a _type_. All expressions have a type. The remaining arguments to `_Generic` are the cases of what to substitute in for the result of the expression if the first argument is that type.
+The first argument is an expression (or variable[^178^]) that has a _type_. All expressions have a type. The remaining arguments to `_Generic` are the cases of what to substitute in for the result of the expression if the first argument is that type.
 
-> 第一个参数是一个表达式(或变量），它具有一个_类型_。所有表达式都有一个类型。`_Generic` 的其余参数是如果第一个参数是该类型，则用于替换表达式结果的情况。
+> 第一个参数是一个表达式(或变量)，它具有一个_类型_。所有表达式都有一个类型。`_Generic` 的其余参数是如果第一个参数是该类型，则用于替换表达式结果的情况。
 
 Wat?
 
@@ -18156,7 +17175,7 @@ Let's try it out and see.
 
 ::: {#cb621 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 int main(void)
@@ -18181,7 +17200,7 @@ Check out the `_Generic` expression starting on line 9.
 
 When the compiler sees it, it looks at the type of the first argument. (In this example, the type of the variable `i`.) It then looks through the cases for something of that type. And then it substitutes the argument in place of the entire `_Generic` expression.
 
-> 当编译器看到它时，它会查看第一个参数的类型(在本例中，变量 `i` 的类型）。然后，它会查找该类型的情况。然后，它会将参数替换为整个 `_Generic` 表达式。
+> 当编译器看到它时，它会查看第一个参数的类型(在本例中，变量 `i` 的类型)。然后，它会查找该类型的情况。然后，它会将参数替换为整个 `_Generic` 表达式。
 
 In this case, `i` is an `int`, so it matches that case. Then the string is substituted in for the expression. So the line turns into this when the compiler sees it:
 
@@ -18261,7 +17280,7 @@ c is type something else
 
 Which should be no surprise, because, like we said, that code in `main()` is replaced with the following when it is compiled:
 
-> 这不足为奇，因为，正如我们所说，当编译时，`main(）` 中的代码将被以下内容替换：
+> 这不足为奇，因为，正如我们所说，当编译时，`main()` 中的代码将被以下内容替换：
 
 ::: {#cb625 .sourceCode}
 
@@ -18306,7 +17325,7 @@ We'll have to make use of some macro magic to do that.
 
 ::: {#cb628 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <string.h>
 
@@ -18636,7 +17655,7 @@ What---? That's a 2D array, but it only has a 1D initializer!
 
 Turns out that's legal (though GCC will warn about it with the proper warnings turned on).
 
-> 结果这是合法的(尽管如果打开适当的警告，GCC 会发出警告）。
+> 结果这是合法的(尽管如果打开适当的警告，GCC 会发出警告)。
 
 Basically, what it does is starts filling in elements in row 0, then row 1, then row 2 from left to right.
 
@@ -18688,7 +17707,7 @@ So if you want to fill the whole array with `0`, then go ahead and:
 
 But my recommendation is if you have a 2D array, use a 2D initializer. It just makes the code more readable. (Except for initializing the whole array with `0`, in which case it's idiomatic to use `{0}` no matter the dimension of the array.)
 
-> 但我的建议是，如果你有一个二维数组，请使用二维初始化程序。这只会使代码更具可读性。(除了使用 `{0}` 初始化整个数组，无论数组的维度如何，这都是惯例。）
+> 但我的建议是，如果你有一个二维数组，请使用二维初始化程序。这只会使代码更具可读性。(除了使用 `{0}` 初始化整个数组，无论数组的维度如何，这都是惯例。)
 
 # [34] Long Jumps with `setjmp`, `longjmp` {#setjmp-longjmp number="34"}
 
@@ -18724,7 +17743,7 @@ The variable `env` is of type `jmp_buf`, an opaque type declared in `<setjmp.h>`
 
 ::: {#cb649 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <setjmp.h>
 
@@ -18789,7 +17808,7 @@ So here's the deal: if `setjmp()` returns `0`, it means that you've successfully
 
 If it returns non-zero, it means you've just returned to the "bookmark" set earlier. (And the value returned is the one you pass to `longjmp()`.)
 
-> 如果它返回非零值，意味着你刚刚返回到之前设置的“书签”。(返回的值就是你传递给 `longjmp()` 的值。）
+> 如果它返回非零值，意味着你刚刚返回到之前设置的“书签”。(返回的值就是你传递给 `longjmp()` 的值。)
 
 This way you can tell the difference between setting the bookmark and returning to it later.
 
@@ -18801,7 +17820,7 @@ So when the code, above, calls `setjmp()` the first time, `setjmp()` _stores_ th
 
 ## [34.2] Pitfalls {#pitfalls number="34.2"}
 
-Under the hood, this is pretty straightforward. Typically the _stack pointer_ keeps track of the locations in memory that local variables are stored, and the _program counter_ keeps track of the address of the currently-executing instruction[^179^](#fn179){#fnref179 .footnote-ref role="doc-noteref"}.
+Under the hood, this is pretty straightforward. Typically the _stack pointer_ keeps track of the locations in memory that local variables are stored, and the _program counter_ keeps track of the address of the currently-executing instruction[^179^].
 
 > 在底层，这很简单。通常，_堆栈指针_跟踪存储本地变量的内存位置，而_程序计数器_跟踪当前正在执行指令的地址。
 
@@ -18817,9 +17836,9 @@ But a variety of factors confound this, making a significant number of undefined
 
 If you want the values of automatic (non-`static` and non-`extern`) local variables to persist in the function that called `setjmp()` after a `longjmp()` happens, you must declare those variables to be `volatile`.
 
-> 如果你想让自动(非静态和非外部）局部变量在调用 setjmp()之后 longjmp()发生时在调用函数中持续存在，你必须将这些变量声明为 volatile。
+> 如果你想让自动(非静态和非外部)局部变量在调用 setjmp()之后 longjmp()发生时在调用函数中持续存在，你必须将这些变量声明为 volatile。
 
-Technically, they only have to be `volatile` if they change between the time `setjmp()` is called and `longjmp()` is called[^180^](#fn180){#fnref180 .footnote-ref role="doc-noteref"}.
+Technically, they only have to be `volatile` if they change between the time `setjmp()` is called and `longjmp()` is called[^180^].
 
 > 技术上，只有在调用 `setjmp()` 和 `longjmp()` 之间发生变化时，它们才必须是“易失性”的。
 
@@ -18963,7 +17982,7 @@ It's undefined behavior if:
 - You called `setjmp()` from another thread
 - You called `setjmp()` in the scope of a variable length array (VLA), and execution left the scope of that VLA before `longjmp()` was called.
 
-> 你在可变长数组(VLA）的范围内调用了 `setjmp()`，但在调用 `longjmp()` 之前，执行已经离开了该 VLA 的范围。
+> 你在可变长数组(VLA)的范围内调用了 `setjmp()`，但在调用 `longjmp()` 之前，执行已经离开了该 VLA 的范围。
 
 - The function containing the `setjmp()` exited before `longjmp()` was called.
 
@@ -18983,9 +18002,9 @@ Since `setjmp()` ultimately returns this value, and having `setjmp()` return `0`
 
 ### [34.2.7] `longjmp()` and Variable Length Arrays {#longjmp-and-variable-length-arrays number="34.2.7"}
 
-If you are in scope of a VLA and `longjmp()` out there, the memory allocated to the VLA could leak[^181^](#fn181){#fnref181 .footnote-ref role="doc-noteref"}.
+If you are in scope of a VLA and `longjmp()` out there, the memory allocated to the VLA could leak[^181^].
 
-> 如果你在 VLA 的范围内，并且使用 `longjmp()` 跳出，那么分配给 VLA 的内存可能会泄漏 [^181^](#fn181){#fnref181 .footnote-ref role="doc-noteref"}。
+> 如果你在 VLA 的范围内，并且使用 `longjmp()` 跳出，那么分配给 VLA 的内存可能会泄漏 [^181^]。
 
 Same thing happens if you `longjmp()` back over any earlier functions that had VLAs still in scope.
 
@@ -19024,7 +18043,7 @@ These are examples of _incomplete types_.
 
 An incomplete type is a type the size (i.e. the size you'd get back from `sizeof`) for which is not known. Another way to think of it is a type that you haven't finished declaring.
 
-> 一个不完整的类型是大小(即从 `sizeof` 返回的大小）未知的类型。另一种理解它的方式是你还没有完成声明的类型。
+> 一个不完整的类型是大小(即从 `sizeof` 返回的大小)未知的类型。另一种理解它的方式是你还没有完成声明的类型。
 
 You can have a pointer to an incomplete type, but you can't dereference it or use pointer arithmetic on it. And you can't `sizeof` it.
 
@@ -19036,7 +18055,7 @@ So what can you do with it?
 
 I only know of one real use case: forward references to `struct` s or `union` s with self-referential or co-dependent structures. (I'm going to use `struct` for the rest of these examples, but they all apply equally to `union` s, as well.)
 
-> 我只知道一个真实的用例：对具有自引用或相互依赖结构的 `struct` 或 `union` 进行前向引用。(我将在接下来的例子中使用 `struct`，但它们对 `union` 也同样适用。）
+> 我只知道一个真实的用例：对具有自引用或相互依赖结构的 `struct` 或 `union` 进行前向引用。(我将在接下来的例子中使用 `struct`，但它们对 `union` 也同样适用。)
 
 Let's do the classic example first.
 
@@ -19078,9 +18097,9 @@ struct node {
 
 :::
 
-Even though the `struct node` is incomplete on line 3, we can still declare a pointer to one[^182^](#fn182){#fnref182 .footnote-ref role="doc-noteref"}.
+Even though the `struct node` is incomplete on line 3, we can still declare a pointer to one[^182^].
 
-> 即使第三行的 `struct node` 不完整，我们仍然可以声明一个指向它的指针 [^182^](#fn182){#fnref182 .footnote-ref role="doc-noteref"}。
+> 即使第三行的 `struct node` 不完整，我们仍然可以声明一个指向它的指针 [^182^]。
 
 We can do the same thing if we have two different `struct` s that refer to each other:
 
@@ -19152,7 +18171,7 @@ If it's a non-`extern` array with no size followed by an initializer, it's incom
 
 It can be useful to declare incomplete array types in header files. In those cases, the actual storage (where the complete array is declared) should be in a single `.c` file. If you put it in the `.h` file, it will be duplicated every time the header file is included.
 
-> 在头文件中声明不完整的数组类型可能会有用。在这种情况下，实际存储(完整数组声明的位置）应该在单个 `.c` 文件中。如果把它放在 `.h` 文件中，每次包含头文件时都会重复。
+> 在头文件中声明不完整的数组类型可能会有用。在这种情况下，实际存储(完整数组声明的位置)应该在单个 `.c` 文件中。如果把它放在 `.h` 文件中，每次包含头文件时都会重复。
 
 So what you can do is make a header file with an incomplete type that refers to the array, like so:
 
@@ -19160,7 +18179,7 @@ So what you can do is make a header file with an incomplete type that refers to 
 
 ::: {#cb666 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File: bar.h
 
 #ifndef BAR_H
@@ -19177,7 +18196,7 @@ And the in the `.c` file, actually define the array:
 
 ::: {#cb667 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File: bar.c
 
 int my_array[1024];     // Complete type!
@@ -19191,7 +18210,7 @@ Then you can include the header from as many places as you'd like, and every one
 
 ::: {#cb668 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // File: foo.c
 
 #include <stdio.h>
@@ -19271,9 +18290,9 @@ The more you know...
 
 # [36] Complex Numbers {#complex-numbers number="36"}
 
-A tiny primer on [Complex numbers](https://en.wikipedia.org/wiki/Complex_number)[^183^](#fn183){#fnref183 .footnote-ref role="doc-noteref"} stolen directly from Wikipedia:
+A tiny primer on [Complex numbers](https://en.wikipedia.org/wiki/Complex_number)[^183^] stolen directly from Wikipedia:
 
-> 一个关于复数([Complex numbers](https://en.wikipedia.org/wiki/Complex_number)[^183^](#fn183){#fnref183 .footnote-ref role="doc-noteref"} 的小简介，直接从维基百科抄录：
+> 一个关于复数([Complex numbers](https://en.wikipedia.org/wiki/Complex_number)[^183^] 的小简介，直接从维基百科抄录：
 
 > A **complex number** is a number that can be expressed in the form [\\(a+bi\\)]{.math .inline}, where [\\(a\\)]{.math .inline} and [\\(b\\)]{.math .inline} are real numbers \[i.e. floating point types in C\], and [\\(i\\)]{.math .inline} represents the imaginary unit, satisfying the equation [\\(i\^2=−1\\)]{.math .inline}. Because no real number satisfies this equation, [\\(i\\)]{.math .inline} is called an imaginary number. For the complex number [\\(a+bi\\)]{.math .inline}, [\\(a\\)]{.math .inline} is called the **real part**, and [\\(b\\)]{.math .inline} is called the **imaginary part**.
 
@@ -19301,7 +18320,7 @@ You can test if your system supports complex numbers with:
 
 Furthermore, there is a macro that indicates adherence to the ISO 60559 (IEEE 754) standard for floating point math with complex numbers, as well as the presence of the `_Imaginary` type.
 
-> 此外，还有一个宏表示遵守 ISO 60559(IEEE 754）标准的复数浮点数学以及 `_Imaginary` 类型的存在。
+> 此外，还有一个宏表示遵守 ISO 60559(IEEE 754)标准的复数浮点数学以及 `_Imaginary` 类型的存在。
 
 ::: {#cb674 .sourceCode}
 
@@ -19367,7 +18386,7 @@ _Imaginary_I
 
 The macro `I` is set to `_Imaginary_I` (if available), or `_Complex_I`. So just use `I` for the imaginary number.
 
-> 宏 `I` 被设置为 `_Imaginary_I`(如果可用）或 `_Complex_I`。所以只需使用 `I` 表示虚数。
+> 宏 `I` 被设置为 `_Imaginary_I`(如果可用)或 `_Complex_I`。所以只需使用 `I` 表示虚数。
 
 One aside: I've said that if a compiler has `__STDC_IEC_559_COMPLEX__` set to `1`, it must support `_Imaginary` types to be compliant. That's my read of the spec. However, I don't know of a single compiler that actually supports `_Imaginary` even though they have `__STDC_IEC_559_COMPLEX__` set. So I'm going to write some code with that type in here I have no way of testing. Sorry!
 
@@ -19413,7 +18432,7 @@ double complex y = 10 + 3*I;
 
 For [\\(5+2i\\)]{.math .inline} and [\\(10+3i\\)]{.math .inline}, respectively.
 
-> 对于(5+2i）和(10+3i）分别来说。
+> 对于(5+2i)和(10+3i)分别来说。
 
 ## [36.3] Constructing, Deconstructing, and Printing {#constructing-deconstructing-and-printing number="36.3"}
 
@@ -19464,13 +18483,13 @@ double complex x = CMPLX(5, 2);
 
 :::
 
-But the `CMPLX()` macro will handle negative zeros in the imaginary part correctly every time, whereas the other way might convert them to positive zeros. I _think_[^184^](#fn184){#fnref184 .footnote-ref role="doc-noteref"} This seems to imply that if there's a chance the imaginary part will be zero, you should use the macro... but someone should correct me on this if I'm mistaken!
+But the `CMPLX()` macro will handle negative zeros in the imaginary part correctly every time, whereas the other way might convert them to positive zeros. I _think_[^184^] This seems to imply that if there's a chance the imaginary part will be zero, you should use the macro... but someone should correct me on this if I'm mistaken!
 
-> 但是 `CMPLX()` 宏每次都能正确处理虚数部分的负零，而其他方法可能会将它们转换为正零。我认为 [^184^](#fn184){#fnref184 .footnote-ref role="doc-noteref"}这似乎意味着，如果有可能虚数部分为零，你应该使用宏...但如果我错了，有人应该纠正我！
+> 但是 `CMPLX()` 宏每次都能正确处理虚数部分的负零，而其他方法可能会将它们转换为正零。我认为 [^184^]这似乎意味着，如果有可能虚数部分为零，你应该使用宏...但如果我错了，有人应该纠正我！
 
 The `CMPLX()` macro works on `double` types. There are two other macros for `float` and `long double`: `CMPLXF()` and `CMPLXL()`. (These "f" and "l" suffixes appear in virtually all the complex-number-related functions.)
 
-> CMPLX()宏在 double 类型上有效。另外还有两个宏分别用于 float 和 long double：CMPLXF()和 CMPLXL()(这些"f"和"l"后缀几乎出现在所有与复数相关的函数中）。
+> CMPLX()宏在 double 类型上有效。另外还有两个宏分别用于 float 和 long double：CMPLXF()和 CMPLXL()(这些"f"和"l"后缀几乎出现在所有与复数相关的函数中)。
 
 Now let's try the reverse: if we have a complex number, how do we break it apart into its real and imaginary parts?
 
@@ -19519,7 +18538,7 @@ Arithmetic can be performed on complex numbers, though how this works mathematic
 
 ::: {#cb686 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <complex.h>
 
@@ -19562,7 +18581,7 @@ You can also compare two complex numbers for equality (or inequality):
 
 ::: {#cb688 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <complex.h>
 
@@ -19589,7 +18608,7 @@ x != y = 1
 
 :::
 
-They are equal if both components test equal. Note that as with all floating point, they could be equal if they're close enough due to rounding error[^185^](#fn185){#fnref185 .footnote-ref role="doc-noteref"}.
+They are equal if both components test equal. Note that as with all floating point, they could be equal if they're close enough due to rounding error[^185^].
 
 > 他们如果两个组件都测试相等，就相等。请注意，由于所有浮点数都可能由于舍入误差而足够接近，因此它们也可能相等。
 
@@ -19683,7 +18702,7 @@ Function Description
 
 `carg()` Argument/phase angle
 
-`conj()` Conjugate[^186^](#fn186){#fnref186 .footnote-ref role="doc-noteref"}
+`conj()` Conjugate[^186^]
 
 ## `cproj()` Projection on Riemann sphere
 
@@ -19699,7 +18718,7 @@ How big are those types? That is, how many bytes do they take up? We could use `
 
 But what if I wanted to go the other way? What if I needed a type that was exactly 32 bits (4 bytes) or at least 16 bits or somesuch?
 
-> 如果我想要走另一条路怎么办？如果我需要一种精确的 32 位(4 字节）或至少 16 位的类型怎么办？
+> 如果我想要走另一条路怎么办？如果我需要一种精确的 32 位(4 字节)或至少 16 位的类型怎么办？
 
 How can we declare a type that's a certain size?
 
@@ -19713,17 +18732,17 @@ For both signed and unsigned integers, we can specify a type that is a certain n
 
 And there are three main classes of these types (in these examples, the `N` would be replaced by a certain number of bits):
 
-> 这些类型有三个主要类别(在这些示例中，`N` 将被某个位数替换）：
+> 这些类型有三个主要类别(在这些示例中，`N` 将被某个位数替换)：
 
 - Integers of exactly a certain size (`intN_t`)
 - Integers that are at least a certain size (`int_leastN_t`)
-- Integers that are at least a certain size and are as fast as possible (`int_fastN_t`)[^187^](#fn187){#fnref187 .footnote-ref role="doc-noteref"}
+- Integers that are at least a certain size and are as fast as possible (`int_fastN_t`)[^187^]
 
-> 整数至少要达到一定大小，并且尽可能快(`int_fastN_t`）[^187^](#fn187){#fnref187 .footnote-ref role="doc-noteref"}
+> 整数至少要达到一定大小，并且尽可能快(`int_fastN_t`)[^187^]
 
 How much faster is `fast`? Definitely maybe some amount faster. Probably. The spec doesn't say how much faster, just that they'll be the fastest on this architecture. Most C compilers are pretty good, though, so you'll probably only see this used in places where the most possible speed needs to be guaranteed (rather than just hoping the compiler is producing pretty-dang-fast code, which it is).
 
-> "快多少？可能会快一些。指定没有说明快多少，只是说它在这个架构上是最快的。不过大多数 C 编译器都很不错，所以你可能只会在需要保证最大可能速度的地方使用它(而不是只是希望编译器能够产生相当快的代码，它确实可以）。
+> "快多少？可能会快一些。指定没有说明快多少，只是说它在这个架构上是最快的。不过大多数 C 编译器都很不错，所以你可能只会在需要保证最大可能速度的地方使用它(而不是只是希望编译器能够产生相当快的代码，它确实可以)。
 
 Finally, these unsigned number types have a leading `u` to differentiate them.
 
@@ -19766,9 +18785,9 @@ There might be others of different widths, as well, but those are optional.
 
 > 可能还有其他不同宽度的，但那些是可选的。
 
-Hey! Where are the fixed types like `int16_t`? Turns out those are entirely optional...unless certain conditions are met[^188^](#fn188){#fnref188 .footnote-ref role="doc-noteref"}. And if you have an average run-of-the-mill modern computer system, those conditions probably are met. And if they are, you'll have these types:
+Hey! Where are the fixed types like `int16_t`? Turns out those are entirely optional...unless certain conditions are met[^188^]. And if you have an average run-of-the-mill modern computer system, those conditions probably are met. And if they are, you'll have these types:
 
-> 嘿！像 `int16_t` 这样的固定类型在哪里？原来这些都是可选的...除非满足某些条件[^188^](#fn188）。如果你有一台普通的现代计算机系统，这些条件可能已经满足了。如果是这样，你将拥有这些类型：
+> 嘿！像 `int16_t` 这样的固定类型在哪里？原来这些都是可选的...除非满足某些条件[^188^](#fn188)。如果你有一台普通的现代计算机系统，这些条件可能已经满足了。如果是这样，你将拥有这些类型：
 
 ::: {#cb692 .sourceCode}
 
@@ -19810,7 +18829,7 @@ Obviously values from any other integer types of the same sign will fit in this 
 
 If you have a constant that you want to have fit in a certain number of bits, you can use these macros to automatically append the proper suffix onto the number (e.g. `22L` or `3490ULL`).
 
-> 如果你有一个常数，你想让它适合某些位数，你可以使用这些宏自动在数字后面添加适当的后缀(例如 `22L` 或 `3490ULL`）。
+> 如果你有一个常数，你想让它适合某些位数，你可以使用这些宏自动在数字后面添加适当的后缀(例如 `22L` 或 `3490ULL`)。
 
 ::: {#cb694 .sourceCode}
 
@@ -19874,7 +18893,7 @@ Note the `MIN` for all the unsigned types is `0`, so, as such, there's no macro 
 
 In order to print these types, you need to send the right format specifier to `printf()`. (And the same issue for getting input with `scanf()`.)
 
-> 为了打印这些类型，你需要发送正确的格式说明符到 `printf()`。(对于使用 `scanf()` 获取输入也是同样的问题。）
+> 为了打印这些类型，你需要发送正确的格式说明符到 `printf()`。(对于使用 `scanf()` 获取输入也是同样的问题。)
 
 But how are you going to know what size the types are under the hood? Luckily, once again, C provides some macros to help with this.
 
@@ -19945,7 +18964,7 @@ And since these macros are string literals, we can use them like so:
 
 ::: {#cb700 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -20012,7 +19031,7 @@ This isn't too complex, but it can be a little intimidating at first, both with 
 
 Mix in GMT (UTC) and local time and we have all the *Usual Fun*™ one gets with times and dates.
 
-> 在 GMT(UTC）和本地时间混合在一起，我们就可以享受到与时间和日期有关的所有 *Usual Fun*™。
+> 在 GMT(UTC)和本地时间混合在一起，我们就可以享受到与时间和日期有关的所有 *Usual Fun*™。
 
 And of course never forget the golden rule of dates and times: _Never attempt to write your own date and time functionality. Only use what the library gives you._
 
@@ -20026,13 +19045,13 @@ Time is too complex for mere mortal programmers to handle correctly. Seriously, 
 
 Just a couple quick terms in case you don't have them down.
 
-- **UTC**: Coordinated Universal Time is a universally[^189^](#fn189){#fnref189 .footnote-ref role="doc-noteref"} agreed upon, absolute time. Everyone on the planet thinks it's the same time right now in UTC... even though they have different local times.
+- **UTC**: Coordinated Universal Time is a universally[^189^] agreed upon, absolute time. Everyone on the planet thinks it's the same time right now in UTC... even though they have different local times.
 
-> UTC(协调世界时）是一种全球公认的绝对时间。全球每个人都认为现在的时间是 UTC 时间，尽管他们有不同的当地时间。
+> UTC(协调世界时)是一种全球公认的绝对时间。全球每个人都认为现在的时间是 UTC 时间，尽管他们有不同的当地时间。
 
-- **GMT**: Greenwich Mean Time, effectively the same as UTC[^190^](#fn190){#fnref190 .footnote-ref role="doc-noteref"}. You probably want to say UTC, or "universal time". If you're talking specifically about the GMT time zone, say GMT. Confusingly, many of C's UTC functions predate UTC and still refer to Greenwich Mean Time. When you see that, know that C means UTC.
+- **GMT**: Greenwich Mean Time, effectively the same as UTC[^190^]. You probably want to say UTC, or "universal time". If you're talking specifically about the GMT time zone, say GMT. Confusingly, many of C's UTC functions predate UTC and still refer to Greenwich Mean Time. When you see that, know that C means UTC.
 
-> 格林威治标准时间(GMT），与 UTC[^190^](#fn190){#fnref190 .footnote-ref role="doc-noteref"}实质上相同。你可能想说 UTC，或者“世界时”。如果你特别指的是 GMT 时区，就说 GMT。令人困惑的是，C 语言中的许多 UTC 函数都比 UTC 更早，仍然指的是格林威治标准时间。当你看到这个时，要知道 C 语言指的是 UTC。
+> 格林威治标准时间(GMT)，与 UTC[^190^]实质上相同。你可能想说 UTC，或者“世界时”。如果你特别指的是 GMT 时区，就说 GMT。令人困惑的是，C 语言中的许多 UTC 函数都比 UTC 更早，仍然指的是格林威治标准时间。当你看到这个时，要知道 C 语言指的是 UTC。
 
 - **Local time**: what time it is where the computer running the program is located. This is described as an offset from UTC. Although there are many time zones in the world, most computers do work in either local time or UTC.
 
@@ -20048,11 +19067,11 @@ On the other hand, if it's something that happens the same time _in every time z
 
 Since a lot of languages are only good at converting between UTC and local time, you can cause yourself a lot of pain by choosing to store your dates in the wrong form. (Ask me how I know.)
 
-> 由于许多语言只擅长在 UTC 和本地时间之间转换，如果你选择以错误的形式存储日期，可能会给自己带来很多麻烦(问我是怎么知道的）。
+> 由于许多语言只擅长在 UTC 和本地时间之间转换，如果你选择以错误的形式存储日期，可能会给自己带来很多麻烦(问我是怎么知道的)。
 
 ## [38.2] Date Types {#date-types number="38.2"}
 
-There are two[^191^](#fn191){#fnref191 .footnote-ref role="doc-noteref"} main types in C when it comes to dates: `time_t` and `struct tm`.
+There are two[^191^] main types in C when it comes to dates: `time_t` and `struct tm`.
 
 > 在 C 语言中，涉及到日期时，有两种主要类型：`time_t` 和 `struct tm`。
 
@@ -20060,15 +19079,15 @@ The spec doesn't actually say much about them:
 
 - `time_t`: a real type capable of holding a time. So by the spec, this could be a floating type or integer type. In POSIX (Unix-likes), it's an integer. This holds _calendar time_. Which you can think of as UTC time.
 
-> `time_t`：一种能够容纳时间的实际类型。根据规范，这可能是浮点类型或整数类型。在 POSIX(类 Unix）中，它是一个整数。它保存_日历时间_。你可以把它想象成 UTC 时间。
+> `time_t`：一种能够容纳时间的实际类型。根据规范，这可能是浮点类型或整数类型。在 POSIX(类 Unix)中，它是一个整数。它保存_日历时间_。你可以把它想象成 UTC 时间。
 
 - `struct tm`: holds the components of a calendar time. This is a _broken-down time_, i.e. the components of the time, like hour, minute, second, day, month, year, etc.
 
 > `struct tm`：保存日历时间的组成部分。这是一个_分解的时间_，即时间的组成部分，如小时，分钟，秒，天，月，年等。
 
-On a lot of systems, `time_t` represents the number of seconds since [_Epoch_](https://en.wikipedia.org/wiki/Unix_time)[^192^](#fn192){#fnref192 .footnote-ref role="doc-noteref"}. Epoch is in some ways the start of time from the computer's perspective, which is commonly January 1, 1970 UTC. `time_t` can go negative to represent times before Epoch. Windows behaves the same way as Unix from what I can tell.
+On a lot of systems, `time_t` represents the number of seconds since [_Epoch_](https://en.wikipedia.org/wiki/Unix_time)[^192^]. Epoch is in some ways the start of time from the computer's perspective, which is commonly January 1, 1970 UTC. `time_t` can go negative to represent times before Epoch. Windows behaves the same way as Unix from what I can tell.
 
-> 在许多系统中，`time_t` 表示自 [Epoch](https://en.wikipedia.org/wiki/Unix_time)[^192^](#fn192){#fnref192 .footnote-ref role="doc-noteref"}以来的秒数。从计算机的角度来看，Epoch 可以说是时间的起点，通常是 1970 年 1 月 1 日 UTC。 `time_t` 可以为负，以表示 Epoch 之前的时间。据我所知，Windows 的行为与 Unix 相同。
+> 在许多系统中，`time_t` 表示自 [Epoch](https://en.wikipedia.org/wiki/Unix_time)[^192^]以来的秒数。从计算机的角度来看，Epoch 可以说是时间的起点，通常是 1970 年 1 月 1 日 UTC。 `time_t` 可以为负，以表示 Epoch 之前的时间。据我所知，Windows 的行为与 Unix 相同。
 
 And what's in a `struct tm`? The following fields:
 
@@ -20161,7 +19180,7 @@ There are two amazing ways to do this conversion:
 
 - `gmtime()`: this function converts a `time_t` to a `struct tm` in UTC. (See ye olde GMT creeping into that function name?)
 
-> `gmtime()`：此函数将 `time_t` 转换为 UTC 中的 `struct tm`(看到古老的 GMT 悄悄出现在函数名中吗？）
+> `gmtime()`：此函数将 `time_t` 转换为 UTC 中的 `struct tm`(看到古老的 GMT 悄悄出现在函数名中吗？)
 
 Let's see what time it is now by printing out a `struct tm` with the `asctime()` function:
 
@@ -20280,7 +19299,7 @@ Sure, we could fish individual fields out of the `struct tm`, but there's a grea
 
 Let's see some examples. In each of these, we pass in a destination buffer, a maximum number of characters to write, and then a format string (in the style of---but not the same as---`printf()`) which tells `strftime()` which components of a `struct tm` to print and how.
 
-> 让我们看一些例子。在每个例子中，我们传入一个目标缓冲区，一个最大字符数，然后是一个格式字符串(以 printf(）的风格，但不是相同的），它告诉 strftime(）要打印 struct tm 的哪些组件以及如何打印。
+> 让我们看一些例子。在每个例子中，我们传入一个目标缓冲区，一个最大字符数，然后是一个格式字符串(以 printf()的风格，但不是相同的)，它告诉 strftime()要打印 struct tm 的哪些组件以及如何打印。
 
 You can add other constant characters to include in the output in the format string, as well, just like with `printf()`.
 
@@ -20292,7 +19311,7 @@ We get a `struct tm` in this case from `localtime()`, but any source works fine.
 
 ::: {#cb712 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <time.h>
 
@@ -20328,9 +19347,9 @@ int main(void)
 
 :::
 
-There are a _ton_ of date printing format specifiers for `strftime()`, so be sure to check them out in the [`strftime()` reference page](https://beej.us/guide/bgclr/html/split/time.html#man-strftime)[^193^](#fn193){#fnref193 .footnote-ref role="doc-noteref"}.
+There are a _ton_ of date printing format specifiers for `strftime()`, so be sure to check them out in the [`strftime()` reference page](https://beej.us/guide/bgclr/html/split/time.html#man-strftime)[^193^].
 
-> 有很多日期打印格式规范可以用于 `strftime()`，所以一定要在[`strftime()` 参考页面](https://beej.us/guide/bgclr/html/split/time.html#man-strftime)[^193^](#fn193){#fnref193 .footnote-ref role="doc-noteref"}上查看它们。
+> 有很多日期打印格式规范可以用于 `strftime()`，所以一定要在[`strftime()` 参考页面](https://beej.us/guide/bgclr/html/split/time.html#man-strftime)[^193^]上查看它们。
 
 ## [38.5] More Resolution with `timespec_get()` {#more-resolution-with-timespec_get number="38.5"}
 
@@ -20342,7 +19361,7 @@ Maybe.
 
 Implementations might not have nanosecond resolution (that's one billionth of a second) so who knows how many significant places you'll get, but give it a shot and see.
 
-> 实现可能没有纳秒分辨率(那是一个十亿分之一秒），所以谁知道你会得到多少有效位，但是试一试，看看吧。
+> 实现可能没有纳秒分辨率(那是一个十亿分之一秒)，所以谁知道你会得到多少有效位，但是试一试，看看吧。
 
 `timespec_get()` takes two arguments. One is a pointer to a `struct timespec` to hold the time information. And the other is the `base`, which the spec lets you set to `TIME_UTC` indicating that you're interested in seconds since Epoch. (Other implementations might give you more options for the `base`.)
 
@@ -20393,13 +19412,13 @@ Example output:
 
 ## [38.6] Differences Between Times {#differences-between-times number="38.6"}
 
-One quick note about getting the difference between two `time_t` s: since the spec doesn't dictate how that type represents a time, you might not be able to simply subtract two `time_t` s and get anything sensible[^194^](#fn194){#fnref194 .footnote-ref role="doc-noteref"}.
+One quick note about getting the difference between two `time_t` s: since the spec doesn't dictate how that type represents a time, you might not be able to simply subtract two `time_t` s and get anything sensible[^194^].
 
 > 一个关于获取两个 `time_t` 之间差异的快速提示：由于规范没有规定这种类型如何表示时间，您可能无法简单地减去两个 `time_t` 并获得任何有意义的结果。
 
 Luckily you can use `difftime()` to compute the difference in seconds between two dates.
 
-> 幸运的是，你可以使用 `difftime(）` 来计算两个日期之间的秒数差异。
+> 幸运的是，你可以使用 `difftime()` 来计算两个日期之间的秒数差异。
 
 In the following example, we have two events that occur some time apart, and we use `difftime()` to compute the difference.
 
@@ -20407,7 +19426,7 @@ In the following example, we have two events that occur some time apart, and we 
 
 ::: {#cb716 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <time.h>
 
@@ -20462,15 +19481,15 @@ And there you have it! Remember to use `difftime()` to take the time difference.
 
 # [39] Multithreading {#multithreading number="39"}
 
-C11 introduced, formally, multithreading to the C language. It's very eerily similar to [POSIX threads](https://en.wikipedia.org/wiki/POSIX_Threads)[^195^](#fn195){#fnref195 .footnote-ref role="doc-noteref"}, if you've ever used those.
+C11 introduced, formally, multithreading to the C language. It's very eerily similar to [POSIX threads](https://en.wikipedia.org/wiki/POSIX_Threads)[^195^], if you've ever used those.
 
-> C11 正式地将多线程引入 C 语言。如果你曾经使用过 [POSIX 线程](https://en.wikipedia.org/wiki/POSIX_Threads)[^195^](#fn195){#fnref195 .footnote-ref role="doc-noteref"}，它们非常相似。
+> C11 正式地将多线程引入 C 语言。如果你曾经使用过 [POSIX 线程](https://en.wikipedia.org/wiki/POSIX_Threads)[^195^]，它们非常相似。
 
 And if you've not, no worries. We'll talk it through.
 
-Do note, however, that I'm not intending this to be a full-blown classic multithreading how-to[^196^](#fn196){#fnref196 .footnote-ref role="doc-noteref"}; you'll have to pick up a different very thick book for that, specifically. Sorry!
+Do note, however, that I'm not intending this to be a full-blown classic multithreading how-to[^196^]; you'll have to pick up a different very thick book for that, specifically. Sorry!
 
-> 不过，请注意，我不打算把这当作一本全面的经典多线程教程[^196^](#fn196）{#fnref196 .footnote-ref role="doc-noteref"}; 您需要另外找一本很厚的书来学习，抱歉！
+> 不过，请注意，我不打算把这当作一本全面的经典多线程教程[^196^]; 您需要另外找一本很厚的书来学习，抱歉！
 
 Threading is an optional feature. If a C11+ compiler defines `__STDC_NO_THREADS__`, threads will **not** be present in the library. Why they decided to go with a negative sense in that macro is beyond me, but there we are.
 
@@ -20488,9 +19507,9 @@ You can test for it like this:
 
 :::
 
-Also, you might need to specify certain linker options when building. In the case of Unix-likes, try appending a `-lpthreads` to the end of the command line to link the `pthreads` library[^197^](#fn197){#fnref197 .footnote-ref role="doc-noteref"}:
+Also, you might need to specify certain linker options when building. In the case of Unix-likes, try appending a `-lpthreads` to the end of the command line to link the `pthreads` library[^197^]:
 
-> 你可能需要在构建时指定某些链接器选项。在 Unix 类系统中，尝试在命令行末尾添加 `-lpthreads` 来链接 `pthreads` 库 [^197^](#fn197){#fnref197 .footnote-ref role="doc-noteref"}：
+> 你可能需要在构建时指定某些链接器选项。在 Unix 类系统中，尝试在命令行末尾添加 `-lpthreads` 来链接 `pthreads` 库 [^197^]：
 
 ::: {#cb719 .sourceCode}
 
@@ -20516,7 +19535,7 @@ Normally, a C program just runs on a single CPU core. But if you know how to spl
 
 Though the spec doesn't say it, on your system it's very likely that C (or the OS at its behest) will attempt to balance the threads over all your CPU cores.
 
-> 尽管规格没有说明，但在您的系统上，C(或操作系统）很可能会尝试在所有 CPU 内核上平衡线程。
+> 尽管规格没有说明，但在您的系统上，C(或操作系统)很可能会尝试在所有 CPU 内核上平衡线程。
 
 And if you have more threads than cores, that's OK. You just won't realize all those gains if they're all trying to compete for CPU time.
 
@@ -20550,9 +19569,9 @@ Additionally, we have thread local storage, mutexes, and conditional variables. 
 
 ## [39.3] Data Races and the Standard Library {#data-races-and-the-standard-library number="39.3"}
 
-Some of the functions in the standard library (e.g. `asctime()` and `strtok()`) return or use `static` data elements that aren't threadsafe. But in general unless it's said otherwise, the standard library makes an effort to be so[^198^](#fn198){#fnref198 .footnote-ref role="doc-noteref"}.
+Some of the functions in the standard library (e.g. `asctime()` and `strtok()`) return or use `static` data elements that aren't threadsafe. But in general unless it's said otherwise, the standard library makes an effort to be so[^198^].
 
-> 一些标准库中的函数(例如 `asctime()` 和 `strtok()`）返回或使用的静态数据元素不是线程安全的。但一般情况下，除非另有说明，标准库都会努力做到这一点。
+> 一些标准库中的函数(例如 `asctime()` 和 `strtok()`)返回或使用的静态数据元素不是线程安全的。但一般情况下，除非另有说明，标准库都会努力做到这一点。
 
 But keep an eye out. If a standard library function is maintaining state between calls in a variable you don't own, or if a function is returning a pointer to a thing that you didn't pass in, it's not threadsafe.
 
@@ -20572,7 +19591,7 @@ Every single thread is identified by an opaque variable of type `thrd_t`. It's a
 
 Also when you make the thread, you have to give it a pointer to a function to run, and a pointer to an argument to pass to it (or `NULL` if you don't have anything to pass).
 
-> 当你创建线程时，你必须给它一个指向要运行的函数的指针，以及一个指向要传递给它的参数的指针(或者如果没有要传递的参数，则为 `NULL`）。
+> 当你创建线程时，你必须给它一个指向要运行的函数的指针，以及一个指向要传递给它的参数的指针(或者如果没有要传递的参数，则为 `NULL`)。
 
 The thread will begin execution on the function you specify.
 
@@ -20592,19 +19611,19 @@ So the basic idea is:
 
 3. In that function, have the thread do whatever it has to do.
 4. Meantimes, the main thread can continue doing whatever _it_ has to do.
-5. When the main thread decides to, it can wait for the child thread to complete by calling `thrd_join()`. Generally you **must** `thrd_join()` the thread to clean up after it or else you'll leak memory[^199^](#fn199){#fnref199 .footnote-ref role="doc-noteref"}
+5. When the main thread decides to, it can wait for the child thread to complete by calling `thrd_join()`. Generally you **must** `thrd_join()` the thread to clean up after it or else you'll leak memory[^199^]
 
-> 5. 主线程可以通过调用 `thrd_join()` 来等待子线程完成。一般来说，你**必须**调用 `thrd_join()` 来清理线程，否则会泄漏内存 [^199^](#fn199){#fnref199 .footnote-ref role="doc-noteref"}。
+> 5. 主线程可以通过调用 `thrd_join()` 来等待子线程完成。一般来说，你**必须**调用 `thrd_join()` 来清理线程，否则会泄漏内存 [^199^]。
 
 `thrd_create()` takes a pointer to the function to run, and it's of type `thrd_start_t`, which is `int (*)(void *)`. That's Greek for "a pointer to a function that takes an `void*` as an argument, and returns an `int`."
 
 Let's make a thread! We'll launch it from the main thread with `thrd_create()` to run a function, do some other things, then wait for it to complete with `thrd_join()`. I've named the thread's main function `run()`, but you can name it anything as long as the types match `thrd_start_t`.
 
-> 让我们创建一个线程！我们将使用 `thrd_create(）` 从主线程启动它来运行一个函数，做一些其他的事情，然后使用 `thrd_join(）` 等待它完成。我已经将线程的主函数命名为 `run(）`，但只要类型与 `thrd_start_t` 匹配，您可以将其命名为任何内容。
+> 让我们创建一个线程！我们将使用 `thrd_create()` 从主线程启动它来运行一个函数，做一些其他的事情，然后使用 `thrd_join()` 等待它完成。我已经将线程的主函数命名为 `run()`，但只要类型与 `thrd_start_t` 匹配，您可以将其命名为任何内容。
 
 ::: {#cb720 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -20681,7 +19700,7 @@ Let's look at an example that launches 5 threads. One thing to note here is how 
 
 ::: {#cb722 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -20730,7 +19749,7 @@ int main(void)
 
 When I run the threads, I count `i` up from 0 to 4. And pass a pointer to it to `thrd_create()`. This pointer ends up in the `run()` routine where we make a copy of it.
 
-> 当我运行线程时，我从 0 到 4 逐个计数 `i`。并将指针传递给 `thrd_create(）`。这个指针最终会进入 `run(）` 例程，我们在那里对它进行复制。
+> 当我运行线程时，我从 0 到 4 逐个计数 `i`。并将指针传递给 `thrd_create()`。这个指针最终会进入 `run()` 例程，我们在那里对它进行复制。
 
 Simple enough? Here's the output:
 
@@ -20769,13 +19788,13 @@ We've got to have a per-thread variable that we can refer to so we can pass it i
 
 We could have a big array of them. Or we could `malloc()` space (and free it somewhere---maybe in the thread itself.)
 
-> 我们可以拥有一个大型的数组。或者我们可以使用 `malloc()` 函数分配空间(并在线程本身中释放它）。
+> 我们可以拥有一个大型的数组。或者我们可以使用 `malloc()` 函数分配空间(并在线程本身中释放它)。
 
 Let's give that a shot:
 
 ::: {#cb724 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
@@ -20856,7 +19875,7 @@ Your run might vary---how the threads get scheduled to run is beyond the C spec.
 
 If you want to fire-and-forget a thread (i.e. so you don't have to `thrd_join()` it later), you can do that with `thrd_detach()`.
 
-> 如果你想要一个可以"fire-and-forget"的线程(即不需要稍后 `thrd_join()` 它），你可以使用 `thrd_detach()` 来实现。
+> 如果你想要一个可以"fire-and-forget"的线程(即不需要稍后 `thrd_join()` 它)，你可以使用 `thrd_detach()` 来实现。
 
 This removes the parent thread's ability to get the return value from the child thread, but if you don't care about that and just want threads to clean up nicely on their own, this is the way to go.
 
@@ -20879,7 +19898,7 @@ where the `thrd_detach()` call is the parent thread saying, "Hey, I'm not going 
 
 ::: {#cb727 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -20939,17 +19958,17 @@ Check out this example. We have a `static` variable `foo` in block scope in `run
 
 Each thread copies `foo` into a local variable `x` (which is not shared between threads---all the threads have their own call stacks). So they _should_ be the same, right?
 
-> 每个线程都会将 `foo` 复制到本地变量 `x`(不会在线程之间共享---所有线程都有自己的调用堆栈）。所以它们应该是相同的，对吗？
+> 每个线程都会将 `foo` 复制到本地变量 `x`(不会在线程之间共享---所有线程都有自己的调用堆栈)。所以它们应该是相同的，对吗？
 
-And the first time we print them, they are[^200^](#fn200){#fnref200 .footnote-ref role="doc-noteref"}. But then right after that, we check to make sure they're still the same.
+And the first time we print them, they are[^200^]. But then right after that, we check to make sure they're still the same.
 
-> 第一次打印它们时，它们是[^200^](#fn200）{#fnref200 .footnote-ref role="doc-noteref"}。但是接着，我们检查一下确保它们仍然是一样的。
+> 第一次打印它们时，它们是[^200^]。但是接着，我们检查一下确保它们仍然是一样的。
 
 And they _usually_ are. But not always!
 
 ::: {#cb728 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
@@ -21021,15 +20040,15 @@ Thread 3: x = 14, foo = 14
 
 In thread 1, between the two `printf()` s, the value of `foo` somehow changed from `10` to `11`, even though clearly there's no increment between the `printf()` s!
 
-> 在线程 1 中，在两个 printf(）之间，foo 的值从 10 变成了 11，尽管明显没有在 printf(）之间增加！
+> 在线程 1 中，在两个 printf()之间，foo 的值从 10 变成了 11，尽管明显没有在 printf()之间增加！
 
 It was another thread that got in there (probably thread 0, from the look of it) and incremented the value of `foo` behind thread 1's back!
 
-> 这是另一条线程进入那里(看起来可能是线程 0），在线程 1 背后增加了 `foo` 的值！
+> 这是另一条线程进入那里(看起来可能是线程 0)，在线程 1 背后增加了 `foo` 的值！
 
 Let's solve this problem two different ways. (If you want all the threads to share the variable _and_ not step on each other's toes, you'll have to read on to the [mutex](#mutex) section.)
 
-> 让我们用两种不同的方式来解决这个问题。(如果你想让所有的线程共享变量，而又不会相互干扰，你就得继续阅读[互斥](#互斥）部分）
+> 让我们用两种不同的方式来解决这个问题。(如果你想让所有的线程共享变量，而又不会相互干扰，你就得继续阅读[互斥](#互斥)部分)
 
 ### [39.6.1] `_Thread_local` Storage-Class {#thread-local number="39.6.1"}
 
@@ -21051,7 +20070,7 @@ Let's take the previous example and make `foo` into a `thread_local` variable so
 
 ::: {#cb730 .sourceCode startfrom="5"}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int run(void *arg)
 {
     int n = *(int*)arg;  // Thread number for humans to differentiate
@@ -21081,7 +20100,7 @@ No more weird problems!
 
 One thing: if a `thread_local` variable is block scope, it **must** be `static`. Them's the rules. (But this is OK because non-`static` variables are per-thread already since each thread has it's own non-`static` variables.)
 
-> 一件事：如果一个 `thread_local` 变量是块作用域，它**必须**是 `static` 的。这就是规则。(但这是可以的，因为非 `static` 变量已经是每个线程的了，因为每个线程都有自己的非 `static` 变量。）
+> 一件事：如果一个 `thread_local` 变量是块作用域，它**必须**是 `static` 的。这就是规则。(但这是可以的，因为非 `static` 变量已经是每个线程的了，因为每个线程都有自己的非 `static` 变量。)
 
 A bit of a lie there: block scope `thread_local` variables can also be `extern`.
 
@@ -21097,7 +20116,7 @@ One additional feature is that these functions allow you to specify a destructor
 
 The destructor is type `tss_dtor_t` which is a pointer to a function that returns `void` and takes a `void*` as an argument (the `void*` points to the data stored in the variable). In other words, it's a `void (*)(void*)`, if that clears it up. Which I admit it probably doesn't. Check out the example, below.
 
-> 析构函数的类型是 `tss_dtor_t`，它是一个指向返回 `void` 并带有 `void*` 作为参数的函数的指针(`void*` 指向变量中存储的数据）。换句话说，它是一个 `void (*)(void*)`，如果这让你弄清楚了就好了。我承认它可能不会。请查看下面的示例。
+> 析构函数的类型是 `tss_dtor_t`，它是一个指向返回 `void` 并带有 `void*` 作为参数的函数的指针(`void*` 指向变量中存储的数据)。换句话说，它是一个 `void (*)(void*)`，如果这让你弄清楚了就好了。我承认它可能不会。请查看下面的示例。
 
 Generally, `thread_local` is probably your go-to, but if you like the destructor idea, then you can make use of that.
 
@@ -21105,7 +20124,7 @@ Generally, `thread_local` is probably your go-to, but if you like the destructor
 
 The usage is a bit weird in that we need a variable of type `tss_t` to be alive to represent the value on a per thread basis. Then we initialize it with `tss_create()`. Eventually we get rid of it with `tss_delete()`. Note that calling `tss_delete()` doesn't run all the destructors---it's `thrd_exit()` (or returning from the run function) that does that. `tss_delete()` just releases any memory allocated by `tss_create()`.
 
-> 使用方法有点奇怪，我们需要一个类型为'tss_t'的变量来代表每个线程的值。然后我们用'tss_create(）'来初始化它。最后，我们用'tss_delete(）'来摆脱它。注意，调用'tss_delete(）'不会运行所有析构函数---只有'thrd_exit(）'(或从运行函数返回）才能做到这一点。 'tss_delete(）'只是释放'tss_create(）'分配的任何内存。
+> 使用方法有点奇怪，我们需要一个类型为'tss_t'的变量来代表每个线程的值。然后我们用'tss_create()'来初始化它。最后，我们用'tss_delete()'来摆脱它。注意，调用'tss_delete()'不会运行所有析构函数---只有'thrd_exit()'(或从运行函数返回)才能做到这一点。 'tss_delete()'只是释放'tss_create()'分配的任何内存。
 
 In the middle, threads can call `tss_set()` and `tss_get()` to set and get the value.
 
@@ -21121,11 +20140,11 @@ In the `run()` function, the threads `malloc()` some space for a string and stor
 
 When the thread exits, the destructor function (`free()` in this case) is called for _all_ the threads.
 
-> 当线程退出时，析构函数(在这种情况下是 `free()`）将被所有线程调用。
+> 当线程退出时，析构函数(在这种情况下是 `free()`)将被所有线程调用。
 
 ::: {#cb732 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <threads.h>
@@ -21191,21 +20210,21 @@ Again, this is kind of a painful way of doing things compared to `thread_local`,
 
 ## [39.7] Mutexes {#mutex number="39.7"}
 
-If you want to only allow a single thread into a critical section of code at a time, you can protect that section with a mutex[^201^](#fn201){#fnref201 .footnote-ref role="doc-noteref"}.
+If you want to only allow a single thread into a critical section of code at a time, you can protect that section with a mutex[^201^].
 
-> 如果你只想让一个线程进入代码的关键部分，你可以用互斥量来保护这一部分 [^201^](#fn201){#fnref201 .footnote-ref role="doc-noteref"}。
+> 如果你只想让一个线程进入代码的关键部分，你可以用互斥量来保护这一部分 [^201^]。
 
 For example, if we had a `static` variable and we wanted to be able to get and set it in two operations without another thread jumping in the middle and corrupting it, we could use a mutex for that.
 
 > 例如，如果我们有一个 `静态` 变量，我们希望能够在两个操作中获取和设置它，而不让另一个线程插入并破坏它，我们可以使用互斥锁来实现。
 
-You can acquire a mutex or release it. If you attempt to acquire the mutex and succeed, you may continue execution. If you attempt and fail (because someone else holds it), you will _block_[^202^](#fn202){#fnref202 .footnote-ref role="doc-noteref"} until the mutex is released.
+You can acquire a mutex or release it. If you attempt to acquire the mutex and succeed, you may continue execution. If you attempt and fail (because someone else holds it), you will _block_[^202^] until the mutex is released.
 
-> 你可以获取一个互斥锁或释放它。如果你尝试获取互斥锁并成功，你可以继续执行。如果你尝试失败(因为别人持有它），你将_阻塞_[^202^](#fn202）{#fnref202 .footnote-ref role="doc-noteref"} 直到互斥锁被释放。
+> 你可以获取一个互斥锁或释放它。如果你尝试获取互斥锁并成功，你可以继续执行。如果你尝试失败(因为别人持有它)，你将_阻塞_[^202^] 直到互斥锁被释放。
 
 If multiple threads are blocked waiting for a mutex to be released, one of them will be chosen to run (at random, from our perspective), and the others will continue to sleep.
 
-> 如果多个线程被阻塞等待一个互斥量被释放，其中一个将被随机选择运行(从我们的角度来看），其他线程将继续睡眠。
+> 如果多个线程被阻塞等待一个互斥量被释放，其中一个将被随机选择运行(从我们的角度来看)，其他线程将继续睡眠。
 
 The gameplan is that first we'll initialize a mutex variable to make it ready to use with `mtx_init()`.
 
@@ -21221,11 +20240,11 @@ When we're completely done with the mutex, we can destroy it with `mtx_destroy()
 
 First, let's look at some code that does _not_ use a mutex, and endeavors to print out a shared (`static`) serial number and then increment it. Because we're not using a mutex over the getting of the value (to print it) and the setting (to increment it), threads might get in each other's way in that critical section.
 
-> 首先，让我们看看一些没有使用互斥量的代码，并努力打印出一个共享(`静态`）的序列号，然后将其递增。由于我们没有在获取值(打印它）和设置(递增它）时使用互斥量，线程可能会在关键部分彼此干扰。
+> 首先，让我们看看一些没有使用互斥量的代码，并努力打印出一个共享(`静态`)的序列号，然后将其递增。由于我们没有在获取值(打印它)和设置(递增它)时使用互斥量，线程可能会在关键部分彼此干扰。
 
 ::: {#cb733 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -21293,7 +20312,7 @@ We'll add a new variable to represent the mutex of type `mtx_t` in file scope, i
 
 ::: {#cb735 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -21392,7 +20411,7 @@ And always remember the Number One Rule of Multiple Mutexes: _Unlock mutexes in 
 
 As hinted earlier, we have a few mutex types that you can create with `mtx_init()`. (Some of these types are the result of a bitwise-OR operation, as noted in the table.)
 
-> 正如之前暗示的，您可以使用 `mtx_init(）` 创建几种互斥类型。 (其中一些类型是位或操作的结果，如表中所示。）
+> 正如之前暗示的，您可以使用 `mtx_init()` 创建几种互斥类型。 (其中一些类型是位或操作的结果，如表中所示。)
 
 ---
 
@@ -21410,7 +20429,7 @@ Type Description
 
 "Recursive" means that the holder of a lock can call `mtx_lock()` multiple times on the same lock. (They have to unlock it an equal number of times before anyone else can take the mutex.) This might ease coding from time to time, especially if you call a function that needs to lock the mutex when you already hold the mutex.
 
-> "递归"意味着持有锁的人可以在同一锁上多次调用 mtx_lock(）。 (他们必须在其他人可以获得互斥体之前相等数量地解锁它。）这可能会不时地简化编码，特别是当您已经持有互斥体时调用需要锁定互斥体的函数。
+> "递归"意味着持有锁的人可以在同一锁上多次调用 mtx_lock()。 (他们必须在其他人可以获得互斥体之前相等数量地解锁它。)这可能会不时地简化编码，特别是当您已经持有互斥体时调用需要锁定互斥体的函数。
 
 And the timeout gives a thread a chance to _try_ to get the lock for a while, but then bail out if it can't get it in that timeframe.
 
@@ -21426,7 +20445,7 @@ mtx_init(&serial_mtx, mtx_timed);
 
 :::
 
-And then when you wait for it, you have to specify a time in UTC when it will unlock[^203^](#fn203){#fnref203 .footnote-ref role="doc-noteref"}.
+And then when you wait for it, you have to specify a time in UTC when it will unlock[^203^].
 
 > 然后当你等待它时，你必须指定一个 UTC 时间，它将解锁。
 
@@ -21436,7 +20455,7 @@ The function `timespec_get()` from `<time.h>` can be of assistance here. It'll g
 
 It has two fields: `tv_sec` has the current time in seconds since epoch, and `tv_nsec` has the nanoseconds (billionths of a second) as the "fractional" part.
 
-> 它有两个字段：`tv_sec` 自 epoch 以来的当前时间以秒计，`tv_nsec` 有纳秒(十亿分之一秒）作为“分数”部分。
+> 它有两个字段：`tv_sec` 自 epoch 以来的当前时间以秒计，`tv_nsec` 有纳秒(十亿分之一秒)作为“分数”部分。
 
 So you can load that up with the current time, and then add to it to get a specific timeout.
 
@@ -21497,11 +20516,11 @@ The numbers will be stored in a global, shared array, as will the index into the
 
 Since these are shared values, we at least have to hide them behind a mutex for both the main and child threads. (The main will be writing data to them and the child will be reading data from them.)
 
-> 由于这些是共享的值，我们至少必须为主线程和子线程之间放置一个互斥锁。(主线程将向其中写入数据，子线程将从其中读取数据。）
+> 由于这些是共享的值，我们至少必须为主线程和子线程之间放置一个互斥锁。(主线程将向其中写入数据，子线程将从其中读取数据。)
 
 But that's not enough. The child thread needs to block ("sleep") until 5 numbers have been read into the array. And then the parent thread needs to wake up the child thread so it can do its work.
 
-> 但这还不够。子线程需要阻塞(“睡眠”），直到数组中读取了 5 个数字。然后，父线程需要唤醒子线程，让它可以完成工作。
+> 但这还不够。子线程需要阻塞(“睡眠”)，直到数组中读取了 5 个数字。然后，父线程需要唤醒子线程，让它可以完成工作。
 
 And when it wakes up, it needs to be holding that mutex. And it will! When a thread waits on a condition variable, it also acquires a mutex when it wakes up.
 
@@ -21532,7 +20551,7 @@ Meanwhile the main thread will be doing this:
 
 If you didn't skim that too hard (it's OK---I'm not offended), you might notice something weird: how can the main thread hold the mutex lock and signal the child, if the child has to hold the mutex lock to wait for the signal? They can't both hold the lock!
 
-> 如果你没有太过分地浏览(没关系---我没有受到冒犯），你可能会注意到一些奇怪的事情：主线程如何能够持有互斥锁并向子线程发出信号，如果子线程必须持有互斥锁来等待信号呢？它们不可能同时持有锁！
+> 如果你没有太过分地浏览(没关系---我没有受到冒犯)，你可能会注意到一些奇怪的事情：主线程如何能够持有互斥锁并向子线程发出信号，如果子线程必须持有互斥锁来等待信号呢？它们不可能同时持有锁！
 
 And indeed they don't! There's some behind-the-scenes magic with condition variables: when you `cnd_wait()`, it releases the mutex that you specify and the thread goes to sleep. And when someone signals that thread to wake up, it reacquires the lock as if nothing had happened.
 
@@ -21542,13 +20561,13 @@ It's a little different on the `cnd_signal()` side of things. This doesn't do an
 
 > 在 `cnd_signal()` 方面有些不同。它不会和互斥量做任何事情。发信号的线程仍然必须在等待线程唤醒之前手动释放互斥量。
 
-One more thing on the `cnd_wait()`. You'll probably be calling `cnd_wait()` if some condition[^204^](#fn204){#fnref204 .footnote-ref role="doc-noteref"} is not yet met (e.g. in this case, if not all the numbers have yet been entered). Here's the deal: this condition should be in a `while` loop, not an `if` statement. Why?
+One more thing on the `cnd_wait()`. You'll probably be calling `cnd_wait()` if some condition[^204^] is not yet met (e.g. in this case, if not all the numbers have yet been entered). Here's the deal: this condition should be in a `while` loop, not an `if` statement. Why?
 
-> 再说一件关于 `cnd_wait()` 的事情。如果某些条件 [^204^](#fn204){#fnref204 .footnote-ref role="doc-noteref"}尚未满足(例如，在本例中，如果还没有输入所有数字），您可能会调用 `cnd_wait()`。事情是这样的：此条件应放在 `while` 循环中，而不是 `if` 语句中。为什么？
+> 再说一件关于 `cnd_wait()` 的事情。如果某些条件 [^204^]尚未满足(例如，在本例中，如果还没有输入所有数字)，您可能会调用 `cnd_wait()`。事情是这样的：此条件应放在 `while` 循环中，而不是 `if` 语句中。为什么？
 
-It's because of a mysterious phenomenon called a _spurious wakeup_. Sometimes, in some implementations, a thread can be woken up out of a `cnd_wait()` sleep for seemingly _no reason_. _\[X-Files music\]_[^205^](#fn205){#fnref205 .footnote-ref role="doc-noteref"}. And so we have to check to see that the condition we need is still actually met when we wake up. And if it's not, back to sleep with us!
+It's because of a mysterious phenomenon called a _spurious wakeup_. Sometimes, in some implementations, a thread can be woken up out of a `cnd_wait()` sleep for seemingly _no reason_. _\[X-Files music\]_[^205^]. And so we have to check to see that the condition we need is still actually met when we wake up. And if it's not, back to sleep with us!
 
-> 这是因为一种神秘的现象，称为虚假唤醒[^205^](#fn205）。有时，在某些实现中，线程可以从 `cnd_wait(）` 睡眠中被唤醒，似乎没有原因。\[X-Files 音乐\]。因此，我们必须检查我们需要的条件在我们醒来时仍然有效。如果不是，我们就睡觉吧！
+> 这是因为一种神秘的现象，称为虚假唤醒[^205^](#fn205)。有时，在某些实现中，线程可以从 `cnd_wait()` 睡眠中被唤醒，似乎没有原因。\[X-Files 音乐\]。因此，我们必须检查我们需要的条件在我们醒来时仍然有效。如果不是，我们就睡觉吧！
 
 So let's do this thing! Starting with the main thread:
 
@@ -21568,7 +20587,7 @@ Meanwhile, the child thread has been up to its own shenanigans:
 - The child thread grabs the mutex
 - While the condition is not met (i.e. while the shared array doesn't yet have 5 numbers in it), the child thread sleeps by waiting on the condition variable. When it waits, it implicitly unlocks the mutex.
 
-> 当条件未满足(即共享数组中的数字还不足 5 个）时，子线程通过等待条件变量来休眠。当它等待时，它会隐式地解锁互斥量。
+> 当条件未满足(即共享数组中的数字还不足 5 个)时，子线程通过等待条件变量来休眠。当它等待时，它会隐式地解锁互斥量。
 
 - Once the main thread signals the child thread to wake up, it wakes up to do the work and gets the mutex lock back.
 
@@ -21583,7 +20602,7 @@ And here's the code! Give it some study so you can see where all the above piece
 
 ::: {#cb739 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 
@@ -21765,9 +20784,9 @@ Let's say you have a function that _could_ be run by many threads, but you don't
 
 > 假设你有一个可以由多个线程运行的函数，但你不知道什么时候运行，也不值得去写所有的逻辑。
 
-There's a way around it: use `call_once()`. Tons of threads could try to run the function, but only the first one counts[^206^](#fn206){#fnref206 .footnote-ref role="doc-noteref"}
+There's a way around it: use `call_once()`. Tons of threads could try to run the function, but only the first one counts[^206^]
 
-> 有一种解决方法：使用 `call_once()`。许多线程可以尝试运行该函数，但只有第一个线程有效 [^206^](#fn206){#fnref206 .footnote-ref role="doc-noteref"}。
+> 有一种解决方法：使用 `call_once()`。许多线程可以尝试运行该函数，但只有第一个线程有效 [^206^]。
 
 To work with this, you need a special flag variable you declare to keep track of whether or not the thing's been run. And you need a function to run, which takes no parameters and returns no value.
 
@@ -21826,9 +20845,9 @@ Atomics are an optional feature. There's a macro `__STDC_NO_ATOMICS__` that's `1
 
 > 原子操作是一个可选功能。如果没有原子操作，就有一个宏 `__STDC_NO_ATOMICS__`，它的值为 `1`。
 
-That macro might not exist pre-C11, so we should test the language version with `__STDC_VERSION__`[^207^](#fn207){#fnref207 .footnote-ref role="doc-noteref"}.
+That macro might not exist pre-C11, so we should test the language version with `__STDC_VERSION__`[^207^].
 
-> 那个宏可能在 C11 之前不存在，因此我们应该使用 `__STDC_VERSION__` 来测试语言版本 [^207^](#fn207){#fnref207 .footnote-ref role="doc-noteref"}。
+> 那个宏可能在 C11 之前不存在，因此我们应该使用 `__STDC_VERSION__` 来测试语言版本 [^207^]。
 
 ::: {#cb743 .sourceCode}
 
@@ -21864,7 +20883,7 @@ That is, the other thread will see the entire write of, say, a 32-bit value. Not
 
 It's almost like there's a little lock around the getting and setting of that one variable. (And there _might_ be! See [Lock-Free Atomic Variables](#lock-free-atomic), below.)
 
-> 这就好像有一个小锁环绕着那个变量的获取和设置(也许真的有！参见下面的“无锁原子变量”）。
+> 这就好像有一个小锁环绕着那个变量的获取和设置(也许真的有！参见下面的“无锁原子变量”)。
 
 And on that note, you can get away with never using atomics if you use mutexes to lock your critical sections. It's just that there are a class of _lock-free data structures_ that always allow other threads to make progress instead of being blocked by a mutex... but these are tough to create correctly from scratch, and are one of the things that are beyond the scope of the guide, sadly.
 
@@ -21886,7 +20905,7 @@ But let's do a demo where we have two threads. The first runs for a while and th
 
 ::: {#cb744 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <threads.h>
 #include <stdatomic.h>
@@ -21961,9 +20980,9 @@ Look, ma! We're accessing a variable from different threads and not using a mute
 
 > 看，妈妈！我们正在从不同的线程访问一个变量，而不使用互斥量！而且由于原子变量的原子性，这每次都能正常工作。
 
-You might be wondering what happens if that's a regular non-atomic `int`, instead. Well, on my system it still works... unless I do an optimized build in which case it hangs on thread 2 waiting to see the 3490 to get set[^208^](#fn208){#fnref208 .footnote-ref role="doc-noteref"}.
+You might be wondering what happens if that's a regular non-atomic `int`, instead. Well, on my system it still works... unless I do an optimized build in which case it hangs on thread 2 waiting to see the 3490 to get set[^208^].
 
-> 你可能想知道如果这是一个普通的非原子 `int`，会发生什么？嗯，在我的系统上它仍然可以工作... 除非我做了一个优化构建，在这种情况下，它在线程 2 上挂起，等待 3490 被设置[^208^](#fn208）{#fnref208 .footnote-ref role="doc-noteref"}。
+> 你可能想知道如果这是一个普通的非原子 `int`，会发生什么？嗯，在我的系统上它仍然可以工作... 除非我做了一个优化构建，在这种情况下，它在线程 2 上挂起，等待 3490 被设置[^208^]。
 
 But that's just the beginning of the story. The next part is going to require more brain power and has to do with something called _synchronization_.
 
@@ -21993,7 +21012,7 @@ By way of example, which happens first in the following code, the write to `x` o
 
 ::: {#cb746 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int x, y;  // global
 
 // ...
@@ -22016,7 +21035,7 @@ In a multithreaded scenario, we might have something like this pseudocode:
 
 ::: {#cb747 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int x = 0, y = 0;
 
 thread1() {
@@ -22058,9 +21077,9 @@ Two threads _synchronize_ when they agree on the state of shared memory. As we'v
 
 > 两个线程在就共享内存的状态达成一致时会进行同步。正如我们所看到的，它们并不总是与代码保持一致。那么它们是如何达成一致的呢？
 
-Using atomic variables can force the agreement[^209^](#fn209){#fnref209 .footnote-ref role="doc-noteref"}. If a thread writes to an atomic variable, it's saying "anyone who reads this atomic variable in the future will also see all the changes I made to memory (atomic or not) up to and including the atomic variable".
+Using atomic variables can force the agreement[^209^]. If a thread writes to an atomic variable, it's saying "anyone who reads this atomic variable in the future will also see all the changes I made to memory (atomic or not) up to and including the atomic variable".
 
-> 使用原子变量可以强制执行协议[^209^] (#fn209) {#fnref209 .footnote-ref role="doc-noteref"}。如果一个线程写入原子变量，就是在说“任何将来读取这个原子变量的人也将看到我对内存(原子的或非原子的）所做的所有更改，包括原子变量”。
+> 使用原子变量可以强制执行协议[^209^] (#fn209) {#fnref209 .footnote-ref role="doc-noteref"}。如果一个线程写入原子变量，就是在说“任何将来读取这个原子变量的人也将看到我对内存(原子的或非原子的)所做的所有更改，包括原子变量”。
 
 Or, in more human terms, let's sit around the conference table and make sure we're on the same page as to which pieces of shared memory hold what values. You agree that the memory changes that you'd made up-to-and-including the atomic store will be visible to me after I do a load of the same atomic variable.
 
@@ -22070,7 +21089,7 @@ So we can easily fix our example:
 
 ::: {#cb749 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 int x = 0;
 atomic int y = 0;  // Make y atomic
 
@@ -22099,11 +21118,11 @@ It's important to note a couple things here:
 
 2. The synchronization happens when one thread reads an atomic variable another thread wrote. So when thread 2 reads `y`, all previous memory writes in thread 1 (namely setting `x`) will be visible in thread 2.
 
-> 当一个线程读取另一个线程写入的原子变量时，同步就发生了。因此，当线程 2 读取'y'时，线程 1 中所有先前的内存写入(即设置'x'）将在线程 2 中可见。
+> 当一个线程读取另一个线程写入的原子变量时，同步就发生了。因此，当线程 2 读取'y'时，线程 1 中所有先前的内存写入(即设置'x')将在线程 2 中可见。
 
 3. Notice that `x` isn't atomic. That's OK because we're not synchronizing over `x`, and the synchronization over `y` when we write it in thread 1 means that all previous writes---including `x`---in thread 1 will become visible to other threads... if those other threads read `y` to synchronize.
 
-> 注意 `x` 不是原子的。这没关系，因为我们不是在 `x` 上进行同步，而是在线程 1 中写入 `y` 时进行同步，这意味着所有先前的写入(包括 `x`）在线程 1 中将对其他线程可见......如果其他线程读取 `y` 进行同步的话。
+> 注意 `x` 不是原子的。这没关系，因为我们不是在 `x` 上进行同步，而是在线程 1 中写入 `y` 时进行同步，这意味着所有先前的写入(包括 `x`)在线程 1 中将对其他线程可见......如果其他线程读取 `y` 进行同步的话。
 
 Forcing this synchronization is inefficient and can be a lot slower than just using a regular variable. This is why we don't use atomics unless we have to for a particular application.
 
@@ -22161,7 +21180,7 @@ With read/load/acquire of a particular atomic variable:
 
 - All writes (atomic or non-atomic) in another thread that happened before that other thread wrote/stored/released this atomic variable are now visible in this thread.
 
-> 所有在另一个线程中发生的(原子的或非原子的）写入，在该线程写入/存储/释放这个原子变量之前，现在在这个线程中可见。
+> 所有在另一个线程中发生的(原子的或非原子的)写入，在该线程写入/存储/释放这个原子变量之前，现在在这个线程中可见。
 
 - The new value of the atomic variable set by the other thread is also visible in this thread.
 - No reads or writes of any variables/memory in the current thread can be reordered to happen before this acquire.
@@ -22176,7 +21195,7 @@ With write/store/release of a particular atomic variable:
 
 - All writes (atomic or non-atomic) in the current thread that happened before this release become visible to other threads that have read/loaded/acquired the same atomic variable.
 
-> 所有在当前线程中发生的写操作(无论是原子操作还是非原子操作），在发布之前，都将对其他线程读取/加载/获取同一原子变量的线程可见。
+> 所有在当前线程中发生的写操作(无论是原子操作还是非原子操作)，在发布之前，都将对其他线程读取/加载/获取同一原子变量的线程可见。
 
 - The value written to this atomic variable by this thread is also visible to other threads.
 - No reads or writes of any variables/memory in the current thread can be reordered to happen after this release.
@@ -22231,9 +21250,9 @@ You hanging in there? We're through the meat of the simpler usage of atomics. An
 
 > 你还在坚持吗？我们已经讨论完原子的简单用法了。由于我们这里不会讨论更复杂的用法，你可以放松一下了。
 
-_Sequential consistency_ is what's called a _memory ordering_. There are many memory orderings, but sequential consistency is the sanest[^210^](#fn210){#fnref210 .footnote-ref role="doc-noteref"} C has to offer. It is also the default. You have to go out of your way to use other memory orderings.
+_Sequential consistency_ is what's called a _memory ordering_. There are many memory orderings, but sequential consistency is the sanest[^210^] C has to offer. It is also the default. You have to go out of your way to use other memory orderings.
 
-> _顺序一致性_被称为_内存排序_。有许多内存排序，但顺序一致性是 C 提供的最合理的[^210^](#fn210）{#fnref210 .footnote-ref role="doc-noteref"}。这也是默认值。要使用其他内存排序，必须特地去做。
+> _顺序一致性_被称为_内存排序_。有许多内存排序，但顺序一致性是 C 提供的最合理的[^210^]。这也是默认值。要使用其他内存排序，必须特地去做。
 
 All the stuff we've been talking about so far has happened within the realm of sequential consistency.
 
@@ -22313,7 +21332,7 @@ In that case, `x` will be atomically incremented by `3`---no other thread can ju
 
 In particular, the following operators are atomic read-modify-write operations with sequential consistency, so use them with gleeful abandon. (In the example, `a` is atomic.)
 
-> 特别是，以下操作符是原子读取-修改-写入操作，具有顺序一致性，因此可以欢快地使用它们。(在示例中，`a` 是原子的。）
+> 特别是，以下操作符是原子读取-修改-写入操作，具有顺序一致性，因此可以欢快地使用它们。(在示例中，`a` 是原子的。)
 
 ::: {#cb753 .sourceCode}
 
@@ -22374,7 +21393,7 @@ Let's take it down a notch and see what types we have available, and how we can 
 
 First things first, let's look at the built-in atomic types and what they are `typedef`'d to. (Spoiler: `_Atomic` is a type qualifier!)
 
-> 首先，让我们看看内置的原子类型以及它们被 `typedef` 到什么。(剧透：`_Atomic` 是一种类型限定符！）
+> 首先，让我们看看内置的原子类型以及它们被 `typedef` 到什么。(剧透：`_Atomic` 是一种类型限定符！)
 
 ---
 
@@ -22464,9 +21483,9 @@ But what if you want more?
 
 You can do it either with a type qualifier or type specifier.
 
-First, specifier! It's the keyword `_Atomic` with a type in parens after[^211^](#fn211){#fnref211 .footnote-ref role="doc-noteref"}---suitable for use with `typedef`:
+First, specifier! It's the keyword `_Atomic` with a type in parens after[^211^]---suitable for use with `typedef`:
 
-> 首先，指定者！它是关键字 `_Atomic`，后面有一个括号中的类型[^211^](#fn211）{#fnref211 .footnote-ref role="doc-noteref"}---适用于 `typedef`：
+> 首先，指定者！它是关键字 `_Atomic`，后面有一个括号中的类型[^211^]---适用于 `typedef`：
 
 ::: {#cb755 .sourceCode}
 
@@ -22484,9 +21503,9 @@ Restrictions on the specifier: the type you're making atomic can't be of type ar
 
 Next, qualifier! It's the keyword `_Atomic` _without_ a type in parens.
 
-So these do similar things[^212^](#fn212){#fnref212 .footnote-ref role="doc-noteref"}:
+So these do similar things[^212^]:
 
-> 这些做的事情很相似 [^212^](#fn212){#fnref212 .footnote-ref role="doc-noteref"}：
+> 这些做的事情很相似 [^212^]：
 
 ::: {#cb756 .sourceCode}
 
@@ -22527,7 +21546,7 @@ So the atomic access becomes lock-access-unlock, which is rather slower and has 
 
 [Atomic flags](#atomic-flags), below, is the only atomic type that is guaranteed to be lock-free in all conforming implementations. In typical desktop/laptop computer world, other larger types are likely lock-free.
 
-> 原子标志(#atomic-flags）是唯一一种在所有符合要求的实现中都保证是无锁的原子类型。在典型的台式/笔记本电脑世界中，其他较大的类型很可能是无锁的。
+> 原子标志(#atomic-flags)是唯一一种在所有符合要求的实现中都保证是无锁的原子类型。在典型的台式/笔记本电脑世界中，其他较大的类型很可能是无锁的。
 
 Luckily, we have a couple ways to determine if a particular type is a lock-free atomic or not.
 
@@ -22573,7 +21592,7 @@ Value Meaning
 `1` _Sometimes_ lock-free.
 `2` Always lock-free.
 
-Wait---how can something be _sometimes_ lock-free? This just means the answer isn't known at compile-time, but could later be known at runtime. Maybe the answer varies depending on whether or not you're running this code on Genuine Intel or AMD, or something like that[^213^](#fn213){#fnref213 .footnote-ref role="doc-noteref"}.
+Wait---how can something be _sometimes_ lock-free? This just means the answer isn't known at compile-time, but could later be known at runtime. Maybe the answer varies depending on whether or not you're running this code on Genuine Intel or AMD, or something like that[^213^].
 
 > 等等---怎么有些时候可以是无锁的？这意味着答案在编译时不能确定，但可以在运行时确定。也许答案取决于你是在 Genuine Intel 还是 AMD 上运行这段代码，或者类似的情况。
 
@@ -22591,7 +21610,7 @@ Lock-free is faster, so maybe there's a speed concern that you'd code around ano
 
 If you read or write a shared variable (static storage duration or `_Thread_Local`) in a signal handler, it's undefined behavior \[gasp!\]... Unless you do one of the following:
 
-> 如果在信号处理程序中读取或写入共享变量(静态存储持续时间或 `_Thread_Local`），那么这是未定义的行为\[哇！\]... 除非你做以下之一：
+> 如果在信号处理程序中读取或写入共享变量(静态存储持续时间或 `_Thread_Local`)，那么这是未定义的行为\[哇！\]... 除非你做以下之一：
 
 1. Write to a variable of type `volatile sig_atomic_t`.
 2. Read or write a lock-free atomic variable.
@@ -22600,15 +21619,15 @@ As far as I can tell, lock-free atomic variables are one of the few ways you get
 
 > 据我所知，无锁原子变量是从信号处理程序中获取信息的少数可移植方式之一。
 
-The spec is a bit vague, in my read, about the memory order when it comes to acquiring or releasing atomic variables in the signal handler. C++ says, and it makes sense, that such accesses are unsequenced with respect to the rest of the program[^214^](#fn214){#fnref214 .footnote-ref role="doc-noteref"}. The signal can be raised, after all, at any time. So I'm assuming C's behavior is similar.
+The spec is a bit vague, in my read, about the memory order when it comes to acquiring or releasing atomic variables in the signal handler. C++ says, and it makes sense, that such accesses are unsequenced with respect to the rest of the program[^214^]. The signal can be raised, after all, at any time. So I'm assuming C's behavior is similar.
 
-> 这个规范在涉及信号处理程序中获取或释放原子变量的内存顺序方面有点模糊，据我所知，C++ 说，这是有道理的，这种访问与程序的其余部分是无序的[^214^](#fn214）{#fnref214 .footnote-ref role =“doc-noteref”}。毕竟，信号可以随时被触发。所以我假设 C 的行为是相似的。
+> 这个规范在涉及信号处理程序中获取或释放原子变量的内存顺序方面有点模糊，据我所知，C++ 说，这是有道理的，这种访问与程序的其余部分是无序的[^214^]。毕竟，信号可以随时被触发。所以我假设 C 的行为是相似的。
 
 ## [40.10] Atomic Flags {#atomic-flags number="40.10"}
 
-There's only one type the standard guarantees will be a lock-free atomic: `atomic_flag`. This is an opaque type for [test-and-set](https://en.wikipedia.org/wiki/Test-and-set)[^215^](#fn215){#fnref215 .footnote-ref role="doc-noteref"} operations.
+There's only one type the standard guarantees will be a lock-free atomic: `atomic_flag`. This is an opaque type for [test-and-set](https://en.wikipedia.org/wiki/Test-and-set)[^215^] operations.
 
-> 只有一种类型可以保证是无锁原子操作：`atomic_flag`。这是一种用于[测试和设置](https://en.wikipedia.org/wiki/Test-and-set)[^215^](#fn215){#fnref215 .footnote-ref role="doc-noteref"}操作的不透明类型。
+> 只有一种类型可以保证是无锁原子操作：`atomic_flag`。这是一种用于[测试和设置](https://en.wikipedia.org/wiki/Test-and-set)[^215^]操作的不透明类型。
 
 It can be either _set_ or _clear_. You can initialize it to clear with:
 
@@ -22622,7 +21641,7 @@ atomic_flag f = ATOMIC_FLAG_INIT;
 
 You can set the flag atomically with `atomic_flag_test_and_set()`, which will set the flag and return its previous status as a `_Bool` (true for set).
 
-> 你可以使用 `atomic_flag_test_and_set()` 原子性地设置标志，它会将标志设置为真，并返回其以前的状态作为 `_Bool`(真表示设置）。
+> 你可以使用 `atomic_flag_test_and_set()` 原子性地设置标志，它会将标志设置为真，并返回其以前的状态作为 `_Bool`(真表示设置)。
 
 You can clear the flag atomically with `atomic_flag_clear()`.
 
@@ -22663,11 +21682,11 @@ Using the `_Atomic` qualifier or specifier, you can make atomic `struct` s or `u
 
 If there's not a lot of data in there (i.e. a handful of bytes), the resulting atomic type might be lock-free. Test it with `atomic_is_lock_free()`.
 
-> 如果里面没有太多数据(即几个字节），那么生成的原子类型可能是无锁的。使用 `atomic_is_lock_free()` 进行测试。
+> 如果里面没有太多数据(即几个字节)，那么生成的原子类型可能是无锁的。使用 `atomic_is_lock_free()` 进行测试。
 
 ::: {#cb760 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdatomic.h>
 
@@ -22691,7 +21710,7 @@ Here's the catch: you can't access fields of an atomic `struct` or `union`... so
 
 ::: {#cb761 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdatomic.h>
 
@@ -22726,7 +21745,7 @@ Just a note here about placement of `_Atomic` when it comes to pointers.
 
 First, pointers to atomics (i.e. the pointer value is not atomic, but the thing it points to is):
 
-> 首先，指向原子的指针(即指针值不是原子的，但它指向的东西是原子的）：
+> 首先，指向原子的指针(即指针值不是原子的，但它指向的东西是原子的)：
 
 ::: {#cb762 .sourceCode}
 
@@ -22741,7 +21760,7 @@ p = &x;  // OK!
 
 Second, atomic pointers to non-atomic values (i.e. the pointer value itself is atomic, but the thing it points to is not):
 
-> 第二，指向非原子值的原子指针(即指针值本身是原子的，但它指向的东西不是）：
+> 第二，指向非原子值的原子指针(即指针值本身是原子的，但它指向的东西不是)：
 
 ::: {#cb763 .sourceCode}
 
@@ -22756,7 +21775,7 @@ p = &x;  // OK!
 
 Lastly, atomic pointers to atomic values (i.e. the pointer and the thing it points to are both atomic):
 
-> 最后，原子指针指向原子值(即指针和它指向的东西都是原子的）：
+> 最后，原子指针指向原子值(即指针和它指向的东西都是原子的)：
 
 ::: {#cb764 .sourceCode}
 
@@ -22857,7 +21876,7 @@ We'll do a breakdown of the different memory orders, below. Don't mess with anyt
 
 Also, in order to maintain the total order of acquires and releases, no acquires or releases will be reordered with respect to each other. (The acquire/release rules do not forbid reordering a release followed by an acquire. But the sequentially consistent rules do.)
 
-> 为了保持获取和释放的总顺序，不会对它们之间的获取或释放进行重新排序。(获取/释放规则不禁止释放后跟着获取进行重新排序，但顺序一致性规则禁止。）
+> 为了保持获取和释放的总顺序，不会对它们之间的获取或释放进行重新排序。(获取/释放规则不禁止释放后跟着获取进行重新排序，但顺序一致性规则禁止。)
 
 ### [40.13.2] Acquire {#acquire number="40.13.2"}
 
@@ -22942,9 +21961,9 @@ This is called a _fence_. So if you want all the writes in a thread to be visibl
 
 > 这叫做一个_围栏_。因此，如果你想要线程中的所有写入在其他地方可见，你可以在一个线程中设置一个发布围栏，在另一个线程中设置一个获取围栏，就像原子变量一样。
 
-Since a consume operation doesn't really make sense on a fence[^216^](#fn216){#fnref216 .footnote-ref role="doc-noteref"}, `memory_order_consume` is treated as an acquire.
+Since a consume operation doesn't really make sense on a fence[^216^], `memory_order_consume` is treated as an acquire.
 
-> 由于对于栅栏 [^216^](#fn216){#fnref216 .footnote-ref role="doc-noteref"}来说，消费操作并不是很有意义，因此 `memory_order_consume` 被视为获取操作。
+> 由于对于栅栏 [^216^]来说，消费操作并不是很有意义，因此 `memory_order_consume` 被视为获取操作。
 
 You can put up a fence with any specified order:
 
@@ -22958,7 +21977,7 @@ atomic_thread_fence(memory_order_release);
 
 There's also a light version of a fence for use with signal handlers, called `atomic_signal_fence()`.
 
-> 也有一个用于信号处理程序的轻量级围栏，称为 `atomic_signal_fence(）`。
+> 也有一个用于信号处理程序的轻量级围栏，称为 `atomic_signal_fence()`。
 
 It works just the same way as `atomic_thread_fence()`, except:
 
@@ -22970,11 +21989,11 @@ It works just the same way as `atomic_thread_fence()`, except:
 
 If you want to be sure the side effects of non-atomic operations (and relaxed atomic operations) are visible in the signal handler, you can use this fence.
 
-> 如果你想确保非原子操作(和松散原子操作）的副作用在信号处理程序中可见，你可以使用这个栅栏。
+> 如果你想确保非原子操作(和松散原子操作)的副作用在信号处理程序中可见，你可以使用这个栅栏。
 
 The idea is that the signal handler is executing in _this_ thread, not another, so this is a lighter-weight way of making sure changes outside the signal handler are visible within it (i.e. they haven't been reordered).
 
-> 这个想法是信号处理程序在这个线程中执行，而不是另一个，因此这是一种更轻量级的方法，可以确保在信号处理程序之外的更改是可见的(即它们没有被重新排序）。
+> 这个想法是信号处理程序在这个线程中执行，而不是另一个，因此这是一种更轻量级的方法，可以确保在信号处理程序之外的更改是可见的(即它们没有被重新排序)。
 
 ## [40.15] References {#references number="40.15"}
 
@@ -22984,57 +22003,57 @@ If you want to learn more about this stuff, here are some of the things that hel
 
 - Herb Sutter's _`atomic<>` Weapons_ talk:
 
-  - [Part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4)[^217^](#fn217){#fnref217 .footnote-ref role="doc-noteref"}
+  - [Part 1](https://www.youtube.com/watch?v=A8eCGOqgvH4)[^217^]
 
-> - [第一部分](https://www.youtube.com/watch?v=A8eCGOqgvH4)[^217^](#fn217){#fnref217 .footnote-ref role="doc-noteref"}
+> - [第一部分](https://www.youtube.com/watch?v=A8eCGOqgvH4)[^217^]
 
-- [part 2](https://www.youtube.com/watch?v=KeLBd2EJLOU)[^218^](#fn218){#fnref218 .footnote-ref role="doc-noteref"}
+- [part 2](https://www.youtube.com/watch?v=KeLBd2EJLOU)[^218^]
 
-> - [第二部分](https://www.youtube.com/watch?v=KeLBd2EJLOU)[^218^](#fn218){#fnref218 .footnote-ref role="doc-noteref"}
+> - [第二部分](https://www.youtube.com/watch?v=KeLBd2EJLOU)[^218^]
 
-- [Jeff Preshing's materials](https://preshing.com/archives/)[^219^](#fn219){#fnref219 .footnote-ref role="doc-noteref"}, in particular:
+- [Jeff Preshing's materials](https://preshing.com/archives/)[^219^], in particular:
 
-  - [An Introduction to Lock-Free Programming](https://preshing.com/20120612/an-introduction-to-lock-free-programming/)[^220^](#fn220){#fnref220 .footnote-ref role="doc-noteref"}
+  - [An Introduction to Lock-Free Programming](https://preshing.com/20120612/an-introduction-to-lock-free-programming/)[^220^]
 
-> [一个关于无锁编程的介绍](https://preshing.com/20120612/an-introduction-to-lock-free-programming/)[^220^](#fn220){#fnref220 .footnote-ref role="doc-noteref"}
+> [一个关于无锁编程的介绍](https://preshing.com/20120612/an-introduction-to-lock-free-programming/)[^220^]
 
-- [Acquire and Release Semantics](https://preshing.com/20120913/acquire-and-release-semantics/)[^221^](#fn221){#fnref221 .footnote-ref role="doc-noteref"}
+- [Acquire and Release Semantics](https://preshing.com/20120913/acquire-and-release-semantics/)[^221^]
 
-> [获取和释放语义](https://preshing.com/20120913/acquire-and-release-semantics/)[^221^](#fn221){#fnref221 .footnote-ref role="doc-noteref"}
+> [获取和释放语义](https://preshing.com/20120913/acquire-and-release-semantics/)[^221^]
 
-- [The _Happens-Before_ Relation](https://preshing.com/20130702/the-happens-before-relation/)[^222^](#fn222){#fnref222 .footnote-ref role="doc-noteref"}
+- [The _Happens-Before_ Relation](https://preshing.com/20130702/the-happens-before-relation/)[^222^]
 
-> [_发生前关系_](https://preshing.com/20130702/the-happens-before-relation/)[^222^](#fn222){#fnref222 .footnote-ref role="doc-noteref"}
+> [_发生前关系_](https://preshing.com/20130702/the-happens-before-relation/)[^222^]
 
-- [The _Synchronizes-With_ Relation](https://preshing.com/20130823/the-synchronizes-with-relation/)[^223^](#fn223){#fnref223 .footnote-ref role="doc-noteref"}
+- [The _Synchronizes-With_ Relation](https://preshing.com/20130823/the-synchronizes-with-relation/)[^223^]
 
-> [同步关系](https://preshing.com/20130823/the-synchronizes-with-relation/)[^223^](#fn223){#fnref223 .footnote-ref role="doc-noteref"}
+> [同步关系](https://preshing.com/20130823/the-synchronizes-with-relation/)[^223^]
 
-- [The Purpose of `memory_order_consume` in C++11](https://preshing.com/20140709/the-purpose-of-memory_order_consume-in-cpp11/)[^224^](#fn224){#fnref224 .footnote-ref role="doc-noteref"}
+- [The Purpose of `memory_order_consume` in C++11](https://preshing.com/20140709/the-purpose-of-memory_order_consume-in-cpp11/)[^224^]
 
-> [《C++11 中 `memory_order_consume` 的目的》](https://preshing.com/20140709/the-purpose-of-memory_order_consume-in-cpp11/)[^224^](#fn224){#fnref224 .footnote-ref role="doc-noteref"}
+> [《C++11 中 `memory_order_consume` 的目的》](https://preshing.com/20140709/the-purpose-of-memory_order_consume-in-cpp11/)[^224^]
 
-- [You Can Do Any Kind of Atomic Read-Modify-Write Operation](https://preshing.com/20150402/you-can-do-any-kind-of-atomic-read-modify-write-operation/)[^225^](#fn225){#fnref225 .footnote-ref role="doc-noteref"}
+- [You Can Do Any Kind of Atomic Read-Modify-Write Operation](https://preshing.com/20150402/you-can-do-any-kind-of-atomic-read-modify-write-operation/)[^225^]
 
-> 你可以进行任何类型的原子读-修改-写操作([https://preshing.com/20150402/you-can-do-any-kind-of-atomic-read-modify-write-operation/](https://preshing.com/20150402/you-can-do-any-kind-of-atomic-read-modify-write-operation/)）[^225^](#fn225）{#fnref225 .footnote-ref role="doc-noteref"}
+> 你可以进行任何类型的原子读-修改-写操作([https://preshing.com/20150402/you-can-do-any-kind-of-atomic-read-modify-write-operation/](https://preshing.com/20150402/you-can-do-any-kind-of-atomic-read-modify-write-operation/))[^225^]
 
 - CPPReference:
 
-  - [Memory Order](https://en.cppreference.com/w/c/atomic/memory_order)[^226^](#fn226){#fnref226 .footnote-ref role="doc-noteref"}
+  - [Memory Order](https://en.cppreference.com/w/c/atomic/memory_order)[^226^]
 
-> [内存顺序](https://en.cppreference.com/w/c/atomic/memory_order)[^226^](#fn226){#fnref226 .footnote-ref role="doc-noteref"}
+> [内存顺序](https://en.cppreference.com/w/c/atomic/memory_order)[^226^]
 
-- [Atomic Types](https://en.cppreference.com/w/c/language/atomic)[^227^](#fn227){#fnref227 .footnote-ref role="doc-noteref"}
+- [Atomic Types](https://en.cppreference.com/w/c/language/atomic)[^227^]
 
-> - [原子类型](https://en.cppreference.com/w/c/language/atomic)[^227^](#fn227){#fnref227 .footnote-ref role="doc-noteref"}
+> - [原子类型](https://en.cppreference.com/w/c/language/atomic)[^227^]
 
-- Bruce Dawson's [Lockless Programming Considerations](https://docs.microsoft.com/en-us/windows/win32/dxtecharts/lockless-programming)[^228^](#fn228){#fnref228 .footnote-ref role="doc-noteref"}
+- Bruce Dawson's [Lockless Programming Considerations](https://docs.microsoft.com/en-us/windows/win32/dxtecharts/lockless-programming)[^228^]
 
-> 布鲁斯·道森的[无锁编程考虑](https://docs.microsoft.com/en-us/windows/win32/dxtecharts/lockless-programming)[^228^](#fn228){#fnref228 .footnote-ref role="doc-noteref"}
+> 布鲁斯·道森的[无锁编程考虑](https://docs.microsoft.com/en-us/windows/win32/dxtecharts/lockless-programming)[^228^]
 
-- The helpful and knowledgeable folks on [r/C_Programming](https://www.reddit.com/r/C_Programming/)[^229^](#fn229){#fnref229 .footnote-ref role="doc-noteref"}
+- The helpful and knowledgeable folks on [r/C_Programming](https://www.reddit.com/r/C_Programming/)[^229^]
 
-> 在 [r/C_Programming](https://www.reddit.com/r/C_Programming/) 上有知识渊博且乐于助人的人们 [^229^](#fn229){#fnref229 .footnote-ref role="doc-noteref"}。
+> 在 [r/C_Programming](https://www.reddit.com/r/C_Programming/) 上有知识渊博且乐于助人的人们 [^229^]。
 
 # [41] Function Specifiers, Alignment Specifiers/Operators {#function-specifiers-alignment-specifiersoperators number="41"}
 
@@ -23080,7 +22099,7 @@ Let's try leaving the `static` off.
 
 ::: {#cb771 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 
 inline int add(int x, int y)
@@ -23185,7 +22204,7 @@ Here's `foo.c` with the `inline`.
 
 ::: {#cb775 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // foo.c
 
 #include <stdio.h>
@@ -23208,13 +22227,13 @@ int main(void)
 
 Recall that unless we're doing an optimized build with `gcc`. `func()` will vanish and we'll get a linker error. Unless, or course, we have a version with external linkage defined elsewhere.
 
-> 如果我们不使用 gcc 进行优化构建，请记住，`func(）` 将消失，我们将得到一个链接器错误。除非，当然，我们有一个具有外部链接定义的版本。
+> 如果我们不使用 gcc 进行优化构建，请记住，`func()` 将消失，我们将得到一个链接器错误。除非，当然，我们有一个具有外部链接定义的版本。
 
 And we do. In `bar.c`.
 
 ::: {#cb776 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 // bar.c
 
 #include <stdio.h>
@@ -23238,7 +22257,7 @@ Seems like when we call `func()` from `foo.c`, it should print "`foo's function`
 
 > 似乎当我们从 foo.c 调用 func()时，它应该打印“foo 的函数”。而从 bar.c，该 func()应该打印“bar 的函数”。
 
-And if I compile with `gcc` with optimizations[^230^](#fn230){#fnref230 .footnote-ref role="doc-noteref"} it will use inline functions, and we'll get the expected:
+And if I compile with `gcc` with optimizations[^230^] it will use inline functions, and we'll get the expected:
 
 > 如果我使用 `gcc` 进行优化编译[^230^]，它将使用内联函数，我们将得到预期的结果：
 
@@ -23284,9 +22303,9 @@ It also allows you to indicate to other devs that some program logic depends on 
 
 > 它还允许您向其他开发人员指示某些程序逻辑取决于一个函数_不_返回。
 
-You'll likely never need to use this, but you'll see it on some library calls like [`exit()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-exit)[^231^](#fn231){#fnref231 .footnote-ref role="doc-noteref"} and [`abort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-abort)[^232^](#fn232){#fnref232 .footnote-ref role="doc-noteref"}.
+You'll likely never need to use this, but you'll see it on some library calls like [`exit()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-exit)[^231^] and [`abort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-abort)[^232^].
 
-> 你很可能永远不需要使用这个，但你会在一些像[`exit()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-exit)[^231^](#fn231){#fnref231 .footnote-ref role="doc-noteref"}和[`abort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-abort)[^232^](#fn232){#fnref232 .footnote-ref role="doc-noteref"}的库调用中看到它。
+> 你很可能永远不需要使用这个，但你会在一些像[`exit()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-exit)[^231^]和[`abort()`](https://beej.us/guide/bgclr/html/split/stdlib.html#man-abort)[^232^]的库调用中看到它。
 
 The built-in keyword is `_Noreturn`, but if it doesn't break your existing code, everyone would recommend including `<stdnoreturn.h>` and using the easier-to-read `noreturn` instead.
 
@@ -23300,7 +22319,7 @@ Here's an example of using `noreturn` correctly:
 
 ::: {#cb779 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
@@ -23349,9 +22368,9 @@ foo.c:7:1: warning: function declared 'noreturn' should not return
 
 ## [41.2] Alignment Specifiers and Operators {#alignment-specifiers-and-operators number="41.2"}
 
-[_Alignment_](https://en.wikipedia.org/wiki/Data_structure_alignment)[^233^](#fn233){#fnref233 .footnote-ref role="doc-noteref"} is all about multiples of addresses on which objects can be stored. Can you store this at any address? Or must it be a starting address that's divisible by 2? Or 8? Or 16?
+[_Alignment_](https://en.wikipedia.org/wiki/Data_structure_alignment)[^233^] is all about multiples of addresses on which objects can be stored. Can you store this at any address? Or must it be a starting address that's divisible by 2? Or 8? Or 16?
 
-> [_对齐_](https://en.wikipedia.org/wiki/Data_structure_alignment)[^233^](#fn233){#fnref233 .footnote-ref role="doc-noteref"}是关于可以存储对象的多个地址的事情。你可以在任何地址存储它吗？还是必须是可以被 2 整除的起始地址？或者 8？或者 16？
+> [_对齐_](https://en.wikipedia.org/wiki/Data_structure_alignment)[^233^]是关于可以存储对象的多个地址的事情。你可以在任何地址存储它吗？还是必须是可以被 2 整除的起始地址？或者 8？或者 16？
 
 If you're coding up something low-level like a memory allocator that interfaces with your OS, you might need to consider this. Most devs go their careers without using this functionality in C.
 
@@ -23381,7 +22400,7 @@ char alignas(int) c;
 
 You can also pass a constant value or expression in for the alignment. This has to be something supported by the system, but the spec stops short of dictating what values you can put in there. Small powers of 2 (1, 2, 4, 8, and 16) are generally safe bets.
 
-> 你也可以传入一个常量值或表达式来进行对齐。这必须是系统支持的，但规范并不强制你使用什么值。2 的小次幂(1，2，4，8 和 16）通常是安全的选择。
+> 你也可以传入一个常量值或表达式来进行对齐。这必须是系统支持的，但规范并不强制你使用什么值。2 的小次幂(1，2，4，8 和 16)通常是安全的选择。
 
 ::: {#cb783 .sourceCode}
 
@@ -23423,7 +22442,7 @@ Here's a program that will print out the alignments of a variety of different ty
 
 ::: {#cb785 .sourceCode}
 
-```{.sourceCode .numberSource .c .numberLines}
+```c
 #include <stdalign.h>
 #include <stdio.h>     // for printf()
 #include <stddef.h>    // for max_align_t
@@ -23486,49 +22505,49 @@ And there you have it. Alignment!
 
 [https://en.wikipedia.org/wiki/Python](https://en.wikipedia.org/wiki/Python)\_(programming_language)[↩︎](#fnref2){.footnote-back role="doc-backlink"}
 
-> [Python(编程语言）](https://zh.wikipedia.org/wiki/Python)↩︎
+> [Python(编程语言)](https://zh.wikipedia.org/wiki/Python)↩︎
 > :::
 
 3. ::: {#fn3}
 
    [https://en.wikipedia.org/wiki/JavaScript](https://en.wikipedia.org/wiki/JavaScript)[↩︎](#fnref3){.footnote-back role="doc-backlink"}
 
-> [JavaScript(简体中文）](https://zh.wikipedia.org/wiki/JavaScript)↩︎
+> [JavaScript(简体中文)](https://zh.wikipedia.org/wiki/JavaScript)↩︎
 > :::
 
 4. ::: {#fn4}
 
    [https://en.wikipedia.org/wiki/Java](https://en.wikipedia.org/wiki/Java)\_(programming_language)[↩︎](#fnref4){.footnote-back role="doc-backlink"}
 
-> [维基百科：Java(编程语言）](https://zh.wikipedia.org/wiki/Java_(%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80))↩︎
+> [维基百科：Java(编程语言)](https://zh.wikipedia.org/wiki/Java_(%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80))↩︎
 > :::
 
 5. ::: {#fn5}
 
    [https://en.wikipedia.org/wiki/Rust](https://en.wikipedia.org/wiki/Rust)\_(programming_language)[↩︎](#fnref5){.footnote-back role="doc-backlink"}
 
-> [Rust(编程语言）](https://zh.wikipedia.org/wiki/Rust)↩︎
+> [Rust(编程语言)](https://zh.wikipedia.org/wiki/Rust)↩︎
 > :::
 
 6. ::: {#fn6}
 
    [https://en.wikipedia.org/wiki/Go](https://en.wikipedia.org/wiki/Go)\_(programming_language)[↩︎](#fnref6){.footnote-back role="doc-backlink"}
 
-> [Go(编程语言）](https://zh.wikipedia.org/wiki/Go_(%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80))↩︎{.footnote-back role="doc-backlink"}
+> [Go(编程语言)](https://zh.wikipedia.org/wiki/Go_(%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80))↩︎{.footnote-back role="doc-backlink"}
 > :::
 
 7. ::: {#fn7}
 
    [https://en.wikipedia.org/wiki/Swift](https://en.wikipedia.org/wiki/Swift)\_(programming_language)[↩︎](#fnref7){.footnote-back role="doc-backlink"}
 
-> [https://zh.wikipedia.org/wiki/Swift](https://zh.wikipedia.org/wiki/Swift)(编程语言）[↩︎](#fnref7){.footnote-back role="doc-backlink"}
+> [https://zh.wikipedia.org/wiki/Swift](https://zh.wikipedia.org/wiki/Swift)(编程语言)[↩︎](#fnref7){.footnote-back role="doc-backlink"}
 > :::
 
 8. ::: {#fn8}
 
    [https://en.wikipedia.org/wiki/Objective-C](https://en.wikipedia.org/wiki/Objective-C)[↩︎](#fnref8){.footnote-back role="doc-backlink"}
 
-> [Objective-C(目标 C）](https://zh.wikipedia.org/wiki/Objective-C)
+> [Objective-C(目标 C)](https://zh.wikipedia.org/wiki/Objective-C)
 > :::
 
 9. ::: {#fn9}
