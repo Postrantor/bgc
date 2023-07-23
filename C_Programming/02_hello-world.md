@@ -1,4 +1,3 @@
-
 # [2] Hello, World! {#hello-world number="2"}
 
 ## [2.1] What to Expect from C {#what-to-expect-from-c number="2.1"}
@@ -6,7 +5,7 @@
 > _"Where do these stairs go?"_ > _"They go up."_
 > ---Ray Stantz and Peter Venkman, Ghostbusters
 
-C is a low-level language.
+**C is a low-level language.**
 
 It didn't use to be. Back in the day when people carved punch cards out of granite, C was an incredible way to be free of the drudgery of lower-level languages like [assembly](https://en.wikipedia.org/wiki/Assembly_language)[^19^].
 
@@ -103,16 +102,10 @@ How did I know I needed to `#include <stdio.h>` for `printf()`? Answer: it's in 
 
 > 我怎么知道我需要 `#include <stdio.h>` 才能使用 `printf()`？答案：**这在文档中有说明**。如果你使用的是 Unix 系统，可以输入 `man 3 printf`，它会在 man 页面的顶部告诉你需要包含哪些头文件。或者参考本书的参考资料部分。:-)
 
-Holy moly. That was all to cover the first line! But, let's face it, it has been completely dissected. No mystery shall remain!
+Holy moly. That was all to cover the first line! But, let's face it, it has been completely dissected. No mystery shall remain! So take a breather...look back over the sample code. Only a couple easy lines to go. Welcome back from your break! I know you didn't really take a break; I was just humoring you.
 
 > 哇！我们已经彻底剖析了第一行！但是，让我们面对现实吧，没有任何神秘可言了！
-
-So take a breather...look back over the sample code. Only a couple easy lines to go.
-
 > 所以休息一下...回顾一下样例代码。只剩下几行简单的代码了。
-
-Welcome back from your break! I know you didn't really take a break; I was just humoring you.
-
 > 欢迎回来！我知道你没有真的休息；我只是在逗你玩。
 
 The next line is `main()`. This is the definition of the function `main()`; everything between the squirrelly braces (`{` and `}`) is part of the function definition.
@@ -125,7 +118,7 @@ The next line is `main()`. This is the definition of the function `main()`; ever
 
 Now, the main function is a special one in many ways, but one way stands above the rest: it is the function that will be called automatically when your program starts executing. Nothing of yours gets called before `main()`. In the case of our example, this works fine since all we want to do is print a line and exit.
 
-> 现在，主函数在很多方面都是特殊的，但有一种方式高于其他方式：当你的程序开始执行时，它将被自动调用。在你的东西之前没有调用'main()'。在我们的例子中，这很好，因为我们要做的就是打印一行并退出。
+> 现在，主函数在很多方面都是特殊的，但有一种方式高于其他方式：当你的程序开始执行时，它**将被自动调用**。在你的东西之前没有调用`main()`。在我们的例子中，这很好，因为我们要做的就是打印一行并退出。
 
 Oh, that's another thing: once the program executes past the end of `main()`, down there at the closing squirrelly brace, the program will exit, and you'll be back at your command prompt.
 
@@ -137,11 +130,11 @@ So now we know that that program has brought in a header file, `stdio.h`, and de
 
 I am so happy you asked. Really! We only have the one goodie: a call to the function `printf()`. You can tell this is a function call and not a function definition in a number of ways, but one indicator is the lack of squirrelly braces after it. And you end the function call with a semicolon so the compiler knows it's the end of the expression. You'll be putting semicolons after almost everything, as you'll see.
 
-> 我很高兴你问了。真的！我们只有一个好东西：调用函数 `printf()`。你可以通过多种方式来判断这是一个函数调用而不是函数定义，但一个指标是它后面没有多余的大括号。你要用分号结束函数调用，这样编译器就知道这是表达式的结尾了。你会发现几乎每件事情都要加分号。
+> 我很高兴你问了。真的！我们只有一个好东西：**调用函数 `printf()`**。你可以通过多种方式来判断这是一个**函数调用而不是函数定义**，但一个指标是它后面没有多余的大括号。你要**用分号结束函数调用**，这样编译器就知道这是表达式的结尾了。你会发现**几乎每件事情都要加分号**。
 
 You're passing one argument to the function `printf()`: a string to be printed when you call it. Oh, yeah---we're calling a function! We rock! Wait, wait---don't get cocky. What's that crazy `\n` at the end of the string? Well, most characters in the string will print out just like they are stored. But there are certain characters that you can't print on screen well that are embedded as two-character backslash codes. One of the most popular is `\n` (read "backslash-N" or simply "newline") that corresponds to the _newline_ character. This is the character that causes further printing to continue at the beginning of the next line instead of the current. It's like hitting return at the end of the line.
 
-> 你正在给函数 `printf()` 传递一个参数：调用它时要打印的字符串。哦，是的——我们正在调用一个函数！我们太棒了！等等——不要太自负。字符串末尾的那个疯狂的 `\n` 是什么？嗯，大多数字符串中的字符都会按照它们存储的方式打印出来。但也有一些你无法在屏幕上打印的字符，它们以双字符反斜杠编码的形式嵌入。其中最常用的是 `\n`(读作“反斜杠-N”或简称“换行”)，它对应于_换行_字符。这个字符会导致后续的打印继续在下一行的开头而不是当前行。就像在行末按下回车键一样。
+> 你正在给函数 `printf()` 传递一个参数：调用它时要打印的字符串。哦，是的——我们正在调用一个函数！我们太棒了！等等——不要太自负。字符串末尾的那个疯狂的 `\n` 是什么？嗯，大多数字符串中的字符都会按照它们存储的方式打印出来。但也有一些你无法在屏幕上打印的字符，它们以双字符反斜杠编码的形式嵌入。其中最常用的是 `\n`(读作“反斜杠-N”或简称“换行”)，它对应于 _换行_ 字符。这个字符会导致后续的打印继续在下一行的开头而不是当前行。就像在行末按下回车键一样。
 
 So copy that code into a file called `hello.c` and build it. On a Unix-like platform (e.g. Linux, BSD, Mac, or WSL), from the command line you'll build with a command like so:
 
@@ -149,7 +142,7 @@ So copy that code into a file called `hello.c` and build it. On a Unix-like plat
 
 ::: {#cb3 .sourceCode}
 
-```{.sourceCode .zsh}
+```zsh
 gcc -o hello hello.c
 ```
 
@@ -225,7 +218,7 @@ If you have a source file called `hello.c` in the current directory, you can bui
 
 ::: {#cb6 .sourceCode}
 
-```{.sourceCode .zsh}
+```zsh
 gcc -o hello hello.c
 ```
 
@@ -241,7 +234,7 @@ If your source is broken up into multiple files, you can compile them all togeth
 
 ::: {#cb7 .sourceCode}
 
-```{.sourceCode .zsh}
+```zsh
 gcc -o awesomegame ui.c characters.c npc.c items.c
 ```
 
@@ -261,7 +254,7 @@ On Macs, the stock compiler isn't `gcc`---it's `clang`. But a wrapper is also in
 
 You can also install the `gcc` compiler proper through [Homebrew](https://formulae.brew.sh/formula/gcc)[^32^] or some other means.
 
-> 你也可以通过 [Homebrew](https://formulae.brew.sh/formula/gcc)[^32^]或其他方式正确安装 `gcc` 编译器。
+> 你也可以通过 [Homebrew][^32^]或其他方式正确安装 `gcc` 编译器。
 
 ## [2.6] Building from IDEs {#building-from-ides number="2.6"}
 
@@ -321,7 +314,7 @@ C95 A rarely-mentioned addition to C89 that included wide character support.
 
 **C11** This major version update includes Unicode support and multi-threading. Be advised that if you start using these language features, you might be sacrificing portability with places that are stuck in C99 land. But, honestly, 1999 is getting to be a while back now.
 
-> **C11** 这个主要版本更新包括 Unicode 支持和多线程。请注意，如果你开始使用这些语言特性，可能会牺牲可移植性，因为一些地方仍然停留在 C99 版本。但是，说实话，1999 年已经有一段时间了。
+> **C11** 这个主要版本更新**包括 Unicode 支持和多线程**。请注意，如果你开始使用这些语言特性，可能会牺牲可移植性，因为一些地方仍然停留在 C99 版本。但是，说实话，1999 年已经有一段时间了。
 
 C17, C18 Bugfix update to C11. C17 seems to be the official name, but the publication was delayed until 2018. As far as I can tell, these two are interchangeable, with C17 being preferred.
 
@@ -337,7 +330,7 @@ For example:
 
 ::: {#cb8 .sourceCode}
 
-```{.sourceCode .zsh}
+```zsh
 gcc -std=c11 -pedantic foo.c
 ```
 
@@ -347,7 +340,7 @@ For this book, I compile programs for C2x with all warnings set:
 
 ::: {#cb9 .sourceCode}
 
-```{.sourceCode .zsh}
+```zsh
 gcc -Wall -Wextra -std=c2x -pedantic foo.c
 ```
 
